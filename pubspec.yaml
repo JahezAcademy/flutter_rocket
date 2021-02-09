@@ -1,8 +1,7 @@
 name: mc
 description: State managment and request package, Model,View,Request [MVR].
 version: 0.0.1
-author: Mohammed CHAHBOUN
-homepage: oflutter.community@gmail.com
+homepage: https://github.com/ourflutter/mc
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -11,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: any
+  http: ^0.12.2
 
 dev_dependencies:
   flutter_test:
