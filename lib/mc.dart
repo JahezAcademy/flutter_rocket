@@ -38,24 +38,27 @@ class McRequest {
       return data;
     } else {
       print({'Error': 'Failed to load Data: ${response.statusCode}'});
-      //return {'Error': 'Failed to load Data: ${response.statusCode}'};
+      return {'Error': 'Failed to load Data: ${response.statusCode}'};
     }
   }
 
   @protected
-  void checkerObj(http.Response response, McModel model, {bool multi}) {
+  McModel checkerObj(http.Response response, McModel model, {bool multi}) {
     if (response.statusCode == 200) {
       if (multi) {
         List result = json.decode(utf8.decode(response.bodyBytes));
         model.setMulti(result);
+        return model;
       } else {
         try {
           List decoded = json.decode(utf8.decode(response.bodyBytes));
           var result = decoded.length == 0 ? model.toJson() : decoded[0];
           model.fromJson(result);
+          return model;
         } catch (e) {
           Map result = json.decode(utf8.decode(response.bodyBytes));
           model.fromJson(result);
+          return model;
         }
       }
     } else {
@@ -115,7 +118,7 @@ class McRequest {
         .get(url + endpoint + "?" + srch, headers: headers)
         .whenComplete(() => model.load(false));
 
-    checkerObj(response, model, multi: multi);
+    return checkerObj(response, model, multi: multi);
   }
 
   /// دالة خاصة بتعديل البيانات على شكل بالنموذج الذي تم تمريره مع الدالة
@@ -129,7 +132,7 @@ class McRequest {
         .put("$url/$endpoint/$id/",
             body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
-    //return checkerObj(response, model);
+    return checkerObj(response, model);
   }
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
@@ -155,7 +158,7 @@ class McRequest {
             body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
 
-    //return checkerObj(response, model);
+    return checkerObj(response, model);
   }
 
   /// دالة خاصة بارسال البيانات على شكل قاموس الذي تم تمريره مع الدالة
@@ -198,7 +201,9 @@ class McModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, dynamic> toJson() {}
+  Map<String, dynamic> toJson() {
+    return {};
+  }
 }
 
 class McView extends AnimatedWidget {

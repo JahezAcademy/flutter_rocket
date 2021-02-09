@@ -61,12 +61,33 @@ void setMulti(List d) {
     }).toList();
     multi = r;
   }
-/////////////////////////////-- View --/////////////////////////////
-mport 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
-import 'package:mcMVRexample/Request.dart';
 
+/////////////////////////////-- View --/////////////////////////////
+import 'package:flutter/material.dart';
+import 'package:mc/mc.dart';
+import 'Request.dart';
 import 'PostModel.dart';
+import 'package:flutter/material.dart';
+import 'package:mcMVRexample/PostView.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MVR Package',
+      theme: ThemeData(
+        primaryColor: Colors.brown,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: MyHomePage(title: 'MVR Package'),
+    );
+  }
+}
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({this.title});
