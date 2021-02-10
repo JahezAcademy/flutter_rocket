@@ -2,7 +2,7 @@
 
 State managment and request package, Model,View,Request [MVR].
 
-## Author: [CHAHBOUN Mohammed](https://github.com/m97chahboun)
+## Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
 
 
 [![Pub](https://img.shields.io/pub/v/mc.svg)](https://pub.dartlang.org/packages/mc)
@@ -17,11 +17,11 @@ dependencies:
   ...
   mc: ^0.0.1
 ```
+for generate The appropriate model by json data use this tool [https://github.com/ourflutter/Json2Dart] or website [https://json2dart.web.app/]
 
 ## Usage
 ```dart
 /////////////////////////////-- Model --/////////////////////////////
-// for generate The appropriate model by json data use this tool [https://github.com/ourflutter/Json2Dart] or website [https://json2dart.web.app/]
 import 'package:mc/mc.dart';
 
 class Post extends McModel{
