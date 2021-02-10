@@ -43,12 +43,12 @@ class McRequest {
   }
 
   @protected
-  McModel checkerObj(http.Response response, McModel model, {bool multi}) {
+  dynamic checkerObj(http.Response response, McModel model, {bool multi}) {
     if (response.statusCode == 200) {
       if (multi) {
         List result = json.decode(utf8.decode(response.bodyBytes));
         model.setMulti(result);
-        return model;
+        return model.multi;
       } else {
         try {
           List decoded = json.decode(utf8.decode(response.bodyBytes));
@@ -90,8 +90,7 @@ class McRequest {
   ///
   ///
   ///[List]=>[مصفوفة]
-  Future<Map<String, dynamic>> getJsonData(String endpoint,
-      {Map search, bool multi = false}) async {
+  Future getJsonData(String endpoint, {Map search, bool multi = false}) async {
     String srch = search != null ? mapToString(search) : "";
     http.Response response =
         await http.get(this.url + endpoint + "?" + srch, headers: headers);
@@ -110,14 +109,13 @@ class McRequest {
   ///
   ///[List]=>[مصفوفة]
 
-  Future<McModel> getObjData(String endpoint, McModel model,
+  Future getObjData(String endpoint, McModel model,
       {Map search, bool multi = false}) async {
     model.load(true);
     String srch = search != null ? mapToString(search) : "";
     http.Response response = await http
         .get(url + endpoint + "?" + srch, headers: headers)
         .whenComplete(() => model.load(false));
-
     return checkerObj(response, model, multi: multi);
   }
 

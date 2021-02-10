@@ -21,7 +21,7 @@ dependencies:
 ## Usage
 ```dart
 /////////////////////////////-- Model --/////////////////////////////
-// for generate The appropriate model by json data use this tool [https://github.com/ourflutter/Json2Dart]
+// for generate The appropriate model by json data use this tool [https://github.com/ourflutter/Json2Dart] or website [https://json2dart.web.app/]
 import 'package:mc/mc.dart';
 
 class Post extends McModel{
@@ -68,7 +68,7 @@ import 'package:mc/mc.dart';
 import 'Request.dart';
 import 'PostModel.dart';
 import 'package:flutter/material.dart';
-import 'package:mcMVRexample/PostView.dart';
+import 'package:example/PostView.dart';
 
 void main() {
   runApp(MyApp());
