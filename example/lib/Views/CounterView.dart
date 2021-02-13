@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import '../Models/CounterModel.dart';
 import 'package:mc/mc.dart';
 
-
-class MyHomePage extends StatelessWidget {
+class CounterExample extends StatelessWidget {
   final String title;
-   MyHomePage({this.title});
+  CounterExample({this.title});
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
@@ -30,8 +29,9 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
         //change your field by json structure
-        onPressed: ()=>counter.fromJson({"count": counter.count + 1}),
+        onPressed: () => counter.fromJson({"count": counter.count + 1}),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),

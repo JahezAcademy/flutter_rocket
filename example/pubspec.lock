@@ -91,10 +91,10 @@ packages:
   mc:
     dependency: "direct main"
     description:
-      path: "/media/chahboun/Nouveau nom/mc"
-      relative: false
-    source: path
-    version: "0.0.1+1"
+      name: mc
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1+2"
   meta:
     dependency: transitive
     description:

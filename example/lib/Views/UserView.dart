@@ -3,8 +3,8 @@ import 'package:example/Request/Request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({this.title});
+class UserExample extends StatelessWidget {
+  UserExample({this.title});
   final String title;
   final User user = User();
   @override
@@ -14,7 +14,7 @@ class MyHomePage extends StatelessWidget {
         title: Text(title),
       ),
       floatingActionButton: Container(
-        color: Colors.brown,
+        color: Theme.of(context).primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -34,7 +34,7 @@ class MyHomePage extends StatelessWidget {
                   );
 
                   user.multi[0].fromJson({
-                    "name": "Mohammed <3",
+                    "name": "Mohammed Mohammed 💙",
                     "company": newCompany.toJson(),
                     'image':
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
@@ -59,10 +59,9 @@ class MyHomePage extends StatelessWidget {
                         Company company = currentUser.company;
                         Address address = currentUser.address;
                         Geo geo = currentUser.address.geo;
-                        print(currentUser.img);
                         return ExpansionTile(
                             leading: CircleAvatar(
-                              backgroundColor: Colors.brown,
+                              backgroundColor: Theme.of(context).primaryColor,
                               backgroundImage: currentUser.img == null
                                   ? null
                                   : NetworkImage(currentUser.img),
@@ -83,7 +82,8 @@ class MyHomePage extends StatelessWidget {
                                   tilePadding:
                                       EdgeInsets.symmetric(horizontal: 40.0),
                                   leading: CircleAvatar(
-                                    backgroundColor: Colors.brown,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
                                     child: Icon(Icons.home),
                                   ),
                                   title: Text("Company :" + company.name),
@@ -97,7 +97,8 @@ class MyHomePage extends StatelessWidget {
                                   tilePadding:
                                       EdgeInsets.symmetric(horizontal: 40.0),
                                   leading: CircleAvatar(
-                                    backgroundColor: Colors.brown,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
                                     child: Icon(Icons.place),
                                   ),
                                   title: Text("Address :" + address.city),
@@ -112,7 +113,8 @@ class MyHomePage extends StatelessWidget {
                                         tilePadding: EdgeInsets.symmetric(
                                             horizontal: 80.0),
                                         leading: CircleAvatar(
-                                          backgroundColor: Colors.brown,
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
                                           child: Icon(Icons.map),
                                         ),
                                         title: Text("geo adrdress"),

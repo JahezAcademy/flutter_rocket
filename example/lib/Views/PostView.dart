@@ -10,8 +10,8 @@ import '../Models/PostModel.dart';
 ///
 ///
 ///
-class MyHomePage extends StatelessWidget {
-  MyHomePage({this.title});
+class PostExample extends StatelessWidget {
+  PostExample({this.title});
   final String title;
   final Post post = Post();
   @override
@@ -26,7 +26,6 @@ class MyHomePage extends StatelessWidget {
           child: FutureBuilder(
             future: request.getObjData("posts", post, multi: true),
             builder: (BuildContext context, snp) {
-              print(snp.data);
               return post.loading
                   ? Center(child: CircularProgressIndicator())
                   : ListView.builder(
