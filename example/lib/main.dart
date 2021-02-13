@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'Views/CounterView.dart';
+//import 'Views/CounterView.dart';
 //import 'Views/PostView.dart';
+import 'Views/UserView.dart';
 
 void main() {
-  runApp(MyApp());  
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -15,8 +16,6 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.brown,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-
-    
       home: MyHomePage(title: 'MVR Package'),
     );
   }

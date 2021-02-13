@@ -202,6 +202,11 @@ class McModel extends ChangeNotifier {
   Map<String, dynamic> toJson() {
     return {};
   }
+
+  void rebuild() {
+    load(true);
+    load(false);
+  }
 }
 
 class McView extends AnimatedWidget {
