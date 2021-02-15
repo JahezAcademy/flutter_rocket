@@ -58,7 +58,7 @@ class UserExample extends StatelessWidget {
                         User currentUser = user.multi[index];
                         Company company = currentUser.company;
                         Address address = currentUser.address;
-                        Geo geo = currentUser.address.geo;
+                        Geo geo = address.geo;
                         return ExpansionTile(
                             leading: CircleAvatar(
                               backgroundColor: Theme.of(context).primaryColor,
