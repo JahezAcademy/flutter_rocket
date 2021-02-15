@@ -34,7 +34,7 @@ class UserExample extends StatelessWidget {
                   );
 
                   user.multi[0].fromJson({
-                    "name": "Mohammed Mohammed 💙",
+                    "name": "Mohammed CHAHBOUN 💙",
                     "company": newCompany.toJson(),
                     'image':
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"

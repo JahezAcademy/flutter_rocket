@@ -17,7 +17,7 @@ dependencies:
   ...
   mc: ^0.0.1
 ```
-for generate The appropriate model by json data use this tool [https://github.com/ourflutter/Json2Dart] or website [https://json2dart.web.app/]
+for generate The appropriate model by json data use this tool https://github.com/ourflutter/Json2Dart or website https://json2dart.web.app/
 
 ## Usage
 ```dart
