@@ -1,6 +1,6 @@
 # mc
 
-State managment and request package, Model,View,Request [MVR].
+State management and request package, Model,View,Request [MVR].
 
 ## Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
 
@@ -15,9 +15,9 @@ In your flutter project, add the dependency to your `pubspec.yaml`
 ```yaml
 dependencies:
   ...
-  mc: ^0.0.1
+  mc: ^0.0.1+3
 ```
-for generate The appropriate model by json data use this tool https://github.com/ourflutter/Json2Dart or website https://json2dart.web.app/
+for generate The appropriate model by json data use this website https://json2dart.web.app/
 
 ## Usage
 ```dart
@@ -63,12 +63,10 @@ void setMulti(List d) {
   }
 
 /////////////////////////////-- View --/////////////////////////////
-import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 import 'Request.dart';
 import 'PostModel.dart';
 import 'package:flutter/material.dart';
-import 'package:example/PostView.dart';
 
 void main() {
   runApp(MyApp());
