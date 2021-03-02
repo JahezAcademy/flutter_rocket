@@ -33,12 +33,13 @@ class UserExample extends StatelessWidget {
                     catchPhrase: "change data...catch",
                   );
 
-                  user.multi[0].fromJson({
+                  user.multi[5].fromJson({
                     "name": "Mohammed CHAHBOUN 💙",
                     "company": newCompany.toJson(),
                     'image':
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
                   });
+                  //rebuild method required if data multi
                   user.rebuild();
                 }),
           ],
