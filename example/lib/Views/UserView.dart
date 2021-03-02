@@ -51,83 +51,76 @@ class UserExample extends StatelessWidget {
           child: McView(
             model: user,
             builder: (BuildContext __, _) {
-              return user.loading
-                  ? Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: user.multi.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        User currentUser = user.multi[index];
-                        Company company = currentUser.company;
-                        Address address = currentUser.address;
-                        Geo geo = address.geo;
-                        return ExpansionTile(
+              return ListView.builder(
+                itemCount: user.multi.length,
+                itemBuilder: (BuildContext context, int index) {
+                  User currentUser = user.multi[index];
+                  Company company = currentUser.company;
+                  Address address = currentUser.address;
+                  Geo geo = address.geo;
+                  return ExpansionTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundImage: currentUser.img == null
+                            ? null
+                            : NetworkImage(currentUser.img),
+                        child:
+                            currentUser.img == null ? Icon(Icons.person) : null,
+                      ),
+                      title: Text("User :" + currentUser.name),
+                      children: [
+                        SizedBox(height: 5.0),
+                        Text(currentUser.id.toString()),
+                        Text(currentUser.username),
+                        Text(currentUser.email),
+                        Text(currentUser.phone),
+                        Text(currentUser.website),
+                        SizedBox(height: 5),
+                        ExpansionTile(
+                            tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
                             leading: CircleAvatar(
                               backgroundColor: Theme.of(context).primaryColor,
-                              backgroundImage: currentUser.img == null
-                                  ? null
-                                  : NetworkImage(currentUser.img),
-                              child: currentUser.img == null
-                                  ? Icon(Icons.person)
-                                  : null,
+                              child: Icon(Icons.home),
                             ),
-                            title: Text("User :" + currentUser.name),
+                            title: Text("Company :" + company.name),
                             children: [
                               SizedBox(height: 5.0),
-                              Text(currentUser.id.toString()),
-                              Text(currentUser.username),
-                              Text(currentUser.email),
-                              Text(currentUser.phone),
-                              Text(currentUser.website),
-                              SizedBox(height: 5),
+                              Text(company.bs),
+                              Text(company.catchPhrase),
+                            ]),
+                        SizedBox(height: 5),
+                        ExpansionTile(
+                            tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
+                            leading: CircleAvatar(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              child: Icon(Icons.place),
+                            ),
+                            title: Text("Address :" + address.city),
+                            children: [
+                              SizedBox(height: 5.0),
+                              Text(address.street),
+                              Text(address.suite),
+                              Text(address.zipcode),
+                              Text(address.city),
+                              SizedBox(height: 5.0),
                               ExpansionTile(
                                   tilePadding:
-                                      EdgeInsets.symmetric(horizontal: 40.0),
+                                      EdgeInsets.symmetric(horizontal: 80.0),
                                   leading: CircleAvatar(
                                     backgroundColor:
                                         Theme.of(context).primaryColor,
-                                    child: Icon(Icons.home),
+                                    child: Icon(Icons.map),
                                   ),
-                                  title: Text("Company :" + company.name),
+                                  title: Text("geo adrdress"),
                                   children: [
                                     SizedBox(height: 5.0),
-                                    Text(company.bs),
-                                    Text(company.catchPhrase),
+                                    Text(geo.lat),
+                                    Text(geo.lng),
                                   ]),
-                              SizedBox(height: 5),
-                              ExpansionTile(
-                                  tilePadding:
-                                      EdgeInsets.symmetric(horizontal: 40.0),
-                                  leading: CircleAvatar(
-                                    backgroundColor:
-                                        Theme.of(context).primaryColor,
-                                    child: Icon(Icons.place),
-                                  ),
-                                  title: Text("Address :" + address.city),
-                                  children: [
-                                    SizedBox(height: 5.0),
-                                    Text(address.street),
-                                    Text(address.suite),
-                                    Text(address.zipcode),
-                                    Text(address.city),
-                                    SizedBox(height: 5.0),
-                                    ExpansionTile(
-                                        tilePadding: EdgeInsets.symmetric(
-                                            horizontal: 80.0),
-                                        leading: CircleAvatar(
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
-                                          child: Icon(Icons.map),
-                                        ),
-                                        title: Text("geo adrdress"),
-                                        children: [
-                                          SizedBox(height: 5.0),
-                                          Text(geo.lat),
-                                          Text(geo.lng),
-                                        ]),
-                                  ]),
-                            ]);
-                      },
-                    );
+                            ]),
+                      ]);
+                },
+              );
             },
           )),
     );
