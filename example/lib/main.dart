@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
             children: [
               example(context, "Counter View", "counter"),
               example(context, "10 Users", "user"),
-              example(context, "100 Posts", "post"),
+              example(context, "1 Post", "post"),
               example(context, "5000 Photos", "photo")
             ],
           ),

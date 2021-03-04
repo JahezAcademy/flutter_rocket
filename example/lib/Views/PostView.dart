@@ -4,7 +4,6 @@ import '../Request/Request.dart';
 import '../Models/PostModel.dart';
 
 //Use as you like
-//as state management && Request
 ///with [McView]
 /////## multi[false]
 ///

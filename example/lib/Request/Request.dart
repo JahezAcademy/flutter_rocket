@@ -1,5 +1,5 @@
 import 'package:mc/mc.dart';
-
-String baseUrl = 'https://jsonplaceholder.typicode.com/';
+//your url without http or https and also without any /
+String baseUrl = 'jsonplaceholder.typicode.com';
 
 McRequest request = McRequest(url: baseUrl);
