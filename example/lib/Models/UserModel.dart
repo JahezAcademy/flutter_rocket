@@ -185,3 +185,22 @@ class Company extends McModel {
     multi = r;
   }
 }
+
+//Controller of your main model
+//if you need more controller you can copy this and use it
+
+class UserC {
+  static final UserC _userC = UserC._internal();
+  User user = User();
+  factory UserC() {
+    return _userC;
+  }
+  void delUSer(int index) {
+    user.multi.removeAt(index);
+    user.rebuild();
+  }
+
+  //you can add more methods
+  UserC._internal();
+}
+
