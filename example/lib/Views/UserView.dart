@@ -18,14 +18,14 @@ class UserExample extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            FlatButton(
+            TextButton(
               child: Wrap(
                 children: [Icon(Icons.get_app), Text("Get Data")],
               ),
               onPressed: () =>
                   request.getObjData("users", _cont.user, multi: true),
             ),
-            FlatButton(
+            TextButton(
                 child: Text(
                     "Click here to Change First User\nCompany & User name & omg"),
                 onPressed: () {
@@ -137,6 +137,7 @@ class OneUser extends StatelessWidget {
   final int index;
   OneUser(this.index);
   final UserC _cont = UserC();
+  
   @override
   Widget build(BuildContext context) {
     User user = _cont.user.multi[index];

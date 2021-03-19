@@ -8,6 +8,7 @@ class CounterExample extends StatelessWidget {
   final MyModel adn = MyModel();
   CounterExample({this.title});
   final Counter counter = Counter();
+  int count = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,17 +35,18 @@ class CounterExample extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         //change your field by json structure
         onPressed: () {
-          adReq
-              .getObjData("v1/calendar", adn,
-                  params: {
-                    "latitude": "51.508515",
-                    "longitude": "-0.1254872",
-                    "method": "2",
-                    "month": "4",
-                    "year": "2017"
-                  },
-                  path: "[data/{timings")
-              .then((value) => print(value.Asr));
+          counter.fromJson({"count": count++});
+          //TEST path parameter/////////
+          // adReq.getObjData("v1/calendar", adn,
+          //     params: {
+          //       "latitude": "51.508515",
+          //       "longitude": "-0.1254872",
+          //       "method": "2",
+          //       "month": "4",
+          //       "year": "2017"
+          //     },
+          //     path: "[data/{timings");
+          ////////////
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

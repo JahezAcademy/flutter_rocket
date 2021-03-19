@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
             children: [
               example(context, "Counter View", "counter"),
               example(context, "10 Users", "user"),
-              example(context, "1 Post", "post"),
+              example(context, "100 Post", "post"),
               example(context, "5000 Photos", "photo")
             ],
           ),
@@ -58,8 +58,7 @@ class MyApp extends StatelessWidget {
   Widget example(BuildContext context, String title, String to) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.6,
-      child: RaisedButton(
-          color: Theme.of(context).primaryColor,
+      child: TextButton(
           child: Text(title),
           onPressed: () => Navigator.pushNamed(context, "/$to")),
     );

@@ -195,6 +195,7 @@ class UserC {
   factory UserC() {
     return _userC;
   }
+
   void delUSer(int index) {
     user.multi.removeAt(index);
     user.rebuild();

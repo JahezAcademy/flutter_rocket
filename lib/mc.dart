@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class McRequest {
   final String url;
-  final Map<String, dynamic> headers;
+  final Map<String, dynamic>? headers;
 
   /// انشاء الطلب.
   ///
@@ -29,12 +29,15 @@ class McRequest {
   ///
   /// متغيير اختياري
   ///
-  McRequest({@required this.url, this.headers});
+  McRequest({required this.url, this.headers});
 
   @protected
-  checkerJson(http.Response response) {
+  checkerJson(http.Response response, {String? path}) {
     if (response.statusCode == 200) {
-      var data = json.decode(utf8.decode(response.bodyBytes));
+      Map? data = json.decode(utf8.decode(response.bodyBytes));
+      if (path!.isNotEmpty) {
+        data = data!.getFromPath(path);
+      }
       return data;
     } else {
       print({'Error': 'Failed to load Data: ${response.statusCode}'});
@@ -43,10 +46,11 @@ class McRequest {
   }
 
   @protected
-  dynamic checkerObj(http.Response response, McModel model, {bool multi}) {
+  dynamic checkerObj(http.Response response, McModel model,
+      {bool? multi, String? path}) {
     if (response.statusCode == 200) {
-      if (multi) {
-        List result = json.decode(utf8.decode(response.bodyBytes));
+      if (multi!) {
+        List? result = json.decode(utf8.decode(response.bodyBytes));
         model.setMulti(result);
         return model.multi;
       } else {
@@ -56,8 +60,13 @@ class McRequest {
           model.fromJson(result);
           return model;
         } catch (e) {
-          Map result = json.decode(utf8.decode(response.bodyBytes));
-          model.fromJson(result);
+          Map? result = json.decode(utf8.decode(response.bodyBytes));
+          if (path!.isNotEmpty) {
+            model.fromJson(result!.getFromPath(path) as Map<String, dynamic>?);
+          } else {
+            model.fromJson(result as Map<String, dynamic>?);
+          }
+
           return model;
         }
       }
@@ -69,14 +78,22 @@ class McRequest {
   }
 
   @protected
-  String mapToString(Map mp) {
-    String result = "";
-    mp.forEach((key, value) {
-      String and = mp.keys.last != key ? "&" : "";
-      result = result + key + "=" + value.toString() + and;
+  Map? getFromPath(String path, Map data) {
+    path.split('/').forEach((e) {
+      data = data[e];
     });
-    return result;
+    return data;
   }
+
+  // @protected
+  // String mapToString(Map mp) {
+  //   String result = "";
+  //   mp.forEach((key, value) {
+  //     String and = mp.keys.last != key ? "&" : "";
+  //     result = result + key + "=" + value.toString() + and;
+  //   });
+  //   return result;
+  // }
 
   /// دالة خاصة لجلب البيانات على شكل [قاموس]
   ///
@@ -90,11 +107,15 @@ class McRequest {
   ///
   ///
   ///[List]=>[مصفوفة]
-  Future getJsonData(String endpoint, {Map search, bool multi = false}) async {
-    String srch = search != null ? mapToString(search) : "";
+  Future getJsonData(String endpoint,
+      {Map<String, dynamic>? params,
+      bool multi = false,
+      String path = ""}) async {
+    //String srch = params != null ? mapToString(params) : "";
+    Uri url = Uri.https(this.url, "/" + endpoint, params);
     http.Response response =
-        await http.get(this.url + endpoint + "?" + srch, headers: headers);
-    return checkerJson(response);
+        await http.get(url, headers: headers as Map<String, String>?);
+    return checkerJson(response, path: path);
   }
 
   /// دالة خاصة لجلب البيانات على شكل النموذج الذي تم تمريره مع الدالة
@@ -110,13 +131,16 @@ class McRequest {
   ///[List]=>[مصفوفة]
 
   Future getObjData(String endpoint, McModel model,
-      {Map search, bool multi = false}) async {
+      {Map<String, dynamic>? params,
+      bool multi = false,
+      String path = ""}) async {
     model.load(true);
-    String srch = search != null ? mapToString(search) : "";
+    // String srch = params != null ? mapToString(params) : "";*
+    Uri url = Uri.https(this.url, "/" + endpoint, params);
     http.Response response = await http
-        .get(url + endpoint + "?" + srch, headers: headers)
+        .get(url, headers: headers as Map<String, String>?)
         .whenComplete(() => model.load(false));
-    return checkerObj(response, model, multi: multi);
+    return checkerObj(response, model, multi: multi, path: path);
   }
 
   /// دالة خاصة بتعديل البيانات على شكل بالنموذج الذي تم تمريره مع الدالة
@@ -126,9 +150,11 @@ class McRequest {
 
   Future<McModel> putObjData(int id, String endpoint, McModel model) async {
     model.load(true);
+    Uri url = Uri.https(this.url, "/" + endpoint);
     http.Response response = await http
-        .put("$url/$endpoint/$id/",
-            body: json.encode(model.toJson()), headers: headers)
+        .put(url,
+            body: json.encode(model.toJson()),
+            headers: headers as Map<String, String>?)
         .whenComplete(() => model.load(false));
     return checkerObj(response, model);
   }
@@ -139,8 +165,9 @@ class McRequest {
   ///
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data) async {
-    http.Response response = await http.put("$url/$endpoint/$id/",
-        body: json.encode(data), headers: headers);
+    Uri url = Uri.https(this.url, "/" + endpoint);
+    http.Response response = await http.put(url,
+        body: json.encode(data), headers: headers as Map<String, String>?);
     return checkerJson(response);
   }
 
@@ -151,9 +178,11 @@ class McRequest {
 
   Future<McModel> postObjData(String endPoint, McModel model) async {
     model.load(true);
+    Uri url = Uri.https(this.url, "/" + endPoint);
     http.Response response = await http
-        .post("$url$endPoint/",
-            body: json.encode(model.toJson()), headers: headers)
+        .post(url,
+            body: json.encode(model.toJson()),
+            headers: headers as Map<String, String>?)
         .whenComplete(() => model.load(false));
 
     return checkerObj(response, model);
@@ -165,8 +194,9 @@ class McRequest {
   ///
 
   Future postJsonData(String endPoint, Map<String, dynamic> data) async {
-    http.Response response = await http.post("$url$endPoint/",
-        body: json.encode(data), headers: headers);
+    Uri url = Uri.https(this.url, "/" + endPoint);
+    http.Response response = await http.post(url,
+        body: json.encode(data), headers: headers as Map<String, String>?);
     return checkerJson(response);
   }
 
@@ -175,8 +205,9 @@ class McRequest {
   ///[id]=>[ر.م]
   ///
   Future delJsonData(int id, String endpoint) async {
+    Uri url = Uri.https(this.url, "/" + id.toString());
     http.Response response =
-        await http.delete("$url/$endpoint/$id/", headers: headers);
+        await http.delete(url, headers: headers as Map<String, String>?);
     var decoded = json.decode(response.body);
     return decoded;
   }
@@ -191,11 +222,11 @@ class McModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  setMulti(List d) {
+  setMulti(List? d) {
     notifyListeners();
   }
 
-  fromJson(Map<String, dynamic> json) {
+  fromJson(Map<String, dynamic>? json) {
     notifyListeners();
   }
 
@@ -229,18 +260,16 @@ class McView extends AnimatedWidget {
   ///
   ///الجزء الخاص بانتظار تحميل البيانات و هو اختياري
   const McView(
-      {Key key,
-      @required this.model,
-      @required this.builder,
+      {Key? key,
+      required this.model,
+      required this.builder,
       this.child,
       this.loader})
-      : assert(model != null),
-        assert(builder != null),
-        super(key: key, listenable: model);
+      : super(key: key, listenable: model);
 
   final TransitionBuilder builder;
-  final Widget child;
-  final Widget loader;
+  final Widget? child;
+  final Widget? loader;
   final McModel model;
 
   @override
@@ -248,5 +277,27 @@ class McView extends AnimatedWidget {
     return model.loading
         ? Center(child: loader ?? CircularProgressIndicator())
         : builder(context, child);
+  }
+}
+
+extension FromPath on Map {
+  Map? getFromPath(String path) {
+    Map result = this;
+    List pth = path.split('/');
+    pth.remove("");
+    pth.forEach((e) {
+      try {
+        if (e.contains('[')) {
+          result = result[e.substring(1)][0];
+        } else if (e.contains('{')) {
+          result = result[e.substring(1)];
+        }
+      } catch (e) {
+        print(e);
+        print(
+            "this path not correct please write correct path example\n data=> {'data':{'user':[{'first_name','Mohammed'}]}}\nCorrect path for this data is {data/[user");
+      }
+    });
+    return result;
   }
 }

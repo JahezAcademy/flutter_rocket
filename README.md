@@ -15,7 +15,7 @@ In your flutter project, add the dependency to your `pubspec.yaml`
 ```yaml
 dependencies:
   ...
-  mc: ^0.0.1+3
+  mc: ^0.0.1+4
 ```
 for generate The appropriate model by json data use this website https://json2dart.web.app/
 
@@ -25,25 +25,31 @@ for generate The appropriate model by json data use this website https://json2da
 import 'package:mc/mc.dart';
 
 class Post extends McModel{
+ List multi;
  int userId;
  int id;
  String title;
  String body;
-List multi = [];
+
  Post({
   this.userId,
   this.id,
   this.title,
   this.body,
- });
+ }){
+  multi = multi ?? [];
+}
 
- fromJson(Map<String, dynamic> json) {
-  userId = json['userId'];
-  id = json['id'];
-  title = json['title'];
-  body = json['body'];
+
+fromJson(Map<String, dynamic> json) {
+  userId = json['userId'] ?? userId;
+  id = json['id'] ?? id;
+  title = json['title'] ?? title;
+  body = json['body'] ?? body;
   return super.fromJson(json);
  }
+
+
  Map<String, dynamic> toJson() {
  final Map<String, dynamic> data = new Map<String, dynamic>();
   data['userId'] = this.userId;
@@ -53,14 +59,32 @@ List multi = [];
 
   return data;
  }
+
 void setMulti(List d) {
-    List r = d.map((e) {
-      Post m = Post();
-      m.fromJson(e);
-      return m;
-    }).toList();
-    multi = r;
+  List r = d.map((e) {
+    Post m = Post();
+    m.fromJson(e);
+    return m;
+      }).toList();
+      multi = r;
+    }
+
+}
+
+//Controller of your main model
+//if you need more controller you can copy this and use it
+        
+class PostC {
+  static final PostC _postC = PostC._internal();
+  Post post = Post();
+  factory PostC() {
+    return _postC;
   }
+  //you can add more methods
+  //any action on multi list you need to call rebuild method from your model for rebuild widgets
+  PostC._internal();
+}
+
 
 /////////////////////////////-- View --/////////////////////////////
 import 'package:mc/mc.dart';
@@ -87,35 +111,29 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({this.title});
+class PostExample extends StatelessWidget {
+  PostExample({this.title});
   final String title;
-  final Post post = Post();
+  final PostC _con = PostC();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child:Icon(Icons.get_app),
-        onPressed:()=>request.getObjData("posts", post,multi:true)
-      ),
-      appBar: AppBar(
-        title: Text(title),
-      ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: McView(
-            model: post,
-            builder: (BuildContext context, Widget child) {
+          child: FutureBuilder(
+            future: request.getObjData("posts", _con.post, multi: true),
+            builder: (BuildContext __, _) {
               return ListView.builder(
-                itemCount: post.multi.length,
+                itemCount: _con.post.multi.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ExpansionTile(
-                    title:Text(post.multi[index].title),
-                    children:[
-                      SizedBox(height:5.0),
-                      Text(post.multi[index].body)
-                    ]
+                  return ListTile(
+                    leading: Text(_con.post.multi[index].id.toString()),
+                    title: Text(_con.post.multi[index].title),
+                    onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      return Details(index);
+                    })),
                   );
                 },
               );
@@ -123,10 +141,30 @@ class MyHomePage extends StatelessWidget {
           )),
     );
   }
+}
+
+class Details extends StatelessWidget {
+  final int index;
+  Details(this.index);
+  final PostC _con = PostC();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ListTile(
+          leading: Text(_con.post.multi[index].id.toString()),
+          title: Text(_con.post.multi[index].title),
+          subtitle: Text(_con.post.multi[index].body),
+        ),
+      ),
+    );
+  }
+}
 /////////////////////////////-- Request --/////////////////////////////
 import 'package:mc/mc.dart';
+//your url without http or https and also without any /
 
-String baseUrl = 'https://jsonplaceholder.typicode.com/';
+String baseUrl = 'jsonplaceholder.typicode.com';
 
 McRequest request = McRequest(url: baseUrl);
 ```

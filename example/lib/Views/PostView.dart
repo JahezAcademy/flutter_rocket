@@ -4,57 +4,57 @@ import '../Request/Request.dart';
 import '../Models/PostModel.dart';
 
 //Use as you like
-///with [McView]
-/////## multi[false]
+///with [FutureBuilder]
+/////## multi[true]
 ///
 ///
 ///
 class PostExample extends StatelessWidget {
   PostExample({this.title});
   final String title;
-  final Post post = Post();
-  int count = 0;
+  final PostC _con = PostC();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Container(
-        color: Theme.of(context).primaryColor,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            FlatButton(
-              child: Wrap(
-                children: [Icon(Icons.get_app), Text("Get Data")],
-              ),
-              onPressed: () => request.getObjData("posts/2", post),
-            ),
-            FlatButton(
-                child: Text("Click here to Change data"),
-                onPressed: () {
-                  count++;
-                  post.fromJson(
-                      {"title": "Change title", "body": "Change body"});
-                }),
-            //not required rebuild method if data not multi
-          ],
-        ),
-      ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: McView(
-            model: post,
+          child: FutureBuilder(
+            future: request.getObjData("posts", _con.post, multi: true),
             builder: (BuildContext __, _) {
-              return Center(
-                child: ExpansionTile(
-                    title: Text(post.title + " $count"),
-                    children: [
-                      SizedBox(height: 5.0),
-                      Text(post.body + " $count")
-                    ]),
+              return ListView.builder(
+                itemCount: _con.post.multi.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    leading: Text(_con.post.multi[index].id.toString()),
+                    title: Text(_con.post.multi[index].title),
+                    onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      return Details(index);
+                    })),
+                  );
+                },
               );
             },
           )),
+    );
+  }
+}
+
+class Details extends StatelessWidget {
+  final int index;
+  Details(this.index);
+  final PostC _con = PostC();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ListTile(
+          leading: Text(_con.post.multi[index].id.toString()),
+          title: Text(_con.post.multi[index].title),
+          subtitle: Text(_con.post.multi[index].body),
+        ),
+      ),
     );
   }
 }
