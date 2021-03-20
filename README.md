@@ -80,7 +80,7 @@ class PostC {
   factory PostC() {
     return _postC;
   }
-  //you can add more methods
+  //you can add more methods here
   //any action on multi list you need to call rebuild method from your model for rebuild widgets
   PostC._internal();
 }

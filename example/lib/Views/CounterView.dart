@@ -5,7 +5,7 @@ import 'package:mc/mc.dart';
 
 class CounterExample extends StatelessWidget {
   final String title;
-  final MyModel adn = MyModel();
+  final Product adn = Product();
   CounterExample({this.title});
   final Counter counter = Counter();
   int count = 0;
@@ -36,17 +36,11 @@ class CounterExample extends StatelessWidget {
         //change your field by json structure
         onPressed: () {
           counter.fromJson({"count": count++});
-          //TEST path parameter/////////
-          // adReq.getObjData("v1/calendar", adn,
-          //     params: {
-          //       "latitude": "51.508515",
-          //       "longitude": "-0.1254872",
-          //       "method": "2",
-          //       "month": "4",
-          //       "year": "2017"
-          //     },
-          //     path: "[data/{timings");
-          ////////////
+          adReq
+              .getObjData("ApiEcommerceApp/items", adn,
+                  multi: true, params: {'limit': "2"}, path: "[results/")
+              .then((value) => print(value[0].price));
+          //////////
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
@@ -55,53 +49,80 @@ class CounterExample extends StatelessWidget {
   }
 }
 
-class MyModel extends McModel {
-  String Fajr;
-  String Sunrise;
-  String Dhuhr;
-  String Asr;
-  String Sunset;
-  String Maghrib;
-  String Isha;
-  String Imsak;
-  String Midnight;
+class Product extends McModel {
+  List multi;
+  int id;
+  String title;
+  String ar_title;
+  double price;
+  String store;
+  String description;
+  String ar_description;
+  String image;
+  int quantity_total;
 
-  MyModel({
-    this.Fajr,
-    this.Sunrise,
-    this.Dhuhr,
-    this.Asr,
-    this.Sunset,
-    this.Maghrib,
-    this.Isha,
-    this.Imsak,
-    this.Midnight,
-  });
+  Product({
+    this.id,
+    this.title,
+    this.ar_title,
+    this.price,
+    this.store,
+    this.description,
+    this.ar_description,
+    this.image,
+    this.quantity_total,
+  }) {
+    multi = multi ?? [];
+  }
   fromJson(Map<String, dynamic> json) {
-    Fajr = json['Fajr'] ?? Fajr;
-    Sunrise = json['Sunrise'] ?? Sunrise;
-    Dhuhr = json['Dhuhr'] ?? Dhuhr;
-    Asr = json['Asr'] ?? Asr;
-    Sunset = json['Sunset'] ?? Sunset;
-    Maghrib = json['Maghrib'] ?? Maghrib;
-    Isha = json['Isha'] ?? Isha;
-    Imsak = json['Imsak'] ?? Imsak;
-    Midnight = json['Midnight'] ?? Midnight;
+    id = json['id'] ?? id;
+    title = json['title'] ?? title;
+    ar_title = json['ar_title'] ?? ar_title;
+    price = json['price'] ?? price;
+    store = json['store'] ?? store;
+    description = json['description'] ?? description;
+    ar_description = json['ar_description'] ?? ar_description;
+    image = json['image'] ?? image;
+    quantity_total = json['quantity_total'] ?? quantity_total;
     return super.fromJson(json);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Fajr'] = this.Fajr;
-    data['Sunrise'] = this.Sunrise;
-    data['Dhuhr'] = this.Dhuhr;
-    data['Asr'] = this.Asr;
-    data['Sunset'] = this.Sunset;
-    data['Maghrib'] = this.Maghrib;
-    data['Isha'] = this.Isha;
-    data['Imsak'] = this.Imsak;
-    data['Midnight'] = this.Midnight;
+    data['id'] = this.id;
+    data['title'] = this.title;
+    data['ar_title'] = this.ar_title;
+    data['price'] = this.price;
+    data['store'] = this.store;
+    data['description'] = this.description;
+    data['ar_description'] = this.ar_description;
+    data['image'] = this.image;
+    data['quantity_total'] = this.quantity_total;
 
     return data;
   }
+
+  void setMulti(List d) {
+    List r = d.map((e) {
+      Product m = Product();
+      m.fromJson(e);
+      return m;
+    }).toList();
+    print(d);
+    multi = r;
+  }
+}
+
+//Controller of your main model
+//if you need more controller you can copy this and use it
+
+class ProductC {
+  static final ProductC _productC = ProductC._internal();
+  Product product = Product();
+  factory ProductC() {
+    return _productC;
+  }
+  //you can add more methods
+  //any action on multi list you need to call rebuild method for rebuild widgets
+  ProductC._internal();
 }

@@ -54,6 +54,9 @@ class User extends McModel {
     return data;
   }
 
+  
+  
+
   void setMulti(List d) {
     List r = d.map((e) {
       User m = User();
@@ -204,4 +207,3 @@ class UserC {
   //you can add more methods
   UserC._internal();
 }
-

@@ -4,9 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class UserExample extends StatelessWidget {
-  UserExample({this.title});
+   final User users = User();
+  UserExample({this.title}) {
+    McController(
+      "users",
+      users
+    );
+  }
   final String title;
-  final UserC _cont = UserC();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +29,7 @@ class UserExample extends StatelessWidget {
                 children: [Icon(Icons.get_app), Text("Get Data")],
               ),
               onPressed: () =>
-                  request.getObjData("users", _cont.user, multi: true),
+                  request.getObjData("users", users, multi: true),
             ),
             TextButton(
                 child: Text(
@@ -34,14 +40,14 @@ class UserExample extends StatelessWidget {
                     catchPhrase: "change data...catch",
                   );
 
-                  _cont.user.multi[5].fromJson({
+                  users.multi[5].fromJson({
                     "name": "Mohammed CHAHBOUN 💙",
                     "company": newCompany.toJson(),
                     'image':
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
                   });
                   //rebuild method required if data multi
-                  _cont.user.rebuild();
+                  users.rebuild();
                 }),
           ],
         ),
@@ -50,18 +56,18 @@ class UserExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: McView(
-            model: _cont.user,
+            model: users,
             builder: (BuildContext __, _) {
               return ListView.builder(
-                itemCount: _cont.user.multi.length,
+                itemCount: users.multi.length,
                 itemBuilder: (BuildContext context, int index) {
-                  User user = _cont.user.multi[index];
+                  User user = users.multi[index];
                   Company company = user.company;
                   Address address = user.address;
                   Geo geo = address.geo;
                   return ExpansionTile(
                       leading: InkWell(
-                        onLongPress:()=> _cont.delUSer(index),
+                        onLongPress: () => users.delItem(index),
                         onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(builder: (BuildContext context) {
                           return OneUser(index);
@@ -135,18 +141,22 @@ class UserExample extends StatelessWidget {
 
 class OneUser extends StatelessWidget {
   final int index;
-  OneUser(this.index);
-  final UserC _cont = UserC();
-  
+  User user;
+  Company company;
+  Address address;
+  Geo geo;
+  OneUser(this.index) {
+    user = McController().get('users').multi[index];
+    company = user.company;
+    address = user.address;
+    geo = address.geo;
+  }
+
   @override
   Widget build(BuildContext context) {
-    User user = _cont.user.multi[index];
-    Company company = user.company;
-    Address address = user.address;
-    Geo geo = address.geo;
     return Scaffold(
-          body: Center(
-            child: ExpansionTile(
+      body: Center(
+        child: ExpansionTile(
             leading: CircleAvatar(
               backgroundColor: Theme.of(context).primaryColor,
               backgroundImage: user.img == null ? null : NetworkImage(user.img),
@@ -202,7 +212,7 @@ class OneUser extends StatelessWidget {
                         ]),
                   ]),
             ]),
-          ),
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:example/Models/UserModel.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 import '../Request/Request.dart';
@@ -10,7 +11,10 @@ import '../Models/PostModel.dart';
 ///
 ///
 class PostExample extends StatelessWidget {
-  PostExample({this.title});
+  User user;
+  PostExample({this.title}) {
+    user = McController().get('users').multi[5];
+  }
   final String title;
   final PostC _con = PostC();
   @override
@@ -28,6 +32,7 @@ class PostExample extends StatelessWidget {
                   return ListTile(
                     leading: Text(_con.post.multi[index].id.toString()),
                     title: Text(_con.post.multi[index].title),
+                    subtitle: Text(user.name),
                     onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (BuildContext context) {
                       return Details(index);

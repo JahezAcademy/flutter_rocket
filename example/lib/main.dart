@@ -39,10 +39,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Center(
+      body: Center(
+        child: Container(
+          height: context.h * 0.5,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               example(context, "Counter View", "counter"),
               example(context, "10 Users", "user"),
@@ -57,10 +58,18 @@ class MyApp extends StatelessWidget {
 
   Widget example(BuildContext context, String title, String to) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.6,
+      width: context.w * 0.6,
       child: TextButton(
-          child: Text(title),
+          child: Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
+          ),
           onPressed: () => Navigator.pushNamed(context, "/$to")),
     );
   }
+}
+
+extension SizeDevice on BuildContext {
+  double get h => MediaQuery.of(this).size.height;
+  double get w => MediaQuery.of(this).size.width;
 }

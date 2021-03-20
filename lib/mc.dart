@@ -50,8 +50,16 @@ class McRequest {
       {bool? multi, String? path}) {
     if (response.statusCode == 200) {
       if (multi!) {
-        List? result = json.decode(utf8.decode(response.bodyBytes));
-        model.setMulti(result);
+        var result = json.decode(utf8.decode(response.bodyBytes));
+        if (result.runtimeType.toString() ==
+            "_InternalLinkedHashMap<String, dynamic>") {
+          Map toMap = result;
+          toMap = toMap.getFromPath(path!, multi)!;
+          model.setMulti(toMap['result']);
+        } else {
+          model.setMulti(result);
+        }
+
         return model.multi;
       } else {
         try {
@@ -222,6 +230,11 @@ class McModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void delItem(int index) {
+    multi.removeAt(index);
+    notifyListeners();
+  }
+
   setMulti(List? d) {
     notifyListeners();
   }
@@ -280,15 +293,45 @@ class McView extends AnimatedWidget {
   }
 }
 
+class McController {
+  static final McController _controller = McController._internal();
+  Map<String,McModel> models = {};
+
+  void add(String key, McModel model) {
+    models[key] = model;
+  }
+
+  get(String key) {
+    return models[key];
+  }
+
+  void remove(String key) {
+    models.remove(key);
+  }
+
+  factory McController([String? key, McModel? model]) {
+    if (key != null && model != null) {
+      _controller.add(key, model);
+    }
+    return _controller;
+  }
+
+  McController._internal();
+}
+
 extension FromPath on Map {
-  Map? getFromPath(String path) {
+  Map? getFromPath(String path, [bool multi = false]) {
     Map result = this;
     List pth = path.split('/');
     pth.remove("");
     pth.forEach((e) {
       try {
         if (e.contains('[')) {
-          result = result[e.substring(1)][0];
+          if (multi) {
+            result = {"result": result[e.substring(1)]};
+          } else {
+            result = result[e.substring(1)][0];
+          }
         } else if (e.contains('{')) {
           result = result[e.substring(1)];
         }
