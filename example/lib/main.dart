@@ -45,18 +45,23 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              example(context, "Counter View", "counter"),
-              example(context, "10 Users", "user"),
-              example(context, "100 Post", "post"),
-              example(context, "5000 Photos", "photo")
+              Example("Counter View", "counter"),
+              Example("10 Users", "user"),
+              Example("100 Posts", "post"),
+              Example("5000 Photos", "photo")
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget example(BuildContext context, String title, String to) {
+class Example extends StatelessWidget {
+  final String title, to;
+  Example(this.title, this.to);
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: context.w * 0.6,
       child: TextButton(

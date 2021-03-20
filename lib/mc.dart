@@ -54,7 +54,7 @@ class McRequest {
         if (result.runtimeType.toString() ==
             "_InternalLinkedHashMap<String, dynamic>") {
           Map toMap = result;
-          toMap = toMap.getFromPath(path!, multi)!;
+          toMap = toMap.getFromPath(path!, multi);
           model.setMulti(toMap['result']);
         } else {
           model.setMulti(result);
@@ -295,7 +295,7 @@ class McView extends AnimatedWidget {
 
 class McController {
   static final McController _controller = McController._internal();
-  Map<String,McModel> models = {};
+  Map<String, McModel> models = {};
 
   void add(String key, McModel model) {
     models[key] = model;
@@ -320,7 +320,7 @@ class McController {
 }
 
 extension FromPath on Map {
-  Map? getFromPath(String path, [bool multi = false]) {
+  Map getFromPath(String path, [bool multi = false]) {
     Map result = this;
     List pth = path.split('/');
     pth.remove("");
@@ -335,6 +335,7 @@ extension FromPath on Map {
         } else if (e.contains('{')) {
           result = result[e.substring(1)];
         }
+        print(result); 
       } catch (e) {
         print(e);
         print(

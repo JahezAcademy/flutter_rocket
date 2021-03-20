@@ -1,4 +1,3 @@
-import 'package:example/Models/UserModel.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 import '../Request/Request.dart';
@@ -11,12 +10,13 @@ import '../Models/PostModel.dart';
 ///
 ///
 class PostExample extends StatelessWidget {
-  User user;
+  final Post post = Post();
   PostExample({this.title}) {
-    user = McController().get('users').multi[5];
+    //Save your model to use on another screen
+    McController('posts', post);
   }
   final String title;
-  final PostC _con = PostC();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,22 +24,24 @@ class PostExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: FutureBuilder(
-            future: request.getObjData("posts", _con.post, multi: true),
-            builder: (BuildContext __, _) {
-              return ListView.builder(
-                itemCount: _con.post.multi.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    leading: Text(_con.post.multi[index].id.toString()),
-                    title: Text(_con.post.multi[index].title),
-                    subtitle: Text(user.name),
-                    onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (BuildContext context) {
-                      return Details(index);
-                    })),
-                  );
-                },
-              );
+            future: request.getObjData("posts", post, multi: true),
+            builder: (BuildContext __, snp) {
+              return snp.hasData
+                  ? ListView.builder(
+                      itemCount: post.multi.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          leading: Text(post.multi[index].id.toString()),
+                          title: Text(post.multi[index].title),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                            return Details(index);
+                          })),
+                        );
+                      },
+                    )
+                  : Center(child: CircularProgressIndicator());
             },
           )),
     );
@@ -48,16 +50,17 @@ class PostExample extends StatelessWidget {
 
 class Details extends StatelessWidget {
   final int index;
+  //get your model by key
+  Post post = McController().get('posts');
   Details(this.index);
-  final PostC _con = PostC();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: ListTile(
-          leading: Text(_con.post.multi[index].id.toString()),
-          title: Text(_con.post.multi[index].title),
-          subtitle: Text(_con.post.multi[index].body),
+          leading: Text(post.multi[index].id.toString()),
+          title: Text(post.multi[index].title),
+          subtitle: Text(post.multi[index].body),
         ),
       ),
     );

@@ -45,17 +45,3 @@ void setMulti(List d) {
           }
 
 }
-
-//Controller of your main model
-//if you need more controller you can copy this and use it
-        
-class PostC {
-        static final PostC _postC = PostC._internal();
-        Post post = Post();
-        factory PostC() {
-          return _postC;
-        }
-        //you can add more methods
-        //any action on multi list you need to call rebuild method for rebuild widgets
-        PostC._internal();
-      }
