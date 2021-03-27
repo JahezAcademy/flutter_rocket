@@ -1,6 +1,6 @@
 # mc
 
-State management and request package, Model,View,Request [MVR].
+State management and request package, Model,View,Controller,Request [MVCR].
 
 ## Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
 
@@ -114,7 +114,8 @@ class PostExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: FutureBuilder(
-            future: request.getObjData("posts", post, multi: true),
+            // call request from controller
+            future: McController().get('request').getObjData("posts", post, multi: true),
             builder: (BuildContext __, snp) {
               return snp.hasData
                   ? ListView.builder(
@@ -180,6 +181,8 @@ Map<String, String> apiHeaders = {
   "X-Requested-With": "XMLHttpRequest",
 };
 McRequest request = McRequest(url: baseUrl);
+// Save request object in controller for use it in another screen add (!) if you want to set readonly for this object 
+McController('!request',request)
 ```
 
 ## [More example](https://github.com/ourflutter/mc/tree/main/example)

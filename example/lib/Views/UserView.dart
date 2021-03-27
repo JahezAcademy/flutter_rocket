@@ -4,12 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class UserExample extends StatelessWidget {
-   final User users = User();
+  final User users = User();
   UserExample({this.title}) {
-    McController(
-      "users",
-      users
-    );
+    McController("users", users);
   }
   final String title;
 
@@ -28,8 +25,7 @@ class UserExample extends StatelessWidget {
               child: Wrap(
                 children: [Icon(Icons.get_app), Text("Get Data")],
               ),
-              onPressed: () =>
-                  request.getObjData("users", users, multi: true),
+              onPressed: () => request.getObjData("users", users, multi: true),
             ),
             TextButton(
                 child: Text(

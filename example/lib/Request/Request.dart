@@ -12,5 +12,3 @@ Map<String, String> apiHeaders = {
 };
 
 McRequest request = McRequest(url: baseUrl);
-
-

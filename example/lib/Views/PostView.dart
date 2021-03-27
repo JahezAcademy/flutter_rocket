@@ -10,38 +10,62 @@ import '../Models/PostModel.dart';
 ///
 ///
 class PostExample extends StatelessWidget {
-  final Post post = Post();
+  Post post = Post();
   PostExample({this.title}) {
-    //Save your model to use on another screen
-    McController('posts', post);
+    // Save your model to use on another screen
+    // (!) means if you close and open this screen you will use same data without update it from Api
+    post = McController('!posts', post).get('posts');
   }
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Refresh Posts with swip to down or from here =>",
+          style: TextStyle(fontSize: 11.0),
+        ),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.data_usage),
+              // Refresh Data from Api
+              onPressed: () => request.getObjData("posts", post, multi: true))
+        ],
+      ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: FutureBuilder(
-            future: request.getObjData("posts", post, multi: true),
+            future: post.multi.isEmpty
+                ? request.getObjData("posts", post, multi: true)
+                : null,
             builder: (BuildContext __, snp) {
-              return snp.hasData
-                  ? ListView.builder(
-                      itemCount: post.multi.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          leading: Text(post.multi[index].id.toString()),
-                          title: Text(post.multi[index].title),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                            return Details(index);
-                          })),
-                        );
-                      },
-                    )
-                  : Center(child: CircularProgressIndicator());
+              return McView(
+                model: post,
+                builder: (BuildContext context, Widget child) {
+                  return !post.loading
+                      ? RefreshIndicator(
+                          onRefresh: () =>
+                              request.getObjData("posts", post, multi: true),
+                          child: ListView.builder(
+                            itemCount: post.multi.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                leading: Text(post.multi[index].id.toString()),
+                                title: Text(post.multi[index].title),
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                  return Details(index);
+                                })),
+                              );
+                            },
+                          ),
+                        )
+                      : Center(child: CircularProgressIndicator());
+                },
+              );
             },
           )),
     );

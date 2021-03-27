@@ -26,7 +26,7 @@ class App extends StatelessWidget {
                 title: "5000 Photos",
               ),
         },
-        title: 'MVR Package',
+        title: 'MVCR Package',
         theme: ThemeData(
           primaryColor: Colors.brown,
           visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -64,6 +64,7 @@ class Example extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: context.w * 0.6,
+      height: context.h * 0.1,
       child: TextButton(
           child: Text(
             title,

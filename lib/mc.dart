@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class McRequest {
+class McRequest extends McModel {
   final String url;
   final Map<String, dynamic>? headers;
 
@@ -298,7 +298,13 @@ class McController {
   Map<String, McModel> models = {};
 
   void add(String key, McModel model) {
-    models[key] = model;
+    if (key.contains('!')) {
+      if (!models.containsKey(key.substring(1))) {
+        models[key.substring(1)] = model;
+      }
+    } else {
+      models[key] = model;
+    }
   }
 
   get(String key) {
@@ -335,7 +341,6 @@ extension FromPath on Map {
         } else if (e.contains('{')) {
           result = result[e.substring(1)];
         }
-        print(result); 
       } catch (e) {
         print(e);
         print(
