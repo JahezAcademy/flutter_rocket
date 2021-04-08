@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class McRequest extends McModel {
   final String url;
-  final Map<String, dynamic>? headers;
+  final Map<String, String>? headers;
 
   /// انشاء الطلب.
   ///
@@ -32,14 +32,16 @@ class McRequest extends McModel {
   McRequest({required this.url, this.headers});
 
   @protected
-  checkerJson(http.Response response, {String? path}) {
-    if (response.statusCode == 200) {
-      Map? data = json.decode(utf8.decode(response.bodyBytes));
-      if (path!.isNotEmpty) {
-        data = data!.getFromPath(path);
+  checkerJson(http.Response response,
+      {bool? complex, Function(dynamic data)? inspect}) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var data = json.decode(utf8.decode(response.bodyBytes));
+      if (complex!) {
+        data = inspect!(data);
       }
       return data;
     } else {
+      print("Response=>" + response.body);
       print({'Error': 'Failed to load Data: ${response.statusCode}'});
       return {'Error': 'Failed to load Data: ${response.statusCode}'};
     }
@@ -47,34 +49,28 @@ class McRequest extends McModel {
 
   @protected
   dynamic checkerObj(http.Response response, McModel model,
-      {bool? multi, String? path}) {
-    if (response.statusCode == 200) {
+      {bool? multi, bool? complex, Function(dynamic data)? inspect}) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
-        if (result.runtimeType.toString() ==
-            "_InternalLinkedHashMap<String, dynamic>") {
-          Map toMap = result;
-          toMap = toMap.getFromPath(path!, multi);
-          model.setMulti(toMap['result']);
+        if (complex!) {
+          result = inspect!(result);
+          model.multi = [];
+          model.setMulti(result);
         } else {
+          model.multi = [];
           model.setMulti(result);
         }
-
         return model.multi;
       } else {
-        try {
-          List decoded = json.decode(utf8.decode(response.bodyBytes));
-          var result = decoded.length == 0 ? model.toJson() : decoded[0];
+        var decoded = json.decode(utf8.decode(response.bodyBytes));
+        var result = decoded.length == 0 ? model.toJson() : decoded[0];
+        if (!complex!) {
           model.fromJson(result);
           return model;
-        } catch (e) {
-          Map? result = json.decode(utf8.decode(response.bodyBytes));
-          if (path!.isNotEmpty) {
-            model.fromJson(result!.getFromPath(path) as Map<String, dynamic>?);
-          } else {
-            model.fromJson(result as Map<String, dynamic>?);
-          }
-
+        } else {
+          result = inspect!(result);
+          model.fromJson(result);
           return model;
         }
       }
@@ -86,22 +82,14 @@ class McRequest extends McModel {
   }
 
   @protected
-  Map? getFromPath(String path, Map data) {
-    path.split('/').forEach((e) {
-      data = data[e];
+  String mapToString(Map mp) {
+    String result = "";
+    mp.forEach((key, value) {
+      String and = mp.keys.last != key ? "&" : "";
+      result = result + key + "=" + value.toString() + and;
     });
-    return data;
+    return result;
   }
-
-  // @protected
-  // String mapToString(Map mp) {
-  //   String result = "";
-  //   mp.forEach((key, value) {
-  //     String and = mp.keys.last != key ? "&" : "";
-  //     result = result + key + "=" + value.toString() + and;
-  //   });
-  //   return result;
-  // }
 
   /// دالة خاصة لجلب البيانات على شكل [قاموس]
   ///
@@ -115,15 +103,17 @@ class McRequest extends McModel {
   ///
   ///
   ///[List]=>[مصفوفة]
+  ///
+  ///[inspect] => List<Map>
   Future getJsonData(String endpoint,
       {Map<String, dynamic>? params,
-      bool multi = false,
-      String path = ""}) async {
-    //String srch = params != null ? mapToString(params) : "";
-    Uri url = Uri.https(this.url, "/" + endpoint, params);
-    http.Response response =
-        await http.get(url, headers: headers as Map<String, String>?);
-    return checkerJson(response, path: path);
+      bool complex = false,
+      Function(dynamic data)? inspect}) async {
+    String srch = params != null ? mapToString(params) : "";
+    Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
+
+    http.Response response = await http.get(url, headers: headers);
+    return checkerJson(response, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة لجلب البيانات على شكل النموذج الذي تم تمريره مع الدالة
@@ -137,91 +127,128 @@ class McRequest extends McModel {
   ///[multi]=>[متعدد]
   ///
   ///[List]=>[مصفوفة]
+  ///
+  ///[inspect] => List<Map>
 
   Future getObjData(String endpoint, McModel model,
       {Map<String, dynamic>? params,
       bool multi = false,
-      String path = ""}) async {
+      bool complex = false,
+      Function(dynamic data)? inspect}) async {
     model.load(true);
-    // String srch = params != null ? mapToString(params) : "";*
-    Uri url = Uri.https(this.url, "/" + endpoint, params);
+    String srch = params != null ? mapToString(params) : "";
+    Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     http.Response response = await http
-        .get(url, headers: headers as Map<String, String>?)
+        .get(url, headers: headers)
         .whenComplete(() => model.load(false));
-    return checkerObj(response, model, multi: multi, path: path);
+    return checkerObj(response, model,
+        multi: multi, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة بتعديل البيانات على شكل بالنموذج الذي تم تمريره مع الدالة
   ///
   ///[model]=>[النموذج]
   ///
+  ///[inspect] => List<Map>
 
-  Future<McModel> putObjData(int id, String endpoint, McModel model) async {
+  Future<McModel> putObjData(int id, String endpoint, McModel model,
+      {bool complex = false, Function(dynamic data)? inspect}) async {
     model.load(true);
-    Uri url = Uri.https(this.url, "/" + endpoint);
+    Uri url = Uri.parse(this.url + "/" + endpoint);
     http.Response response = await http
-        .put(url,
-            body: json.encode(model.toJson()),
-            headers: headers as Map<String, String>?)
+        .put(url, body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
-    return checkerObj(response, model);
+    return checkerObj(response, model, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
   ///
   ///[Json]=>[قاموس]
   ///
+  ///[inspect] => List<Map>
 
-  Future putJsonData(int id, String endpoint, Map<String, dynamic> data) async {
-    Uri url = Uri.https(this.url, "/" + endpoint);
-    http.Response response = await http.put(url,
-        body: json.encode(data), headers: headers as Map<String, String>?);
-    return checkerJson(response);
+  Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
+      {bool complex = false, Function(dynamic data)? inspect}) async {
+    Uri url = Uri.parse(this.url + "/" + endpoint);
+    http.Response response =
+        await http.put(url, body: json.encode(data), headers: headers);
+    return checkerJson(response, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة بارسال البيانات على شكل النموذج الذي تم تمريره مع الدالة
   ///
   ///[model]=>[النموذج]
   ///
+  ///[inspect] => List<Map>
 
-  Future<McModel> postObjData(String endPoint, McModel model) async {
+  Future<McModel> postObjData(String endPoint, McModel model,
+      {bool complex = false, Function(dynamic data)? inspect}) async {
     model.load(true);
-    Uri url = Uri.https(this.url, "/" + endPoint);
+    Uri url = Uri.parse(this.url + "/" + endPoint);
     http.Response response = await http
-        .post(url,
-            body: json.encode(model.toJson()),
-            headers: headers as Map<String, String>?)
+        .post(url, body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
 
-    return checkerObj(response, model);
+    return checkerObj(response, model, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة بارسال البيانات على شكل قاموس الذي تم تمريره مع الدالة
   ///
   ///[Json]=>[قاموس]
   ///
+  ///[inspect] => List<Map>
 
-  Future postJsonData(String endPoint, Map<String, dynamic> data) async {
-    Uri url = Uri.https(this.url, "/" + endPoint);
-    http.Response response = await http.post(url,
-        body: json.encode(data), headers: headers as Map<String, String>?);
-    return checkerJson(response);
+  Future postJsonData(String endPoint, Map<String, dynamic> data,
+      {bool complex = false, Function(dynamic data)? inspect}) async {
+    Uri url = Uri.parse(this.url + "/" + endPoint);
+    http.Response response =
+        await http.post(url, body: json.encode(data), headers: headers);
+    return checkerJson(response, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة بحذف البيانات عن طريق ر.م الخاص بهم
   ///
   ///[id]=>[ر.م]
   ///
+  ///[inspect] => List<Map>
+  ///
   Future delJsonData(int id, String endpoint) async {
-    Uri url = Uri.https(this.url, "/" + id.toString());
-    http.Response response =
-        await http.delete(url, headers: headers as Map<String, String>?);
-    var decoded = json.decode(response.body);
-    return decoded;
+    Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
+    http.Response response = await http.delete(url, headers: headers);
+    return response.body;
+  }
+
+  Future sendFile(
+      String endpoint, Map<String, String>? fields, Map<String, String>? files,
+      {String id = "", String method = "POST"}) async {
+    String end = method == "POST" ? '$id' : "$id/";
+    var request =
+        http.MultipartRequest(method, Uri.parse("$url/$endpoint/$end"));
+
+    files?.forEach((key, value) async {
+      request.files.add(await http.MultipartFile.fromPath(key, value));
+    });
+    // request.files.addAll(files!.map((key, value) async {
+    //   return await http.MultipartFile.fromPath(key, value))
+    // });
+    request.fields.addAll(fields!);
+    request.headers.addAll(this.headers!);
+
+    var response = await request.send();
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var responseData = await response.stream.toBytes();
+      //var responseString = String.fromCharCodes(responseData);
+      var result = json.decode(utf8.decode(responseData));
+      return result;
+    } else {
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      return responseString;
+    }
   }
 }
 
-class McModel extends ChangeNotifier {
+abstract class McModel extends ChangeNotifier {
   bool loading = false;
   List multi = [];
 
@@ -297,13 +324,17 @@ class McController {
   static final McController _controller = McController._internal();
   Map<String, McModel> models = {};
 
-  void add(String key, McModel model) {
+  McModel? add(String key, McModel model) {
     if (key.contains('!')) {
       if (!models.containsKey(key.substring(1))) {
         models[key.substring(1)] = model;
+        return model;
+      } else {
+        return models[key.substring(1)];
       }
     } else {
       models[key] = model;
+      return model;
     }
   }
 
@@ -325,28 +356,12 @@ class McController {
   McController._internal();
 }
 
-extension FromPath on Map {
-  Map getFromPath(String path, [bool multi = false]) {
-    Map result = this;
-    List pth = path.split('/');
-    pth.remove("");
-    pth.forEach((e) {
-      try {
-        if (e.contains('[')) {
-          if (multi) {
-            result = {"result": result[e.substring(1)]};
-          } else {
-            result = result[e.substring(1)][0];
-          }
-        } else if (e.contains('{')) {
-          result = result[e.substring(1)];
-        }
-      } catch (e) {
-        print(e);
-        print(
-            "this path not correct please write correct path example\n data=> {'data':{'user':[{'first_name','Mohammed'}]}}\nCorrect path for this data is {data/[user");
-      }
-    });
-    return result;
-  }
+/// Extensions
+
+extension Mcless on StatelessWidget {
+  McController get mc => McController();
+}
+
+extension Mcful on State {
+  McController get mc => McController();
 }

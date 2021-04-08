@@ -5,8 +5,10 @@ import 'package:mc/mc.dart';
 
 class UserExample extends StatelessWidget {
   final User users = User();
+  McRequest request;
   UserExample({this.title}) {
     McController("users", users);
+    request = mc.get('rq');
   }
   final String title;
 
@@ -29,7 +31,7 @@ class UserExample extends StatelessWidget {
             ),
             TextButton(
                 child: Text(
-                    "Click here to Change First User\nCompany & User name & omg"),
+                    "Click here to Change First User\nCompany & User name & img"),
                 onPressed: () {
                   Company newCompany = Company(
                     bs: "change data...bs",
@@ -142,7 +144,7 @@ class OneUser extends StatelessWidget {
   Address address;
   Geo geo;
   OneUser(this.index) {
-    user = McController().get('users').multi[index];
+    user = mc.get('users').multi[index];
     company = user.company;
     address = user.address;
     geo = address.geo;

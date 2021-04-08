@@ -1,11 +1,13 @@
 import 'package:example/Models/PhotoModel.dart';
 import 'package:example/Request/Request.dart';
 import 'package:flutter/material.dart';
+import 'package:mc/mc.dart';
 
 class PhotoExample extends StatelessWidget {
   PhotoExample({this.title});
   final String title;
   final Photo photo = Photo();
+  final McRequest request = McController().get('rq');
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -15,7 +15,7 @@ In your flutter project, add the dependency to your `pubspec.yaml`
 ```yaml
 dependencies:
   ...
-  mc: ^0.0.1+5
+  mc: ^0.0.1+7
 ```
 for generate The appropriate model by json data use this website https://json2dart.web.app/
 
@@ -99,46 +99,70 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class PostExample extends StatelessWidget {
-  final Post post = Post();
+  Post post = Post();
   PostExample({this.title}) {
-    //Save your model to use on another screen when you need it
-    McController('posts', post);
+    // Save your model to use on another screen
+    // (!) means if you close and open this screen you will use same data without update it from Api
+    // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
+    post = mc.add('!posts', post);
   }
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Refresh Posts with swip to down or from here =>",
+          style: TextStyle(fontSize: 11.0),
+        ),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.data_usage),
+              // Refresh Data from Api
+              onPressed: () => request.getObjData("posts", post, multi: true))
+        ],
+      ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: FutureBuilder(
-            // call request from controller
-            future: McController().get('request').getObjData("posts", post, multi: true),
+            future: post.multi.isEmpty
+                ? request.getObjData("posts", post, multi: true)
+                : null,
             builder: (BuildContext __, snp) {
-              return snp.hasData
-                  ? ListView.builder(
-                      itemCount: post.multi.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          leading: Text(post.multi[index].id.toString()),
-                          title: Text(post.multi[index].title),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                            return Details(index);
-                          })),
-                        );
-                      },
-                    )
-                  : Center(child: CircularProgressIndicator());
+              return McView(
+                model: post,
+                builder: (BuildContext context, Widget child) {
+                  return !post.loading
+                      ? RefreshIndicator(
+                          onRefresh: () =>
+                              request.getObjData("posts", post, multi: true),
+                          child: ListView.builder(
+                            itemCount: post.multi.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                leading: Text(post.multi[index].id.toString()),
+                                title: Text(post.multi[index].title),
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                  return Details(index);
+                                })),
+                              );
+                            },
+                          ),
+                        )
+                      : Center(child: CircularProgressIndicator());
+                },
+              );
             },
           )),
     );
   }
 }
-
 ```
 /////////////////////////////////--Another View to use same data--////////////////////////////////// 
 ```dart
@@ -150,9 +174,13 @@ import 'package:flutter/material.dart';
 /////We will use same data on this page by controller
 class Details extends StatelessWidget {
   final int index;
-  //get your model from controller by key
-  Post post = McController().get('posts');
-  Details(this.index);
+  Post post;
+  //you can it directly here or in constractor with mc
+  //Post post = McController().get('posts')
+  Details(this.index) {
+    //get your model by key
+    post = mc.get("posts");
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,7 +199,7 @@ class Details extends StatelessWidget {
 ```dart
 import 'package:mc/mc.dart';
 
-//your url without http or https and also without any /
+//your url with http or https protocol
 String baseUrl = 'jsonplaceholder.typicode.com';
 String token = "4acabed770cf............................";
 Map<String, String> apiHeaders = {

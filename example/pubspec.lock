@@ -73,7 +73,7 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.0"
+    version: "0.13.1"
   http_parser:
     dependency: transitive
     description:
@@ -94,7 +94,7 @@ packages:
       path: "/media/chahboun/Nouveau nom/mc"
       relative: false
     source: path
-    version: "0.0.1+6"
+    version: "0.0.1+7"
   meta:
     dependency: transitive
     description:

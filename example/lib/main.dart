@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mc/mc.dart';
 import 'Views/CounterView.dart';
 import 'Views/PhotoView.dart';
 import 'Views/PostView.dart';
@@ -36,6 +37,11 @@ class App extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
+  MyApp() {
+    String baseUrl = 'https://jsonplaceholder.typicode.com';
+    McRequest request = McRequest(url: baseUrl);
+    mc.add('rq', request);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
