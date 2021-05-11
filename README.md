@@ -15,7 +15,7 @@ In your flutter project, add the dependency to your `pubspec.yaml`
 ```yaml
 dependencies:
   ...
-  mc: ^0.0.1+7
+  mc: ^0.0.1+8
 ```
 for generate The appropriate model by json data use this website https://json2dart.web.app/
 

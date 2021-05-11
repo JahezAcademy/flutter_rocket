@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 
 class McRequest extends McModel {
   final String url;
-  final Map<String, String>? headers;
+  final Map<String, String> headers;
+  final bool setCookies;
 
   /// انشاء الطلب.
   ///
@@ -29,7 +30,8 @@ class McRequest extends McModel {
   ///
   /// متغيير اختياري
   ///
-  McRequest({required this.url, this.headers});
+  McRequest(
+      {required this.url, this.headers = const {}, this.setCookies = false});
 
   @protected
   checkerJson(http.Response response,
@@ -43,7 +45,7 @@ class McRequest extends McModel {
     } else {
       print("Response=>" + response.body);
       print({'Error': 'Failed to load Data: ${response.statusCode}'});
-      return {'Error': 'Failed to load Data: ${response.statusCode}'};
+      return json.decode(utf8.decode(response.bodyBytes));
     }
   }
 
@@ -63,8 +65,8 @@ class McRequest extends McModel {
         }
         return model.multi;
       } else {
-        var decoded = json.decode(utf8.decode(response.bodyBytes));
-        var result = decoded.length == 0 ? model.toJson() : decoded[0];
+        var result = json.decode(utf8.decode(response.bodyBytes));
+        //var result = decoded.length == 0 ? decoded : decoded[0];
         if (!complex!) {
           model.fromJson(result);
           return model;
@@ -154,7 +156,7 @@ class McRequest extends McModel {
   Future<McModel> putObjData(int id, String endpoint, McModel model,
       {bool complex = false, Function(dynamic data)? inspect}) async {
     model.load(true);
-    Uri url = Uri.parse(this.url + "/" + endpoint);
+    Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     http.Response response = await http
         .put(url, body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
@@ -169,7 +171,7 @@ class McRequest extends McModel {
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {bool complex = false, Function(dynamic data)? inspect}) async {
-    Uri url = Uri.parse(this.url + "/" + endpoint);
+    Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     http.Response response =
         await http.put(url, body: json.encode(data), headers: headers);
     return checkerJson(response, complex: complex, inspect: inspect);
@@ -181,14 +183,20 @@ class McRequest extends McModel {
   ///
   ///[inspect] => List<Map>
 
-  Future<McModel> postObjData(String endPoint, McModel model,
-      {bool complex = false, Function(dynamic data)? inspect}) async {
-    model.load(true);
-    Uri url = Uri.parse(this.url + "/" + endPoint);
+  Future<McModel> postObjData(String endPoint,
+      {McModel? model,
+      bool complex = false,
+      Function(dynamic data)? inspect,
+      Map<String, dynamic>? params}) async {
+    model!.load(true);
+    String srch = params != null ? mapToString(params) : "";
+    Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
     http.Response response = await http
         .post(url, body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
-
+    if (setCookies) {
+      updateCookie(response);
+    }
     return checkerObj(response, model, complex: complex, inspect: inspect);
   }
 
@@ -198,11 +206,18 @@ class McRequest extends McModel {
   ///
   ///[inspect] => List<Map>
 
-  Future postJsonData(String endPoint, Map<String, dynamic> data,
-      {bool complex = false, Function(dynamic data)? inspect}) async {
-    Uri url = Uri.parse(this.url + "/" + endPoint);
+  Future postJsonData(String endPoint,
+      {Map<String, dynamic>? data,
+      bool complex = false,
+      Function(dynamic data)? inspect,
+      Map<String, dynamic>? params}) async {
+    String srch = params != null ? mapToString(params) : "";
+    Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
     http.Response response =
         await http.post(url, body: json.encode(data), headers: headers);
+    if (setCookies) {
+      updateCookie(response);
+    }
     return checkerJson(response, complex: complex, inspect: inspect);
   }
 
@@ -232,7 +247,7 @@ class McRequest extends McModel {
     //   return await http.MultipartFile.fromPath(key, value))
     // });
     request.fields.addAll(fields!);
-    request.headers.addAll(this.headers!);
+    request.headers.addAll(this.headers);
 
     var response = await request.send();
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -245,6 +260,13 @@ class McRequest extends McModel {
       var responseString = String.fromCharCodes(responseData);
       return responseString;
     }
+  }
+
+  void updateCookie(http.Response response) {
+    String rawCookie = response.headers['set-cookie']!;
+    int index = rawCookie.indexOf(';');
+    headers['cookie'] =
+        (index == -1) ? rawCookie : rawCookie.substring(0, index);
   }
 }
 
