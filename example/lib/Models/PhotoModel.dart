@@ -1,12 +1,12 @@
 import 'package:mc/mc.dart';
 
-class Photo extends McModel {
+class Photo extends McModel<Photo> {
+  List<Photo> multi;
   int albumId;
   int id;
   String title;
   String url;
   String thumbnailUrl;
-  List multi;
 
   Photo({
     this.albumId,
@@ -37,12 +37,12 @@ class Photo extends McModel {
     return data;
   }
 
-  void setMulti(List d) {
-    List r = d.map((e) {
-      Photo m = Photo();
-      m.fromJson(e);
-      return m;
+  void setMulti(List data) {
+    List listOfphoto = data.map((e) {
+      Photo photo = Photo();
+      photo.fromJson(e);
+      return photo;
     }).toList();
-    multi = r;
+    multi = listOfphoto;
   }
 }

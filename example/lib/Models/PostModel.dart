@@ -1,7 +1,7 @@
 import 'package:mc/mc.dart';
 
-class Post extends McModel {
-  List multi;
+class Post extends McModel<Post> {
+  List<Post> multi;
   int userId;
   int id;
   String title;
@@ -12,9 +12,8 @@ class Post extends McModel {
     this.id,
     this.title,
     this.body,
-  }) {
-    multi = multi ?? [];
-  }
+  });
+
   fromJson(Map<String, dynamic> json) {
     userId = json['userId'] ?? userId;
     id = json['id'] ?? id;
@@ -33,12 +32,12 @@ class Post extends McModel {
     return data;
   }
 
-  void setMulti(List d) {
-    List r = d.map((e) {
-      Post m = Post();
-      m.fromJson(e);
-      return m;
+  void setMulti(List data) {
+    List listOfpost = data.map((e) {
+      Post post = Post();
+      post.fromJson(e);
+      return post;
     }).toList();
-    multi = r;
+    multi = listOfpost;
   }
 }

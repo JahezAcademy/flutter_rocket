@@ -1,17 +1,11 @@
 import 'package:example/Models/UserModel.dart';
-import 'package:example/Request/Request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class UserExample extends StatelessWidget {
-  final User users = User();
-  McRequest request;
-  UserExample({this.title}) {
-    McController("users", users);
-    request = mc.get('rq');
-  }
+  final User users = McController().add<User>("users", User());
+  UserExample({this.title});
   final String title;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +21,9 @@ class UserExample extends StatelessWidget {
               child: Wrap(
                 children: [Icon(Icons.get_app), Text("Get Data")],
               ),
-              onPressed: () => request.getObjData("users", users, multi: true),
+              onPressed: () => mc
+                  .get<McRequest>('rq')
+                  .getObjData<User>("users", users, multi: true),
             ),
             TextButton(
                 child: Text(
@@ -38,7 +34,7 @@ class UserExample extends StatelessWidget {
                     catchPhrase: "change data...catch",
                   );
 
-                  users.multi[5].fromJson({
+                  users.multi[0].fromJson({
                     "name": "Mohammed CHAHBOUN 💙",
                     "company": newCompany.toJson(),
                     'image':
@@ -54,6 +50,10 @@ class UserExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: McView(
+            call: () =>
+                mc.get<McRequest>('rq').getObjData("users", users, multi: true),
+            callType: CallType.callAsStream,
+            secondsOfStream: 1,
             model: users,
             builder: (BuildContext __, _) {
               return ListView.builder(
@@ -144,7 +144,7 @@ class OneUser extends StatelessWidget {
   Address address;
   Geo geo;
   OneUser(this.index) {
-    user = mc.get('users').multi[index];
+    user = mc.get<User>('users').multi[index];
     company = user.company;
     address = user.address;
     geo = address.geo;

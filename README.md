@@ -15,7 +15,7 @@ In your flutter project, add the dependency to your `pubspec.yaml`
 ```yaml
 dependencies:
   ...
-  mc: ^0.0.1+8
+  mc: ^0.0.1+9
 ```
 for generate The appropriate model by json data use this website https://json2dart.web.app/
 
@@ -26,52 +26,48 @@ for generate The appropriate model by json data use this website https://json2da
 ```dart
 import 'package:mc/mc.dart';
 
-class Post extends McModel{
- List multi;
- int userId;
- int id;
- String title;
- String body;
 
- Post({
-  this.userId,
-  this.id,
-  this.title,
-  this.body,
- }){
-  multi = multi ?? [];
+class Post extends McModel<Post> {
+  List<Post> multi;
+  int userId;
+  int id;
+  String title;
+  String body;
+
+  Post({
+    this.userId,
+    this.id,
+    this.title,
+    this.body,
+  });
+
+  fromJson(Map<String, dynamic> json) {
+    userId = json['userId'] ?? userId;
+    id = json['id'] ?? id;
+    title = json['title'] ?? title;
+    body = json['body'] ?? body;
+    return super.fromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['userId'] = this.userId;
+    data['id'] = this.id;
+    data['title'] = this.title;
+    data['body'] = this.body;
+    return data;
+  }
+
+  void setMulti(List data) {
+    List listOfpost = data.map((e) {
+      Post post = Post();
+      post.fromJson(e);
+      return post;
+    }).toList();
+    multi = listOfpost;
+  }
 }
 
-
-fromJson(Map<String, dynamic> json) {
-  userId = json['userId'] ?? userId;
-  id = json['id'] ?? id;
-  title = json['title'] ?? title;
-  body = json['body'] ?? body;
-  return super.fromJson(json);
- }
-
-
- Map<String, dynamic> toJson() {
- final Map<String, dynamic> data = new Map<String, dynamic>();
-  data['userId'] = this.userId;
-  data['id'] = this.id;
-  data['title'] = this.title;
-  data['body'] = this.body;
-
-  return data;
- }
-
-void setMulti(List d) {
-  List r = d.map((e) {
-    Post m = Post();
-    m.fromJson(e);
-    return m;
-      }).toList();
-      multi = r;
-    }
-
-}
 ```
 /////////////////////////////-- View --/////////////////////////////
 ```dart
@@ -101,13 +97,12 @@ class MyApp extends StatelessWidget {
 }
 
 class PostExample extends StatelessWidget {
-  Post post = Post();
-  PostExample({this.title}) {
-    // Save your model to use on another screen
-    // (!) means if you close and open this screen you will use same data without update it from Api
-    // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
-    post = mc.add('!posts', post);
-  }
+  // Save your model to use on another screen
+  // (!) means if you close and open this screen you will use same data without update it from Api
+  // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
+  final Post post = McController().add<Post>('!posts', Post());
+  final McRequest rq = McController().get<McRequest>("rq");
+  PostExample({this.title});
   final String title;
 
   @override
@@ -122,41 +117,32 @@ class PostExample extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.data_usage),
               // Refresh Data from Api
-              onPressed: () => request.getObjData("posts", post, multi: true))
+              onPressed: () => rq.getObjData("posts", post, multi: true))
         ],
       ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: FutureBuilder(
-            future: post.multi.isEmpty
-                ? request.getObjData("posts", post, multi: true)
-                : null,
+          child: McView(
+            call: () => rq.getObjData("posts", post, multi: true),
+            model: post,
+            callType: CallType.callIfModelEmpty,
             builder: (BuildContext __, snp) {
-              return McView(
-                model: post,
-                builder: (BuildContext context, Widget child) {
-                  return !post.loading
-                      ? RefreshIndicator(
-                          onRefresh: () =>
-                              request.getObjData("posts", post, multi: true),
-                          child: ListView.builder(
-                            itemCount: post.multi.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                leading: Text(post.multi[index].id.toString()),
-                                title: Text(post.multi[index].title),
-                                onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                  return Details(index);
-                                })),
-                              );
-                            },
-                          ),
-                        )
-                      : Center(child: CircularProgressIndicator());
-                },
+              return RefreshIndicator(
+                onRefresh: () => rq.getObjData("posts", post, multi: true),
+                child: ListView.builder(
+                  itemCount: post.multi.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      leading: Text(post.multi[index].id.toString()),
+                      title: Text(post.multi[index].title),
+                      onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return Details(index);
+                      })),
+                    );
+                  },
+                ),
               );
             },
           )),
@@ -176,10 +162,10 @@ class Details extends StatelessWidget {
   final int index;
   Post post;
   //you can it directly here or in constractor with mc
-  //Post post = McController().get('posts')
+  //Post post = McController().get<Post>('posts')
   Details(this.index) {
     //get your model by key
-    post = mc.get("posts");
+    post = mc.get<Post>("posts");
   }
   @override
   Widget build(BuildContext context) {

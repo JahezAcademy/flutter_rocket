@@ -1,5 +1,6 @@
 library mc;
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -50,7 +51,7 @@ class McRequest extends McModel {
   }
 
   @protected
-  dynamic checkerObj(http.Response response, McModel model,
+  dynamic checkerObj<T>(http.Response response, McModel<T> model,
       {bool? multi, bool? complex, Function(dynamic data)? inspect}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       if (multi!) {
@@ -132,7 +133,7 @@ class McRequest extends McModel {
   ///
   ///[inspect] => List<Map>
 
-  Future getObjData(String endpoint, McModel model,
+  Future getObjData<T>(String endpoint, McModel<T> model,
       {Map<String, dynamic>? params,
       bool multi = false,
       bool complex = false,
@@ -143,7 +144,7 @@ class McRequest extends McModel {
     http.Response response = await http
         .get(url, headers: headers)
         .whenComplete(() => model.load(false));
-    return checkerObj(response, model,
+    return checkerObj<T>(response, model,
         multi: multi, complex: complex, inspect: inspect);
   }
 
@@ -153,14 +154,14 @@ class McRequest extends McModel {
   ///
   ///[inspect] => List<Map>
 
-  Future<McModel> putObjData(int id, String endpoint, McModel model,
+  Future<McModel> putObjData<T>(int id, String endpoint, McModel<T> model,
       {bool complex = false, Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     http.Response response = await http
         .put(url, body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
-    return checkerObj(response, model, complex: complex, inspect: inspect);
+    return checkerObj<T>(response, model, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
@@ -183,8 +184,8 @@ class McRequest extends McModel {
   ///
   ///[inspect] => List<Map>
 
-  Future<McModel> postObjData(String endPoint,
-      {McModel? model,
+  Future<McModel> postObjData<T>(String endPoint,
+      {McModel<T>? model,
       bool complex = false,
       Function(dynamic data)? inspect,
       Map<String, dynamic>? params}) async {
@@ -197,7 +198,7 @@ class McRequest extends McModel {
     if (setCookies) {
       updateCookie(response);
     }
-    return checkerObj(response, model, complex: complex, inspect: inspect);
+    return checkerObj<T>(response, model, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة بارسال البيانات على شكل قاموس الذي تم تمريره مع الدالة
@@ -270,13 +271,23 @@ class McRequest extends McModel {
   }
 }
 
-abstract class McModel extends ChangeNotifier {
+abstract class McModel<T> extends ChangeNotifier {
   bool loading = false;
-  List multi = [];
+  bool loadingChecker = false;
+  List<T> multi = [];
 
   void load(bool t) {
-    loading = t;
+    loading = loadingChecker ? false : t;
     notifyListeners();
+  }
+
+  void loadingChecking(bool value) {
+    loadingChecker = value;
+    notifyListeners();
+  }
+
+  bool hasListener() {
+    return super.hasListeners;
   }
 
   void delItem(int index) {
@@ -284,11 +295,11 @@ abstract class McModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  setMulti(List? d) {
+  void setMulti(List data) {
     notifyListeners();
   }
 
-  fromJson(Map<String, dynamic>? json) {
+  void fromJson(Map<String, dynamic>? json) {
     notifyListeners();
   }
 
@@ -300,6 +311,12 @@ abstract class McModel extends ChangeNotifier {
     load(true);
     load(false);
   }
+}
+
+enum CallType {
+  callAsStream,
+  callAsFuture,
+  callIfModelEmpty,
 }
 
 class McView extends AnimatedWidget {
@@ -321,15 +338,56 @@ class McView extends AnimatedWidget {
   ///[loader]
   ///
   ///الجزء الخاص بانتظار تحميل البيانات و هو اختياري
-  const McView(
+  ///
+  ///[call]
+  ///
+  ///الدالة الخاصة بطلب البيانات من لخادم
+  ///
+  ///
+  ///[callType]
+  ///
+  ///طريقة استدعاء الدالة
+  ///
+  ///[secondsOfStream]
+  ///
+  ///يمكنك تحديد عدد الثواني من اجل تجديد البيانات callAsStream في حالة اختيار
+  ///
+
+  McView(
       {Key? key,
       required this.model,
       required this.builder,
+      this.call = _myDefaultFunc,
+      this.callType = CallType.callAsFuture,
+      this.secondsOfStream = 1,
       this.child,
       this.loader})
-      : super(key: key, listenable: model);
+      : super(key: key, listenable: model) {
+    switch (callType) {
+      case CallType.callAsFuture:
+        call();
+        break;
+      case CallType.callIfModelEmpty:
+        if (model.multi.isEmpty) {
+          call();
+        }
+        break;
+      case CallType.callAsStream:
+        call();
+        Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
+          model.loadingChecking(true);
+          call();
+          if (!model.hasListener()) timer.cancel();
+        });
+        break;
+    }
+  }
 
+  static _myDefaultFunc() {}
   final TransitionBuilder builder;
+  final dynamic Function() call;
+  final CallType callType;
+  final int secondsOfStream;
   final Widget? child;
   final Widget? loader;
   final McModel model;
@@ -344,9 +402,9 @@ class McView extends AnimatedWidget {
 
 class McController {
   static final McController _controller = McController._internal();
-  Map<String, McModel> models = {};
+  Map<String, dynamic> models = {};
 
-  McModel? add(String key, McModel model) {
+  T? add<T>(String key, T model) {
     if (key.contains('!')) {
       if (!models.containsKey(key.substring(1))) {
         models[key.substring(1)] = model;
@@ -360,7 +418,7 @@ class McController {
     }
   }
 
-  get(String key) {
+  T get<T>(String key) {
     return models[key];
   }
 

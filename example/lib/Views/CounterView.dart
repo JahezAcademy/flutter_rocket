@@ -1,4 +1,3 @@
-import 'package:example/Request/Request.dart';
 import 'package:flutter/material.dart';
 import '../Models/CounterModel.dart';
 import 'package:mc/mc.dart';
@@ -7,19 +6,25 @@ class CounterExample extends StatelessWidget {
   final String title;
   CounterExample({this.title});
   final Counter counter = Counter();
-  int count = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              'number of once call parameter called & and you can also click on add icon',
+              textAlign: TextAlign.center,
             ),
             McView(
               model: counter,
+              call: () {
+                counter.count += 1;
+              },
+              secondsOfStream: 2,
+              callType: CallType.callAsStream,
               builder: (BuildContext context, Widget child) {
                 return Text(
                   counter.count.toString(),
@@ -34,10 +39,11 @@ class CounterExample extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         //change your field by json structure
         onPressed: () {
-          counter.fromJson({"count": count++});
+          counter.count -= 1;
+          counter.fromJson({"count": counter.count});
         },
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: Icon(Icons.minimize),
       ),
     );
   }

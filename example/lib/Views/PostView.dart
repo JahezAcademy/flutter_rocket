@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
-import '../Request/Request.dart';
 import '../Models/PostModel.dart';
 
 //Use as you like
@@ -9,14 +8,14 @@ import '../Models/PostModel.dart';
 ///
 ///
 ///
+
 class PostExample extends StatelessWidget {
-  Post post = Post();
-  PostExample({this.title}) {
-    // Save your model to use on another screen
-    // (!) means if you close and open this screen you will use same data without update it from Api
-    // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
-    post = mc.add('!posts', post);
-  }
+  // Save your model to use on another screen
+  // (!) means if you close and open this screen you will use same data without update it from Api
+  // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
+  final Post post = McController().add<Post>('!posts', Post());
+  final McRequest rq = McController().get<McRequest>("rq");
+  PostExample({this.title});
   final String title;
 
   @override
@@ -31,43 +30,32 @@ class PostExample extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.data_usage),
               // Refresh Data from Api
-              onPressed: () =>
-                  mc.get('rq').getObjData("posts", post, multi: true))
+              onPressed: () => rq.getObjData("posts", post, multi: true))
         ],
       ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: FutureBuilder(
-            future: post.multi.isEmpty
-                ? mc.get('rq').getObjData("posts", post, multi: true)
-                : null,
+          child: McView(
+            call: () => rq.getObjData("posts", post, multi: true),
+            model: post,
+            callType: CallType.callIfModelEmpty,
             builder: (BuildContext __, snp) {
-              return McView(
-                model: post,
-                builder: (BuildContext context, Widget child) {
-                  return !post.loading
-                      ? RefreshIndicator(
-                          onRefresh: () => mc
-                              .get('rq')
-                              .getObjData("posts", post, multi: true),
-                          child: ListView.builder(
-                            itemCount: post.multi.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                leading: Text(post.multi[index].id.toString()),
-                                title: Text(post.multi[index].title),
-                                onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                  return Details(index);
-                                })),
-                              );
-                            },
-                          ),
-                        )
-                      : Center(child: CircularProgressIndicator());
-                },
+              return RefreshIndicator(
+                onRefresh: () => rq.getObjData("posts", post, multi: true),
+                child: ListView.builder(
+                  itemCount: post.multi.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      leading: Text(post.multi[index].id.toString()),
+                      title: Text(post.multi[index].title),
+                      onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return Details(index);
+                      })),
+                    );
+                  },
+                ),
               );
             },
           )),
@@ -78,10 +66,8 @@ class PostExample extends StatelessWidget {
 class Details extends StatelessWidget {
   final int index;
   //get your model by key
-  Post post;
-  Details(this.index) {
-    post = mc.get("posts");
-  }
+  Post post = McController().get<Post>('posts');
+  Details(this.index);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

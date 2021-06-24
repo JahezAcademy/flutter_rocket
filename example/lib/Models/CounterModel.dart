@@ -1,13 +1,11 @@
 import 'package:mc/mc.dart';
 
-class Counter extends McModel {
+class Counter extends McModel<Counter> {
   int count;
-  List multi = [];
 
   Counter({
     this.count = 0,
   });
-
   fromJson(Map<String, dynamic> json) {
     count = json['count'] ?? count;
     return super.fromJson(json);
@@ -18,14 +16,5 @@ class Counter extends McModel {
     data['count'] = this.count;
 
     return data;
-  }
-
-  void setMulti(List d) {
-    List r = d.map((e) {
-      Counter m = Counter();
-      m.fromJson(e);
-      return m;
-    }).toList();
-    multi = r;
   }
 }

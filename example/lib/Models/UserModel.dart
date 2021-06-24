@@ -1,6 +1,7 @@
 import 'package:mc/mc.dart';
 
-class User extends McModel {
+class User extends McModel<User> {
+  List<User> multi;
   int id;
   String name;
   String username;
@@ -10,7 +11,6 @@ class User extends McModel {
   String website;
   Company company;
   String img;
-  List multi;
 
   User(
       {this.id,
@@ -33,8 +33,8 @@ class User extends McModel {
     email = json['email'] ?? email;
     address.fromJson(json['address'] ?? address.toJson());
     phone = json['phone'] ?? phone;
-    website = json['website'] ?? website;
     img = json['image'] ?? img;
+    website = json['website'] ?? website;
     company.fromJson(json['company'] ?? company.toJson());
     return super.fromJson(json);
   }
@@ -44,30 +44,30 @@ class User extends McModel {
     data['id'] = this.id;
     data['name'] = this.name;
     data['username'] = this.username;
+    data['image'] = this.img;
     data['email'] = this.email;
     data['address'] = this.address.toJson();
     data['phone'] = this.phone;
     data['website'] = this.website;
-    data['image'] = this.img;
     data['company'] = this.company.toJson();
 
     return data;
   }
 
-  void setMulti(List d) {
-    List r = d.map((e) {
-      User m = User();
-      m.fromJson(e);
-      return m;
+  void setMulti(List data) {
+    List listOfuser = data.map((e) {
+      User user = User();
+      user.fromJson(e);
+      return user;
     }).toList();
-    multi = r;
+    multi = listOfuser;
   }
 }
 
-class Geo extends McModel {
+class Geo extends McModel<Geo> {
+  List<Geo> multi;
   String lat;
   String lng;
-  List multi;
 
   Geo({
     this.lat,
@@ -89,23 +89,49 @@ class Geo extends McModel {
     return data;
   }
 
-  void setMulti(List d) {
-    List r = d.map((e) {
-      Geo m = Geo();
-      m.fromJson(e);
-      return m;
+  void setMulti(List data) {
+    List listOfgeo = data.map((e) {
+      Geo geo = Geo();
+      geo.fromJson(e);
+      return geo;
     }).toList();
-    multi = r;
+    multi = listOfgeo;
   }
 }
 
-class Address extends McModel {
+class Company extends McModel<Company> {
+  String name;
+  String catchPhrase;
+  String bs;
+
+  Company({
+    this.name,
+    this.catchPhrase,
+    this.bs,
+  });
+  fromJson(Map<String, dynamic> json) {
+    name = json['name'] ?? name;
+    catchPhrase = json['catchPhrase'] ?? catchPhrase;
+    bs = json['bs'] ?? bs;
+    return super.fromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['catchPhrase'] = this.catchPhrase;
+    data['bs'] = this.bs;
+
+    return data;
+  }
+}
+
+class Address extends McModel<Address> {
   String street;
   String suite;
   String city;
   String zipcode;
   Geo geo;
-  List multi;
 
   Address({
     this.street,
@@ -114,7 +140,6 @@ class Address extends McModel {
     this.zipcode,
     this.geo,
   }) {
-    multi = multi ?? [];
     geo ??= Geo();
   }
   fromJson(Map<String, dynamic> json) {
@@ -135,53 +160,5 @@ class Address extends McModel {
     data['geo'] = this.geo.toJson();
 
     return data;
-  }
-
-  void setMulti(List d) {
-    List r = d.map((e) {
-      Address m = Address();
-      m.fromJson(e);
-      return m;
-    }).toList();
-    multi = r;
-  }
-}
-
-class Company extends McModel {
-  String name;
-  String catchPhrase;
-  String bs;
-  List multi;
-
-  Company({
-    this.name,
-    this.catchPhrase,
-    this.bs,
-  }) {
-    multi = multi ?? [];
-  }
-  fromJson(Map<String, dynamic> json) {
-    name = json['name'] ?? name;
-    catchPhrase = json['catchPhrase'] ?? catchPhrase;
-    bs = json['bs'] ?? bs;
-    return super.fromJson(json);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['catchPhrase'] = this.catchPhrase;
-    data['bs'] = this.bs;
-
-    return data;
-  }
-
-  void setMulti(List d) {
-    List r = d.map((e) {
-      Company m = Company();
-      m.fromJson(e);
-      return m;
-    }).toList();
-    multi = r;
   }
 }
