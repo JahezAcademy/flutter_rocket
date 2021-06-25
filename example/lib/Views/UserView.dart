@@ -27,17 +27,29 @@ class UserExample extends StatelessWidget {
             ),
             TextButton(
                 child: Text(
-                    "Click here to Change First User\nCompany & User name & img"),
+                    "Click here to Change First User\nCompany & User name & image"),
                 onPressed: () {
                   Company newCompany = Company(
                     bs: "change data...bs",
                     catchPhrase: "change data...catch",
                   );
+                  // [1]-change data with constractor:
+
+                  // User editUser = User(
+                  //     name: "Mohammed CHAHBOUN 💙",
+                  //     company: newCompany,
+                  //     image:
+                  //         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4");
+
+                  // users.multi[0].fromJson(editUser.toJson());
+                  // users.rebuild();
+
+                  // [2]-change data with fromJson method directly:
 
                   users.multi[0].fromJson({
-                    "name": "Mohammed CHAHBOUN 💙",
-                    "company": newCompany.toJson(),
-                    'image':
+                    users.nameStr: "Mohammed CHAHBOUN 💙",
+                    users.companyStr: newCompany.toJson(),
+                    users.imageStr:
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
                   });
                   //rebuild method required if data multi
@@ -72,9 +84,10 @@ class UserExample extends StatelessWidget {
                         })),
                         child: CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
-                          backgroundImage:
-                              user.img == null ? null : NetworkImage(user.img),
-                          child: user.img == null ? Icon(Icons.person) : null,
+                          backgroundImage: user.image == null
+                              ? null
+                              : NetworkImage(user.image),
+                          child: user.image == null ? Icon(Icons.person) : null,
                         ),
                       ),
                       title: Text("User :" + user.name),
@@ -157,8 +170,9 @@ class OneUser extends StatelessWidget {
         child: ExpansionTile(
             leading: CircleAvatar(
               backgroundColor: Theme.of(context).primaryColor,
-              backgroundImage: user.img == null ? null : NetworkImage(user.img),
-              child: user.img == null ? Icon(Icons.person) : null,
+              backgroundImage:
+                  user.image == null ? null : NetworkImage(user.image),
+              child: user.image == null ? Icon(Icons.person) : null,
             ),
             title: Text("User :" + user.name),
             children: [

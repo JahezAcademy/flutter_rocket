@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 import '../Models/PostModel.dart';
 
-//Use as you like
-///with [FutureBuilder]
-/////## multi[true]
-///
-///
-///
-
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // (!) means if you close and open this screen you will use same data without update it from Api
@@ -71,6 +64,7 @@ class Details extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text(post.multi[index].title)),
       body: Center(
         child: ListTile(
           leading: Text(post.multi[index].id.toString()),
@@ -194,7 +188,7 @@ class Details extends StatelessWidget {
 //   }
 // }
 
-// as Request Json & Model
+// as Request Json || Model
 // ## multi[false]
 // Json: request.getJsonData("posts/1").then((value) => print(value));
 // Model: request.getObjData("posts/1",yourModelHere).then((value) => print(value));

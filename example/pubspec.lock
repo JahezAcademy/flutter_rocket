@@ -94,7 +94,7 @@ packages:
       path: "/media/chahboun/Nouveau nom/mc"
       relative: false
     source: path
-    version: "0.0.1+8"
+    version: "0.0.1+9"
   meta:
     dependency: transitive
     description:

@@ -9,17 +9,20 @@ class CounterExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Container(
+        alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'number of once call parameter called & and you can also click on add icon',
+              'Number of once call parameter called & and you can also click on add icon',
               textAlign: TextAlign.center,
             ),
             McView(
               model: counter,
+              // call & secondsOfStream & callType optional parameters you can use McView Widget without them
               call: () {
                 counter.count += 1;
               },

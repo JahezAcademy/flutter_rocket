@@ -41,7 +41,7 @@ class App extends StatelessWidget {
 class MyApp extends StatelessWidget {
   final ValueNotifier<double> dx = ValueNotifier<double>(0.1);
   BuildContext cntx;
-  List<String> exps = [
+  final List<String> exps = [
     "Mc Package",
     "Link your app with API easily",
     "One Package All Features",
@@ -53,22 +53,20 @@ class MyApp extends StatelessWidget {
     String baseUrl = 'https://jsonplaceholder.typicode.com';
     McRequest request = McRequest(url: baseUrl);
     mc.add('rq', request);
-    for (var i = 0; i < 9; i++) {
-      Timer.periodic(Duration(milliseconds: 80), (timer) {
-        if (dx.value <=
-            MediaQuery.of(cntx).size.width +
-                (MediaQuery.of(cntx).size.width * 0.04)) {
-          dx.value += 0.5;
+    Timer.periodic(Duration(milliseconds: 5), (timer) {
+      if (dx.value <=
+          MediaQuery.of(cntx).size.width +
+              (MediaQuery.of(cntx).size.width * 0.04)) {
+        dx.value += 0.5;
+      } else {
+        dx.value = -MediaQuery.of(cntx).size.width;
+        if (index < exps.length - 1) {
+          index++;
         } else {
-          dx.value = -MediaQuery.of(cntx).size.width;
-          if (index < exps.length - 1) {
-            index++;
-          } else {
-            index = 0;
-          }
+          index = 0;
         }
-      });
-    }
+      }
+    });
   }
 
   @override

@@ -368,7 +368,7 @@ class McView extends AnimatedWidget {
         call();
         break;
       case CallType.callIfModelEmpty:
-        if (model.multi.isEmpty) {
+        if (model.multi == null) {
           call();
         }
         break;

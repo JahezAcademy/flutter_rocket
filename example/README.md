@@ -1,8 +1,15 @@
-# example
+# How to use mc package easily
 
-A new Flutter project.
+Examples of mc package.
 
 ## Getting Started
+
+You can found on this Examples:
+
+CounterView [callAsStream Example]
+UserView [callAsStream Example]
+PostView [callIfModelEmpty Example]
+PhotoView [callAsFuture Example]
 
 This project is a starting point for a Flutter application.
 

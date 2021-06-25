@@ -7,6 +7,11 @@ class Post extends McModel<Post> {
   String title;
   String body;
 
+  final String userIdStr = 'userId';
+  final String idStr = 'id';
+  final String titleStr = 'title';
+  final String bodyStr = 'body';
+
   Post({
     this.userId,
     this.id,

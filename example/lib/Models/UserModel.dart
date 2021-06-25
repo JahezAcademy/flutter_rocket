@@ -10,7 +10,16 @@ class User extends McModel<User> {
   String phone;
   String website;
   Company company;
-  String img;
+  String image;
+  final String idStr = "id";
+  final String nameStr = "name";
+  final String usernameStr = "username";
+  final String emailStr = "email";
+  final String addressStr = "address";
+  final String phoneStr = "phone";
+  final String websiteStr = "website";
+  final String companyStr = "company";
+  final String imageStr = "img";
 
   User(
       {this.id,
@@ -21,7 +30,7 @@ class User extends McModel<User> {
       this.phone,
       this.website,
       this.company,
-      this.img}) {
+      this.image}) {
     multi = multi ?? [];
     address ??= Address();
     company ??= Company();
@@ -33,7 +42,7 @@ class User extends McModel<User> {
     email = json['email'] ?? email;
     address.fromJson(json['address'] ?? address.toJson());
     phone = json['phone'] ?? phone;
-    img = json['image'] ?? img;
+    image = json['image'] ?? image;
     website = json['website'] ?? website;
     company.fromJson(json['company'] ?? company.toJson());
     return super.fromJson(json);
@@ -44,7 +53,7 @@ class User extends McModel<User> {
     data['id'] = this.id;
     data['name'] = this.name;
     data['username'] = this.username;
-    data['image'] = this.img;
+    data['image'] = this.image;
     data['email'] = this.email;
     data['address'] = this.address.toJson();
     data['phone'] = this.phone;
