@@ -18,13 +18,10 @@
 - add complex parameter for complex json
 - add inspect parameter for complex json if complex true you need to define inspect by function return List of Map like this [{'item':'value1'},{'item':'value1'}] & if data already like this you dont need define complex and inspect
 - add sendFile Method for send files 
-
 ## [0.0.1+8] 
 - fix PUT bugs
 - add params for post methods
 - add setCookies parameter for enable and disable setCookie
-
-
 ## [0.0.1+9] 
 - Add generics types
 - Add on McView [call] parameter for call request method & [callType] for define how call function will call (call as future or as stream or call when model is empty) & [secondsOfStream] for define seconds for update data from call method when choose callAsStream

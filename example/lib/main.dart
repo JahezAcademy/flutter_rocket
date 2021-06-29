@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
     "Link your app with API easily",
     "One Package All Features",
     "Make your work easy",
-    "this animation make by crazy code with for loop"
+    "this animation make by crazy code with timer"
   ];
   int index = 0;
   MyApp() {

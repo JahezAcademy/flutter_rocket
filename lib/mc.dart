@@ -31,6 +31,10 @@ class McRequest extends McModel {
   ///
   /// متغيير اختياري
   ///
+  /// [setCookies]
+  ///
+  /// Cookies تفعيل او الغاء حاصية الحفاظ على
+  ///
   McRequest(
       {required this.url, this.headers = const {}, this.setCookies = false});
 
@@ -58,10 +62,8 @@ class McRequest extends McModel {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (complex!) {
           result = inspect!(result);
-          model.multi = [];
           model.setMulti(result);
         } else {
-          model.multi = [];
           model.setMulti(result);
         }
         return model.multi;
@@ -155,13 +157,16 @@ class McRequest extends McModel {
   ///[inspect] => List<Map>
 
   Future<McModel> putObjData<T>(int id, String endpoint, McModel<T> model,
-      {bool complex = false, Function(dynamic data)? inspect}) async {
+      {bool complex = false,
+      bool multi = false,
+      Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     http.Response response = await http
         .put(url, body: json.encode(model.toJson()), headers: headers)
         .whenComplete(() => model.load(false));
-    return checkerObj<T>(response, model, complex: complex, inspect: inspect);
+    return checkerObj<T>(response, model,
+        complex: complex, inspect: inspect, multi: multi);
   }
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
@@ -187,6 +192,7 @@ class McRequest extends McModel {
   Future<McModel> postObjData<T>(String endPoint,
       {McModel<T>? model,
       bool complex = false,
+      bool multi = false,
       Function(dynamic data)? inspect,
       Map<String, dynamic>? params}) async {
     model!.load(true);
@@ -198,7 +204,8 @@ class McRequest extends McModel {
     if (setCookies) {
       updateCookie(response);
     }
-    return checkerObj<T>(response, model, complex: complex, inspect: inspect);
+    return checkerObj<T>(response, model,
+        complex: complex, inspect: inspect, multi: multi);
   }
 
   /// دالة خاصة بارسال البيانات على شكل قاموس الذي تم تمريره مع الدالة
@@ -274,7 +281,7 @@ class McRequest extends McModel {
 abstract class McModel<T> extends ChangeNotifier {
   bool loading = false;
   bool loadingChecker = false;
-  List<T> multi = [];
+  List<T>? multi;
 
   void load(bool t) {
     loading = loadingChecker ? false : t;
@@ -291,7 +298,7 @@ abstract class McModel<T> extends ChangeNotifier {
   }
 
   void delItem(int index) {
-    multi.removeAt(index);
+    multi!.removeAt(index);
     notifyListeners();
   }
 
@@ -313,10 +320,12 @@ abstract class McModel<T> extends ChangeNotifier {
   }
 }
 
+// call طريقة استدعاء دالة
+
 enum CallType {
-  callAsStream,
-  callAsFuture,
-  callIfModelEmpty,
+  callAsStream, // يتم استدعاء الدالة يشكل متكرر
+  callAsFuture, // يتم استدعاء الدالة مرة واحدة
+  callIfModelEmpty, // يتم استدعاء الدالة عندما يكون النموذج فارغ
 }
 
 class McView extends AnimatedWidget {
@@ -400,11 +409,12 @@ class McView extends AnimatedWidget {
   }
 }
 
+// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class McController {
   static final McController _controller = McController._internal();
   Map<String, dynamic> models = {};
-
-  T? add<T>(String key, T model) {
+// اضافة تموذج جديد
+  T add<T>(String key, T model) {
     if (key.contains('!')) {
       if (!models.containsKey(key.substring(1))) {
         models[key.substring(1)] = model;
@@ -418,10 +428,12 @@ class McController {
     }
   }
 
+// الوصول لنموذج
   T get<T>(String key) {
     return models[key];
   }
 
+// حذف النموذح
   void remove(String key) {
     models.remove(key);
   }

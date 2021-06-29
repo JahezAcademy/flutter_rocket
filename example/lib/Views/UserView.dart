@@ -52,7 +52,7 @@ class UserExample extends StatelessWidget {
                     users.imageStr:
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
                   });
-                  //rebuild method required if data multi
+                  // Call rebuild method required if data multi
                   users.rebuild();
                 }),
           ],
@@ -150,6 +150,7 @@ class UserExample extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class OneUser extends StatelessWidget {
   final int index;
   User user;
