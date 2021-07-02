@@ -26,3 +26,6 @@
 - Add generics types
 - Add on McView [call] parameter for call request method & [callType] for define how call function will call (call as future or as stream or call when model is empty) & [secondsOfStream] for define seconds for update data from call method when choose callAsStream
 
+## [0.0.2] 
+
+- fix some bugs & optimizated the code

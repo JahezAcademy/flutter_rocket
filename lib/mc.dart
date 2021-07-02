@@ -278,11 +278,14 @@ class McRequest extends McModel {
   }
 }
 
+
+//يجب ان ترث النماذج المستخدمة من هذا الكائن 
 abstract class McModel<T> extends ChangeNotifier {
   bool loading = false;
   bool loadingChecker = false;
   List<T>? multi;
 
+  // تفعيل و الغاء جاري التحميل 
   void load(bool t) {
     loading = loadingChecker ? false : t;
     notifyListeners();
@@ -296,24 +299,27 @@ abstract class McModel<T> extends ChangeNotifier {
   bool hasListener() {
     return super.hasListeners;
   }
-
+  //حذف النموذج من قائمة النماذج
   void delItem(int index) {
     multi!.removeAt(index);
     notifyListeners();
   }
 
+  // ملئ النماذج من البيانات القادمة من الخادم
   void setMulti(List data) {
     notifyListeners();
   }
-
+  // من البيانات القادمة من الخادم الى نماذج
   void fromJson(Map<String, dynamic>? json) {
     notifyListeners();
   }
-
+  //json من النماذج الى بيانات  
   Map<String, dynamic> toJson() {
     return {};
   }
 
+
+  //التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
   void rebuild() {
     load(true);
     load(false);
@@ -372,6 +378,7 @@ class McView extends AnimatedWidget {
       this.child,
       this.loader})
       : super(key: key, listenable: model) {
+        // call التحقق من طريقة الاستدعاء لدالة 
     switch (callType) {
       case CallType.callAsFuture:
         call();
