@@ -2,6 +2,7 @@ library mc;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -143,11 +144,17 @@ class McRequest extends McModel {
     model.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
-    http.Response response = await http
-        .get(url, headers: headers)
-        .whenComplete(() => model.load(false));
-    return checkerObj<T>(response, model,
-        multi: multi, complex: complex, inspect: inspect);
+    try {
+      http.Response response = await http
+          .get(url, headers: headers)
+          .whenComplete(() => model.load(false));
+      model.setFailed(false);
+      return checkerObj<T>(response, model,
+          multi: multi, complex: complex, inspect: inspect);
+    } catch (e) {
+      model.setExcetion(e.toString());
+      model.setFailed(true);
+    }
   }
 
   /// دالة خاصة بتعديل البيانات على شكل بالنموذج الذي تم تمريره مع الدالة
@@ -162,11 +169,18 @@ class McRequest extends McModel {
       Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    http.Response response = await http
-        .put(url, body: json.encode(model.toJson()), headers: headers)
-        .whenComplete(() => model.load(false));
-    return checkerObj<T>(response, model,
-        complex: complex, inspect: inspect, multi: multi);
+    try {
+      http.Response response = await http
+          .put(url, body: json.encode(model.toJson()), headers: headers)
+          .whenComplete(() => model.load(false));
+      model.setFailed(false);
+      return checkerObj<T>(response, model,
+          complex: complex, inspect: inspect, multi: multi);
+    } catch (e) {
+      model.setExcetion(e.toString());
+      model.setFailed(true);
+      return Future.value(model);
+    }
   }
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
@@ -198,14 +212,21 @@ class McRequest extends McModel {
     model!.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
-    http.Response response = await http
-        .post(url, body: json.encode(model.toJson()), headers: headers)
-        .whenComplete(() => model.load(false));
-    if (setCookies) {
-      updateCookie(response);
+    try {
+      http.Response response = await http
+          .post(url, body: json.encode(model.toJson()), headers: headers)
+          .whenComplete(() => model.load(false));
+      if (setCookies) {
+        updateCookie(response);
+      }
+      model.setFailed(false);
+      return checkerObj<T>(response, model,
+          complex: complex, inspect: inspect, multi: multi);
+    } catch (e) {
+      model.setExcetion(e.toString());
+      model.setFailed(true);
+      return Future.value(model);
     }
-    return checkerObj<T>(response, model,
-        complex: complex, inspect: inspect, multi: multi);
   }
 
   /// دالة خاصة بارسال البيانات على شكل قاموس الذي تم تمريره مع الدالة
@@ -278,16 +299,22 @@ class McRequest extends McModel {
   }
 }
 
-
-//يجب ان ترث النماذج المستخدمة من هذا الكائن 
+//يجب ان ترث النماذج المستخدمة من هذا الكائن
 abstract class McModel<T> extends ChangeNotifier {
   bool loading = false;
   bool loadingChecker = false;
   List<T>? multi;
+  bool failed = false;
+  late String exception;
 
-  // تفعيل و الغاء جاري التحميل 
+  // تفعيل و الغاء جاري التحميل
   void load(bool t) {
     loading = loadingChecker ? false : t;
+    notifyListeners();
+  }
+
+  void setExcetion(String _exception) {
+    exception = _exception;
     notifyListeners();
   }
 
@@ -299,6 +326,12 @@ abstract class McModel<T> extends ChangeNotifier {
   bool hasListener() {
     return super.hasListeners;
   }
+
+  void setFailed(bool state) {
+    failed = state;
+    notifyListeners();
+  }
+
   //حذف النموذج من قائمة النماذج
   void delItem(int index) {
     multi!.removeAt(index);
@@ -309,15 +342,16 @@ abstract class McModel<T> extends ChangeNotifier {
   void setMulti(List data) {
     notifyListeners();
   }
+
   // من البيانات القادمة من الخادم الى نماذج
   void fromJson(Map<String, dynamic>? json) {
     notifyListeners();
   }
-  //json من النماذج الى بيانات  
+
+  //json من النماذج الى بيانات
   Map<String, dynamic> toJson() {
     return {};
   }
-
 
   //التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
   void rebuild() {
@@ -376,9 +410,12 @@ class McView extends AnimatedWidget {
       this.callType = CallType.callAsFuture,
       this.secondsOfStream = 1,
       this.child,
-      this.loader})
+      this.loader,
+      this.tryAgainText = "Failed, try again",
+      this.style,
+      this.showExceptionDetails = false})
       : super(key: key, listenable: model) {
-        // call التحقق من طريقة الاستدعاء لدالة 
+    // call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
         call();
@@ -407,12 +444,50 @@ class McView extends AnimatedWidget {
   final Widget? child;
   final Widget? loader;
   final McModel model;
+  final String tryAgainText;
+  final ButtonStyle? style;
+  final bool showExceptionDetails;
 
   @override
   Widget build(BuildContext context) {
-    return model.loading
-        ? Center(child: loader ?? CircularProgressIndicator())
-        : builder(context, child);
+    if (model.failed) {
+      return Center(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  child: Text(tryAgainText),
+                  onPressed: () {
+                    model.setFailed(false);
+                    call();
+                  }),
+              showExceptionDetails
+                  ? ExpansionTile(
+                      title: Text(
+                        model.exception.split(":")[0],
+                        style: TextStyle(
+                            fontSize: 16.0, fontWeight: FontWeight.w500),
+                      ),
+                      children: <Widget>[
+                        ListTile(
+                          title: Text(
+                            model.exception,
+                          ),
+                        )
+                      ],
+                    )
+                  : const SizedBox(),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return model.loading
+          ? Center(child: loader ?? CircularProgressIndicator())
+          : builder(context, child);
+    }
   }
 }
 
@@ -463,4 +538,38 @@ extension Mcless on StatelessWidget {
 
 extension Mcful on State {
   McController get mc => McController();
+}
+
+extension Sz on BuildContext {
+  double get height => MediaQuery.of(this).size.height;
+  double get width => MediaQuery.of(this).size.width;
+  Color get primaryColor => Theme.of(this).primaryColor;
+  Color get accentColor => Theme.of(this).accentColor;
+  ScaffoldMessengerState get snc => ScaffoldMessenger.of(this);
+  double get headline0 => this.median / 21.19; //28
+  double get headline1 => this.median / 25.19; //28
+  double get headline2 => this.median / 33.58; //24
+  double get headline3 => this.median / 40.30; //18
+  double get headline4 => this.median / 54.30; //15
+  double get headline5 => this.median / 67.17; //12
+  double get headline6 => this.median / 80.17; //9
+  double get median =>
+      (MediaQuery.of(this).size.height + MediaQuery.of(this).size.width) / 2;
+
+  void push(Widget child) {
+    Navigator.push(this, MaterialPageRoute(builder: (BuildContext context) {
+      return child;
+    }));
+  }
+
+  void pop() {
+    Navigator.pop(this);
+  }
+
+  void pushR(Widget child) {
+    Navigator.pushAndRemoveUntil(this,
+        MaterialPageRoute(builder: (BuildContext context) {
+      return child;
+    }), (Route<dynamic> route) => false);
+  }
 }

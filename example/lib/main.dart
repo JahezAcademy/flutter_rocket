@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 import 'Views/CounterView.dart';

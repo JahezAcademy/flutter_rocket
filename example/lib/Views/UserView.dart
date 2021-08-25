@@ -66,6 +66,7 @@ class UserExample extends StatelessWidget {
                 mc.get<McRequest>('rq').getObjData("users", users, multi: true),
             callType: CallType.callAsStream,
             secondsOfStream: 1,
+            showExceptionDetails: true,
             model: users,
             builder: (BuildContext __, _) {
               return ListView.builder(
