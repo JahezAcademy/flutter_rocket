@@ -2,7 +2,6 @@ library mc;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -117,9 +116,12 @@ class McRequest extends McModel {
       Function(dynamic data)? inspect}) async {
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
-
-    http.Response response = await http.get(url, headers: headers);
-    return checkerJson(response, complex: complex, inspect: inspect);
+    try {
+      http.Response response = await http.get(url, headers: headers);
+      return checkerJson(response, complex: complex, inspect: inspect);
+    } catch (e) {
+      print(e);
+    }
   }
 
   /// دالة خاصة لجلب البيانات على شكل النموذج الذي تم تمريره مع الدالة
@@ -152,7 +154,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           multi: multi, complex: complex, inspect: inspect);
     } catch (e) {
-      model.setExcetion(e.toString());
+      model.setException(e.toString());
       model.setFailed(true);
     }
   }
@@ -177,7 +179,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi);
     } catch (e) {
-      model.setExcetion(e.toString());
+      model.setException(e.toString());
       model.setFailed(true);
       return Future.value(model);
     }
@@ -192,9 +194,13 @@ class McRequest extends McModel {
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {bool complex = false, Function(dynamic data)? inspect}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    http.Response response =
-        await http.put(url, body: json.encode(data), headers: headers);
-    return checkerJson(response, complex: complex, inspect: inspect);
+    try {
+      http.Response response =
+          await http.put(url, body: json.encode(data), headers: headers);
+      return checkerJson(response, complex: complex, inspect: inspect);
+    } catch (e) {
+      print(e);
+    }
   }
 
   /// دالة خاصة بارسال البيانات على شكل النموذج الذي تم تمريره مع الدالة
@@ -223,7 +229,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi);
     } catch (e) {
-      model.setExcetion(e.toString());
+      model.setException(e.toString());
       model.setFailed(true);
       return Future.value(model);
     }
@@ -242,12 +248,16 @@ class McRequest extends McModel {
       Map<String, dynamic>? params}) async {
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
-    http.Response response =
-        await http.post(url, body: json.encode(data), headers: headers);
-    if (setCookies) {
-      updateCookie(response);
+    try {
+      http.Response response =
+          await http.post(url, body: json.encode(data), headers: headers);
+      if (setCookies) {
+        updateCookie(response);
+      }
+      return checkerJson(response, complex: complex, inspect: inspect);
+    } catch (e) {
+      print(e);
     }
-    return checkerJson(response, complex: complex, inspect: inspect);
   }
 
   /// دالة خاصة بحذف البيانات عن طريق ر.م الخاص بهم
@@ -313,7 +323,7 @@ abstract class McModel<T> extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setExcetion(String _exception) {
+  void setException(String _exception) {
     exception = _exception;
     notifyListeners();
   }
@@ -411,7 +421,7 @@ class McView extends AnimatedWidget {
       this.secondsOfStream = 1,
       this.child,
       this.loader,
-      this.tryAgainText = "Failed, try again",
+      this.retryText = "Failed, retry",
       this.style,
       this.showExceptionDetails = false})
       : super(key: key, listenable: model) {
@@ -444,7 +454,7 @@ class McView extends AnimatedWidget {
   final Widget? child;
   final Widget? loader;
   final McModel model;
-  final String tryAgainText;
+  final String retryText;
   final ButtonStyle? style;
   final bool showExceptionDetails;
 
@@ -458,7 +468,7 @@ class McView extends AnimatedWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                  child: Text(tryAgainText),
+                  child: Text(retryText),
                   onPressed: () {
                     model.setFailed(false);
                     call();
