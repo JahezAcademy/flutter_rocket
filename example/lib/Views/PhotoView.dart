@@ -18,7 +18,7 @@ class PhotoExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: McView(
             model: photo,
-            //get 5000 items
+            // get 5000 items
             call: () => request.getObjData("photos", photo, multi: true),
             builder: (BuildContext context, snp) {
               return photo.loading

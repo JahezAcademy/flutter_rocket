@@ -62,12 +62,18 @@ class UserExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: McView(
+            // call api by McRequest saved in McController and make model on ready
             call: () =>
                 mc.get<McRequest>('rq').getObjData("users", users, multi: true),
+            // call api every 1 sec
             callType: CallType.callAsStream,
+
             secondsOfStream: 1,
+            // case exception show details of exception error
             showExceptionDetails: true,
+            // your model
             model: users,
+            // your widget for show data from model
             builder: (BuildContext __, _) {
               return ListView.builder(
                 itemCount: users.multi.length,

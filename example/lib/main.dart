@@ -50,7 +50,9 @@ class MyApp extends StatelessWidget {
   int index = 0;
   MyApp() {
     String baseUrl = 'https://jsonplaceholder.typicode.com';
+    // create request object
     McRequest request = McRequest(url: baseUrl);
+    // save it, for use it from any screen
     mc.add('rq', request);
     Timer.periodic(Duration(milliseconds: 5), (timer) {
       if (dx.value <=

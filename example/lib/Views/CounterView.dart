@@ -17,7 +17,7 @@ class CounterExample extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Number of once call parameter called & and you can also click on add icon',
+              'Number of once call parameter called & you can also click on add icon',
               textAlign: TextAlign.center,
             ),
             McView(

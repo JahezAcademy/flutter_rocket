@@ -6,7 +6,7 @@ class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // (!) means if you close and open this screen you will use same data without update it from Api
   // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
-  final Post post = McController().add<Post>('!posts', Post());
+  final Post post = McController().add<Post>('posts', Post());
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
   final String title;
@@ -32,7 +32,9 @@ class PostExample extends StatelessWidget {
           child: McView(
             call: () => rq.getObjData("posts", post, multi: true),
             model: post,
+            // call api if model is empty
             callType: CallType.callIfModelEmpty,
+            showExceptionDetails: true,
             builder: (BuildContext __, snp) {
               return RefreshIndicator(
                 onRefresh: () => rq.getObjData("posts", post, multi: true),

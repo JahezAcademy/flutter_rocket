@@ -1,5 +1,6 @@
 library mc;
 
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class McRequest extends McModel {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
+  final bool debugging;
 
   /// انشاء الطلب.
   ///
@@ -36,11 +38,14 @@ class McRequest extends McModel {
   /// Cookies تفعيل او الغاء حاصية الحفاظ على
   ///
   McRequest(
-      {required this.url, this.headers = const {}, this.setCookies = false});
+      {required this.url,
+      this.headers = const {},
+      this.setCookies = false,
+      this.debugging = true});
 
   @protected
   checkerJson(http.Response response,
-      {bool? complex, Function(dynamic data)? inspect}) {
+      {bool? complex, Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var data = json.decode(utf8.decode(response.bodyBytes));
       if (complex!) {
@@ -48,16 +53,65 @@ class McRequest extends McModel {
       }
       return data;
     } else {
-      print("Response=>" + response.body);
-      print({'Error': 'Failed to load Data: ${response.statusCode}'});
+      getDebugging(response, endpoint);
       return json.decode(utf8.decode(response.bodyBytes));
+    }
+  }
+
+  getDebugging(http.Response response, String? endpoint) {
+    if (debugging) {
+      print("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
+      print("url => ${url + "/" + endpoint!}");
+      print("Response => " + response.body);
+      print(
+          "${response.statusCode} => ${msgByStatusCode(response.statusCode)}");
+      print("\x1B[38;5;2m ################################ \x1B[0m");
+    }
+  }
+
+  String msgByStatusCode(int statusCode) {
+    switch (statusCode) {
+      case 400:
+        return "the request entity sent by your application could not be understood by the server due to malformed syntax (e.g. invalid payload, data type mismatch)";
+      case 401:
+        return "there is a problem with the credentials provided by your application. This code indicates that your application tried to operate on a protected resource without providing the proper authorization. It may have provided the wrong credentials or none at all";
+      case 403:
+        return "your application is not authorized to access the requested resource, or when your application is being rate limited";
+      case 404:
+        return "the resource requested by your application does not exist";
+      case 405:
+        return "the HTTP method used by your application is not allowed for the resource";
+      case 406:
+        return "the resource requested by your application is not capable of generating response entities that are compliant the Accept headers sent";
+      case 408:
+        return "your application did not produce a request within the time that the server was prepared to wait";
+      case 409:
+        return "the request sent by your application could not be completed due to a conflict with the current state of the resource";
+      case 415:
+        return "the request entity sent by your application is in a format not supported by the requested resource for the requested method";
+      case 429:
+        return "your application has made too many calls and has exceeded the rate limit for this service";
+      case 500:
+        return "the server encountered an unexpected condition which prevented it from fulfilling the request sent by your application";
+      case 502:
+        return "the server encountered an unexpected condition which prevented it from fulfilling the request sent by your application";
+      case 503:
+        return "the server is currently unable to handle the request sent by your application due to a temporary overloading or maintenance of the server";
+      case 504:
+        return "the server, while acting as a gateway or proxy, did not get a response in time from the upstream server that it needed in order to complete the API call.";
+      default:
+        return "success";
     }
   }
 
   @protected
   dynamic checkerObj<T>(http.Response response, McModel<T> model,
-      {bool? multi, bool? complex, Function(dynamic data)? inspect}) {
+      {bool? multi,
+      bool? complex,
+      Function(dynamic data)? inspect,
+      String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
+      model.existData = true;
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (complex!) {
@@ -69,7 +123,6 @@ class McRequest extends McModel {
         return model.multi;
       } else {
         var result = json.decode(utf8.decode(response.bodyBytes));
-        //var result = decoded.length == 0 ? decoded : decoded[0];
         if (!complex!) {
           model.fromJson(result);
           return model;
@@ -80,8 +133,8 @@ class McRequest extends McModel {
         }
       }
     } else {
-      print(response.body);
       model.load(false);
+      getDebugging(response, endpoint);
       throw Exception('Failed to load Data');
     }
   }
@@ -118,7 +171,8 @@ class McRequest extends McModel {
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     try {
       http.Response response = await http.get(url, headers: headers);
-      return checkerJson(response, complex: complex, inspect: inspect);
+      return checkerJson(response,
+          complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       print(e);
     }
@@ -146,15 +200,22 @@ class McRequest extends McModel {
     model.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
+    Map<int, String> currentStatus = {};
     try {
       http.Response response = await http
           .get(url, headers: headers)
           .whenComplete(() => model.load(false));
+      if (response.statusCode != 200) {
+        currentStatus = {
+          response.statusCode: msgByStatusCode(response.statusCode)
+        };
+      }
+
       model.setFailed(false);
       return checkerObj<T>(response, model,
-          multi: multi, complex: complex, inspect: inspect);
+          multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e) {
-      model.setException(e.toString());
+      model.setException(e.toString(), currentStatus);
       model.setFailed(true);
     }
   }
@@ -171,15 +232,19 @@ class McRequest extends McModel {
       Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
+    Map<int, String>? currentStatus;
     try {
       http.Response response = await http
           .put(url, body: json.encode(model.toJson()), headers: headers)
           .whenComplete(() => model.load(false));
+      currentStatus = {
+        response.statusCode: msgByStatusCode(response.statusCode)
+      };
       model.setFailed(false);
       return checkerObj<T>(response, model,
-          complex: complex, inspect: inspect, multi: multi);
+          complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e) {
-      model.setException(e.toString());
+      model.setException(e.toString(), currentStatus);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -197,7 +262,8 @@ class McRequest extends McModel {
     try {
       http.Response response =
           await http.put(url, body: json.encode(data), headers: headers);
-      return checkerJson(response, complex: complex, inspect: inspect);
+      return checkerJson(response,
+          complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       print(e);
     }
@@ -214,22 +280,28 @@ class McRequest extends McModel {
       bool complex = false,
       bool multi = false,
       Function(dynamic data)? inspect,
+      Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     model!.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
+    Map<int, String>? currentStatus;
     try {
       http.Response response = await http
-          .post(url, body: json.encode(model.toJson()), headers: headers)
+          .post(url, headers: headers, body: json.encode(data))
           .whenComplete(() => model.load(false));
+      currentStatus = {
+        response.statusCode: msgByStatusCode(response.statusCode)
+      };
+
       if (setCookies) {
         updateCookie(response);
       }
       model.setFailed(false);
       return checkerObj<T>(response, model,
-          complex: complex, inspect: inspect, multi: multi);
+          complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e) {
-      model.setException(e.toString());
+      model.setException(e.toString(), currentStatus);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -254,7 +326,8 @@ class McRequest extends McModel {
       if (setCookies) {
         updateCookie(response);
       }
-      return checkerJson(response, complex: complex, inspect: inspect);
+      return checkerJson(response,
+          complex: complex, inspect: inspect, endpoint: endPoint);
     } catch (e) {
       print(e);
     }
@@ -282,16 +355,18 @@ class McRequest extends McModel {
     files?.forEach((key, value) async {
       request.files.add(await http.MultipartFile.fromPath(key, value));
     });
-    // request.files.addAll(files!.map((key, value) async {
-    //   return await http.MultipartFile.fromPath(key, value))
-    // });
+
+    /// request.files.addAll(files!.map((key, value) async {
+    ///   return await http.MultipartFile.fromPath(key, value))
+    /// });
     request.fields.addAll(fields!);
     request.headers.addAll(this.headers);
 
     var response = await request.send();
     if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.toBytes();
-      //var responseString = String.fromCharCodes(responseData);
+
+      ///var responseString = String.fromCharCodes(responseData);
       var result = json.decode(utf8.decode(responseData));
       return result;
     } else {
@@ -309,22 +384,26 @@ class McRequest extends McModel {
   }
 }
 
-//يجب ان ترث النماذج المستخدمة من هذا الكائن
+///يجب ان ترث النماذج المستخدمة من هذا الكائن
 abstract class McModel<T> extends ChangeNotifier {
   bool loading = false;
   bool loadingChecker = false;
   List<T>? multi;
   bool failed = false;
+  bool existData = false;
   late String exception;
+  Map<int, String>? statusCode;
 
-  // تفعيل و الغاء جاري التحميل
+  /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
     loading = loadingChecker ? false : t;
     notifyListeners();
   }
 
-  void setException(String _exception) {
+  /// التقاط الخطأ
+  void setException(String _exception, Map<int, String>? status) {
     exception = _exception;
+    statusCode = status;
     notifyListeners();
   }
 
@@ -342,40 +421,46 @@ abstract class McModel<T> extends ChangeNotifier {
     notifyListeners();
   }
 
-  //حذف النموذج من قائمة النماذج
+  ///حذف النموذج من قائمة النماذج
   void delItem(int index) {
     multi!.removeAt(index);
     notifyListeners();
   }
 
-  // ملئ النماذج من البيانات القادمة من الخادم
+  /// ملئ النماذج من البيانات القادمة من الخادم
   void setMulti(List data) {
     notifyListeners();
   }
 
-  // من البيانات القادمة من الخادم الى نماذج
+  /// من البيانات القادمة من الخادم الى نماذج
   void fromJson(Map<String, dynamic>? json) {
     notifyListeners();
   }
 
-  //json من النماذج الى بيانات
+  ///json من النماذج الى بيانات
   Map<String, dynamic> toJson() {
     return {};
   }
 
-  //التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
+  ///التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
   void rebuild() {
     load(true);
     load(false);
   }
 }
 
-// call طريقة استدعاء دالة
+/// call طريقة استدعاء دالة
 
 enum CallType {
-  callAsStream, // يتم استدعاء الدالة يشكل متكرر
-  callAsFuture, // يتم استدعاء الدالة مرة واحدة
-  callIfModelEmpty, // يتم استدعاء الدالة عندما يكون النموذج فارغ
+  callAsStream,
+
+  /// يتم استدعاء الدالة يشكل متكرر
+  callAsFuture,
+
+  /// يتم استدعاء الدالة مرة واحدة
+  callIfModelEmpty,
+
+  /// يتم استدعاء الدالة عندما يكون النموذج فارغ
 }
 
 class McView extends AnimatedWidget {
@@ -425,13 +510,13 @@ class McView extends AnimatedWidget {
       this.style,
       this.showExceptionDetails = false})
       : super(key: key, listenable: model) {
-    // call التحقق من طريقة الاستدعاء لدالة
+    /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
         call();
         break;
       case CallType.callIfModelEmpty:
-        if (model.multi == null) {
+        if (!model.existData) {
           call();
         }
         break;
@@ -463,6 +548,8 @@ class McView extends AnimatedWidget {
     if (model.failed) {
       return Center(
         child: Container(
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.height * 0.2,
           padding: EdgeInsets.symmetric(horizontal: 15.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -471,23 +558,38 @@ class McView extends AnimatedWidget {
                   child: Text(retryText),
                   onPressed: () {
                     model.setFailed(false);
+                    model.load(true);
                     call();
                   }),
               showExceptionDetails
-                  ? ExpansionTile(
-                      title: Text(
-                        model.exception.split(":")[0],
-                        style: TextStyle(
-                            fontSize: 16.0, fontWeight: FontWeight.w500),
-                      ),
-                      children: <Widget>[
-                        ListTile(
-                          title: Text(
-                            model.exception,
-                          ),
-                        )
-                      ],
-                    )
+                  ? ElevatedButton(
+                      child: Text("show Details"),
+                      onPressed: () {
+                        Scaffold.of(context).showBottomSheet((context) =>
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              child: ExpansionTile(
+                                title: Text(
+                                  model.exception.split(":")[0] +
+                                      " " +
+                                      model.statusCode!.keys.first.toString(),
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                children: <Widget>[
+                                  ListTile(
+                                    title: Text(
+                                      model.exception +
+                                          "\n- " +
+                                          model.statusCode!.values.first
+                                              .toString(),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ));
+                      })
                   : const SizedBox(),
             ],
           ),
@@ -501,11 +603,12 @@ class McView extends AnimatedWidget {
   }
 }
 
-// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
+/// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class McController {
   static final McController _controller = McController._internal();
   Map<String, dynamic> models = {};
-// اضافة تموذج جديد
+
+  /// اضافة تموذج جديد
   T add<T>(String key, T model) {
     if (key.contains('!')) {
       if (!models.containsKey(key.substring(1))) {
@@ -520,12 +623,12 @@ class McController {
     }
   }
 
-// الوصول لنموذج
+  /// الوصول لنموذج
   T get<T>(String key) {
     return models[key];
   }
 
-// حذف النموذح
+  /// حذف النموذح
   void remove(String key) {
     models.remove(key);
   }
@@ -540,7 +643,7 @@ class McController {
   McController._internal();
 }
 
-/// Extensions
+/// Extensions helper
 
 extension Mcless on StatelessWidget {
   McController get mc => McController();
@@ -548,38 +651,4 @@ extension Mcless on StatelessWidget {
 
 extension Mcful on State {
   McController get mc => McController();
-}
-
-extension Sz on BuildContext {
-  double get height => MediaQuery.of(this).size.height;
-  double get width => MediaQuery.of(this).size.width;
-  Color get primaryColor => Theme.of(this).primaryColor;
-  Color get accentColor => Theme.of(this).accentColor;
-  ScaffoldMessengerState get snc => ScaffoldMessenger.of(this);
-  double get headline0 => this.median / 21.19; //28
-  double get headline1 => this.median / 25.19; //28
-  double get headline2 => this.median / 33.58; //24
-  double get headline3 => this.median / 40.30; //18
-  double get headline4 => this.median / 54.30; //15
-  double get headline5 => this.median / 67.17; //12
-  double get headline6 => this.median / 80.17; //9
-  double get median =>
-      (MediaQuery.of(this).size.height + MediaQuery.of(this).size.width) / 2;
-
-  void push(Widget child) {
-    Navigator.push(this, MaterialPageRoute(builder: (BuildContext context) {
-      return child;
-    }));
-  }
-
-  void pop() {
-    Navigator.pop(this);
-  }
-
-  void pushR(Widget child) {
-    Navigator.pushAndRemoveUntil(this,
-        MaterialPageRoute(builder: (BuildContext context) {
-      return child;
-    }), (Route<dynamic> route) => false);
-  }
 }

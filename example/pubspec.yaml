@@ -29,7 +29,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   mc:
-    path: /media/chahboun/New Volume/Development/mc
+    path: /home/chahboun/mc
     
 
 dev_dependencies:
