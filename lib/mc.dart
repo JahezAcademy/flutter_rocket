@@ -61,10 +61,10 @@ class McRequest extends McModel {
   getDebugging(http.Response response, String? endpoint) {
     if (debugging) {
       print("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
-      print("url => ${url + "/" + endpoint!}");
-      print("Response => " + response.body);
+      print("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
+      print("\x1B[38;5;2m [Response] => " + response.body + " \x1B[0m");
       print(
-          "${response.statusCode} => ${msgByStatusCode(response.statusCode)}");
+          "\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
       print("\x1B[38;5;2m ################################ \x1B[0m");
     }
   }
@@ -166,6 +166,7 @@ class McRequest extends McModel {
   Future getJsonData(String endpoint,
       {Map<String, dynamic>? params,
       bool complex = false,
+      Function(Object error)? onError,
       Function(dynamic data)? inspect}) async {
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
@@ -174,7 +175,7 @@ class McRequest extends McModel {
       return checkerJson(response,
           complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e) {
-      print(e);
+      onError!(e);
     }
   }
 
@@ -205,7 +206,7 @@ class McRequest extends McModel {
       http.Response response = await http
           .get(url, headers: headers)
           .whenComplete(() => model.load(false));
-      if (response.statusCode != 200) {
+      if (response.statusCode >= 400) {
         currentStatus = {
           response.statusCode: msgByStatusCode(response.statusCode)
         };
@@ -237,9 +238,11 @@ class McRequest extends McModel {
       http.Response response = await http
           .put(url, body: json.encode(model.toJson()), headers: headers)
           .whenComplete(() => model.load(false));
-      currentStatus = {
-        response.statusCode: msgByStatusCode(response.statusCode)
-      };
+      if (response.statusCode >= 400) {
+        currentStatus = {
+          response.statusCode: msgByStatusCode(response.statusCode)
+        };
+      }
       model.setFailed(false);
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
@@ -257,7 +260,9 @@ class McRequest extends McModel {
   ///[inspect] => List<Map>
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
-      {bool complex = false, Function(dynamic data)? inspect}) async {
+      {bool complex = false,
+      Function(dynamic data)? inspect,
+      Function(Object error)? onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
       http.Response response =
@@ -265,7 +270,7 @@ class McRequest extends McModel {
       return checkerJson(response,
           complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e) {
-      print(e);
+      onError!(e);
     }
   }
 
@@ -290,9 +295,11 @@ class McRequest extends McModel {
       http.Response response = await http
           .post(url, headers: headers, body: json.encode(data))
           .whenComplete(() => model.load(false));
-      currentStatus = {
-        response.statusCode: msgByStatusCode(response.statusCode)
-      };
+      if (response.statusCode >= 400) {
+        currentStatus = {
+          response.statusCode: msgByStatusCode(response.statusCode)
+        };
+      }
 
       if (setCookies) {
         updateCookie(response);
@@ -317,6 +324,7 @@ class McRequest extends McModel {
       {Map<String, dynamic>? data,
       bool complex = false,
       Function(dynamic data)? inspect,
+      Function(Object error)? onError,
       Map<String, dynamic>? params}) async {
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
@@ -329,7 +337,7 @@ class McRequest extends McModel {
       return checkerJson(response,
           complex: complex, inspect: inspect, endpoint: endPoint);
     } catch (e) {
-      print(e);
+      onError!(e);
     }
   }
 
@@ -339,10 +347,15 @@ class McRequest extends McModel {
   ///
   ///[inspect] => List<Map>
   ///
-  Future delJsonData(int id, String endpoint) async {
+  Future delJsonData(int id, String endpoint,
+      {Function(Object error)? onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    http.Response response = await http.delete(url, headers: headers);
-    return response.body;
+    try {
+      http.Response response = await http.delete(url, headers: headers);
+      return response.body;
+    } catch (e) {
+      onError!(e);
+    }
   }
 
   Future sendFile(
@@ -565,30 +578,22 @@ class McView extends AnimatedWidget {
                   ? ElevatedButton(
                       child: Text("show Details"),
                       onPressed: () {
-                        Scaffold.of(context).showBottomSheet((context) =>
-                            Container(
-                              height: MediaQuery.of(context).size.height * 0.3,
-                              child: ExpansionTile(
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
                                 title: Text(
                                   model.exception.split(":")[0] +
                                       " " +
                                       model.statusCode!.keys.first.toString(),
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500),
                                 ),
-                                children: <Widget>[
-                                  ListTile(
-                                    title: Text(
-                                      model.exception +
-                                          "\n- " +
-                                          model.statusCode!.values.first
-                                              .toString(),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ));
+                                content: Text(
+                                  model.exception +
+                                      "\n- " +
+                                      model.statusCode!.values.first.toString(),
+                                ),
+                              );
+                            });
                       })
                   : const SizedBox(),
             ],
