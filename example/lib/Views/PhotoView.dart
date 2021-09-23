@@ -5,7 +5,7 @@ import 'package:mc/mc.dart';
 class PhotoExample extends StatelessWidget {
   PhotoExample({this.title});
   final String title;
-  final Photo photo = McController().add<Photo>('!photos', Photo());
+  final Photo photo = McController().add<Photo>('photos', Photo());
   final McRequest request = McController().get<McRequest>('rq');
   @override
   Widget build(BuildContext context) {
@@ -18,31 +18,31 @@ class PhotoExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: McView(
             model: photo,
+            
             // get 5000 items
-            call: () => request.getObjData("photos", photo, multi: true),
+            call: getData,
             builder: (BuildContext context, snp) {
-              return photo.loading
-                  ? Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: photo.multi.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        Photo currentphoto = photo.multi[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                title: Text(currentphoto.title),
-                                leading:
-                                    Image.network(currentphoto.thumbnailUrl),
-                              ),
-                              Image.network(currentphoto.url)
-                            ],
+              return ListView.builder(
+                  itemCount: photo.multi.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Photo currentphoto = photo.multi[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            title: Text(currentphoto.title),
+                            leading: Image.network(currentphoto.thumbnailUrl),
                           ),
-                        );
-                      });
+                          Image.network(currentphoto.url)
+                        ],
+                      ),
+                    );
+                  });
             },
           )),
     );
   }
+
+  Future getData() => request.getObjData("photos", photo, multi: true);
 }

@@ -1,6 +1,6 @@
 name: mc
-description: State management & request package, Model,View,Controller,Request [MVCR].
-version: 0.0.2
+description: State management & request package, Model,View,Controller,Request MVCR.
+version: 0.0.2+1
 homepage: https://github.com/ourflutter/mc
 
 environment:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.1
+  http: ^0.13.3 
 
 dev_dependencies:
   flutter_test:

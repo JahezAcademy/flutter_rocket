@@ -29,3 +29,12 @@
 ## [0.0.2] 
 
 - fix some bugs & optimizated the code
+
+## [0.0.2+1] 
+
+- add [onError] Function(error) parameter for getJson methods for handle errors & exceptions
+- handle errors & exceptions in McView widget
+- add [showExceptionDetails] parameter for show errors details in UI
+- add [exception] & [statusCode] in McModel for models
+- add [params] & [data] as body parameter for post methods
+- add [debugging] parameter for enable or disable debugging

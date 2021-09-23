@@ -1,6 +1,6 @@
 # mc
 
-State management and request package, Model,View,Controller,Request [MVCR].
+State management and request package, Model,View,Controller,Request MVCR.
 
 ## Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
 
@@ -15,7 +15,7 @@ In your flutter project, add the dependency to your `pubspec.yaml`
 ```yaml
 dependencies:
   ...
-  mc: ^0.0.1+9
+  mc: ^0.0.2+1
 ```
 for generate The appropriate model by json data use this website https://json2dart.web.app/
 
@@ -59,7 +59,7 @@ class Post extends McModel<Post> {
   }
 
   void setMulti(List data) {
-    List listOfpost = data.map((e) {
+    List<Post> listOfpost = data.map((e) {
       Post post = Post();
       post.fromJson(e);
       return post;
@@ -126,8 +126,9 @@ class PostExample extends StatelessWidget {
           child: McView(
             call: () => rq.getObjData("posts", post, multi: true),
             model: post,
+            showExceptionDetails: true,
             callType: CallType.callIfModelEmpty,
-            builder: (BuildContext __, snp) {
+            builder: (BuildContext __, _) {
               return RefreshIndicator(
                 onRefresh: () => rq.getObjData("posts", post, multi: true),
                 child: ListView.builder(

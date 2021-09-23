@@ -1,6 +1,14 @@
+/// mc package for state management & request
+/// based on MVCR
+/// Model
+/// View
+/// Controller
+/// Request
+/// Powerful & easy
+/// developed with ❤️ by Mohammed CHAHBOUN
+
 library mc;
 
-import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -19,12 +27,12 @@ class McRequest extends McModel {
   /// هو الرابط الخاص بالخادم بدون نقطة النهاية كمثال
   ///
   ///
-  /// [صحيح]
+  /// شطل صحيح
   ///
   /// www.test.com/api/
   ///
   ///
-  /// [خطأ]
+  /// شكل حاطئ
   ///
   /// www.test.com/api/users/
   ///
@@ -37,6 +45,9 @@ class McRequest extends McModel {
   ///
   /// Cookies تفعيل او الغاء حاصية الحفاظ على
   ///
+  /// [debugging]
+  ///
+  /// console تفعيل او الغاء ظهور المشاكل في
   McRequest(
       {required this.url,
       this.headers = const {},
@@ -149,20 +160,20 @@ class McRequest extends McModel {
     return result;
   }
 
-  /// دالة خاصة لجلب البيانات على شكل [قاموس]
+  /// دالة خاصة لجلب البيانات على شكل (قاموس)
   ///
-  ///[Json]=>[قاموس]
-  ///
-  ///
-  ///عندما يكون [متعدد] صحيح هذا يعني أنك ستجلب بيانات على شكل [قاموس] داخل [مصفوفة]
+  /// Json=>(قاموس)
   ///
   ///
-  ///[multi]=>[متعدد]
+  /// عندما يكون (متعدد) صحيح هذا يعني أنك ستجلب بيانات على شكل (قاموس) داخل (مصفوفة)]
   ///
   ///
-  ///[List]=>[مصفوفة]
+  /// [multi]=> (متعدد)
   ///
-  ///[inspect] => List<Map>
+  ///
+  /// [List]=>(قاموس)
+  ///
+  /// [inspect] => List<Map>
   Future getJsonData(String endpoint,
       {Map<String, dynamic>? params,
       bool complex = false,
@@ -181,17 +192,16 @@ class McRequest extends McModel {
 
   /// دالة خاصة لجلب البيانات على شكل النموذج الذي تم تمريره مع الدالة
   ///
-  ///[model]=>[النموذج]
+  /// [model]=>(النموذج)
   ///
-  ///  عندما يكون [متعدد] صحيح هذا يعني أنك ستجد بيناتك في [مصفوفة] داخل [النموذج] الخاص بك على شكل نفس النموذج يمكنك الوصول لهذه البيانات عن طريق المتغير
+  ///  عندما يكون (متعدد) صحيح هذا يعني أنك ستجد بيناتك في (مصفوفة) داخل (النموذج) الخاص بك على شكل نفس النموذج يمكنك الوصول لهذه البيانات عن طريق المتغير
   ///
-  ///[myModel.multi]
   ///
-  ///[multi]=>[متعدد]
+  /// [multi]=>(متعدد)
   ///
-  ///[List]=>[مصفوفة]
+  /// [List]=>(مصفوفة)
   ///
-  ///[inspect] => List<Map>
+  /// [inspect] => List<Map>
 
   Future getObjData<T>(String endpoint, McModel<T> model,
       {Map<String, dynamic>? params,
@@ -223,9 +233,9 @@ class McRequest extends McModel {
 
   /// دالة خاصة بتعديل البيانات على شكل بالنموذج الذي تم تمريره مع الدالة
   ///
-  ///[model]=>[النموذج]
+  /// [model]=>(النموذج)
   ///
-  ///[inspect] => List<Map>
+  /// [inspect] => List<Map>
 
   Future<McModel> putObjData<T>(int id, String endpoint, McModel<T> model,
       {bool complex = false,
@@ -255,9 +265,9 @@ class McRequest extends McModel {
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
   ///
-  ///[Json]=>[قاموس]
+  /// [data]=>(قاموس)
   ///
-  ///[inspect] => List<Map>
+  /// [inspect] => List<Map>
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {bool complex = false,
@@ -276,9 +286,9 @@ class McRequest extends McModel {
 
   /// دالة خاصة بارسال البيانات على شكل النموذج الذي تم تمريره مع الدالة
   ///
-  ///[model]=>[النموذج]
+  /// [model]=>(النموذج)
   ///
-  ///[inspect] => List<Map>
+  /// [inspect] => List<Map>
 
   Future<McModel> postObjData<T>(String endPoint,
       {McModel<T>? model,
@@ -316,9 +326,9 @@ class McRequest extends McModel {
 
   /// دالة خاصة بارسال البيانات على شكل قاموس الذي تم تمريره مع الدالة
   ///
-  ///[Json]=>[قاموس]
+  /// Json=>(قاموس)
   ///
-  ///[inspect] => List<Map>
+  /// [inspect] => List<Map>
 
   Future postJsonData(String endPoint,
       {Map<String, dynamic>? data,
@@ -343,9 +353,9 @@ class McRequest extends McModel {
 
   /// دالة خاصة بحذف البيانات عن طريق ر.م الخاص بهم
   ///
-  ///[id]=>[ر.م]
+  /// [id]=>(ر.م)
   ///
-  ///[inspect] => List<Map>
+  /// [inspect] => List<Map>
   ///
   Future delJsonData(int id, String endpoint,
       {Function(Object error)? onError}) async {
@@ -397,7 +407,7 @@ class McRequest extends McModel {
   }
 }
 
-///يجب ان ترث النماذج المستخدمة من هذا الكائن
+/// يجب ان ترث النماذج المستخدمة من هذا الكائن
 abstract class McModel<T> extends ChangeNotifier {
   bool loading = false;
   bool loadingChecker = false;
@@ -429,6 +439,7 @@ abstract class McModel<T> extends ChangeNotifier {
     return super.hasListeners;
   }
 
+  ///في حالة وجود خطأ
   void setFailed(bool state) {
     failed = state;
     notifyListeners();
@@ -509,7 +520,18 @@ class McView extends AnimatedWidget {
   ///
   ///يمكنك تحديد عدد الثواني من اجل تجديد البيانات callAsStream في حالة اختيار
   ///
-
+  ///[retryText]
+  ///
+  ///النص الذي سيظهر في الور في حالة وجود خطأ
+  ///
+  ///[styleButton]
+  ///
+  ///تصميم الزر يمكنك التحكم من حلاله في الألوان ...
+  ///
+  ///[showExceptionDetails]
+  ///
+  ///تفعيل او الغاء ظهور تفاصيل الخطأ
+  ///
   McView(
       {Key? key,
       required this.model,
@@ -520,7 +542,7 @@ class McView extends AnimatedWidget {
       this.child,
       this.loader,
       this.retryText = "Failed, retry",
-      this.style,
+      this.styleButton,
       this.showExceptionDetails = false})
       : super(key: key, listenable: model) {
     /// call التحقق من طريقة الاستدعاء لدالة
@@ -553,7 +575,7 @@ class McView extends AnimatedWidget {
   final Widget? loader;
   final McModel model;
   final String retryText;
-  final ButtonStyle? style;
+  final ButtonStyle? styleButton;
   final bool showExceptionDetails;
 
   @override
@@ -569,6 +591,7 @@ class McView extends AnimatedWidget {
             children: [
               ElevatedButton(
                   child: Text(retryText),
+                  style: styleButton,
                   onPressed: () {
                     model.setFailed(false);
                     model.load(true);

@@ -61,7 +61,7 @@ class PostExample extends StatelessWidget {
 class Details extends StatelessWidget {
   final int index;
   //get your model by key
-  Post post = McController().get<Post>('posts');
+  final Post post = McController().get<Post>('posts');
   Details(this.index);
   @override
   Widget build(BuildContext context) {

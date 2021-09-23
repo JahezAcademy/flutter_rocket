@@ -37,6 +37,7 @@ class App extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   final ValueNotifier<double> dx = ValueNotifier<double>(0.1);
   BuildContext cntx;
