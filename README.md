@@ -128,7 +128,7 @@ class PostExample extends StatelessWidget {
             model: post,
             showExceptionDetails: true,
             callType: CallType.callIfModelEmpty,
-            builder: (BuildContext __, _) {
+            builder: () {
               return RefreshIndicator(
                 onRefresh: () => rq.getObjData("posts", post, multi: true),
                 child: ListView.builder(

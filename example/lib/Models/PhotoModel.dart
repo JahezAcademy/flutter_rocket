@@ -46,3 +46,4 @@ class Photo extends McModel<Photo> {
     multi = listOfphoto;
   }
 }
+

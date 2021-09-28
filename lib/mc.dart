@@ -11,6 +11,7 @@ library mc;
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -487,7 +488,7 @@ enum CallType {
   /// يتم استدعاء الدالة عندما يكون النموذج فارغ
 }
 
-class McView extends AnimatedWidget {
+class McView extends StatefulWidget {
   /// [McView]
   ///
   /// انشاء البناء الخاص باعادة بناء المحتويات الخاصة به.
@@ -539,12 +540,10 @@ class McView extends AnimatedWidget {
       this.call = _myDefaultFunc,
       this.callType = CallType.callAsFuture,
       this.secondsOfStream = 1,
-      this.child,
       this.loader,
       this.retryText = "Failed, retry",
       this.styleButton,
-      this.showExceptionDetails = false})
-      : super(key: key, listenable: model) {
+      this.showExceptionDetails = false}) {
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
@@ -567,11 +566,10 @@ class McView extends AnimatedWidget {
   }
 
   static _myDefaultFunc() {}
-  final TransitionBuilder builder;
+  final Widget Function() builder;
   final dynamic Function() call;
   final CallType callType;
   final int secondsOfStream;
-  final Widget? child;
   final Widget? loader;
   final McModel model;
   final String retryText;
@@ -579,25 +577,64 @@ class McView extends AnimatedWidget {
   final bool showExceptionDetails;
 
   @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Listenable>('model', model));
+  }
+
+  @override
+  _McViewState createState() => _McViewState();
+}
+
+class _McViewState extends State<McView> {
+  @override
+  void initState() {
+    super.initState();
+    widget.model.addListener(_handleChange);
+  }
+
+  @override
+  void didUpdateWidget(McView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.model != oldWidget.model) {
+      oldWidget.model.removeListener(_handleChange);
+      widget.model.addListener(_handleChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.model.removeListener(_handleChange);
+    super.dispose();
+  }
+
+  void _handleChange() {
+    setState(() {
+      // The listenable's state is our build state, and it changed already.
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (model.failed) {
+    if (widget.model.failed) {
       return Center(
         child: Container(
           width: MediaQuery.of(context).size.width * 0.5,
           height: MediaQuery.of(context).size.height * 0.2,
           padding: EdgeInsets.symmetric(horizontal: 15.0),
+          //TODO: make more customizible
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                  child: Text(retryText),
-                  style: styleButton,
+                  child: Text(widget.retryText),
+                  style: widget.styleButton,
                   onPressed: () {
-                    model.setFailed(false);
-                    model.load(true);
-                    call();
+                    widget.model.setFailed(false);
+                    widget.model.load(true);
+                    widget.call();
                   }),
-              showExceptionDetails
+              widget.showExceptionDetails
                   ? ElevatedButton(
                       child: Text("show Details"),
                       onPressed: () {
@@ -606,14 +643,16 @@ class McView extends AnimatedWidget {
                             builder: (context) {
                               return AlertDialog(
                                 title: Text(
-                                  model.exception.split(":")[0] +
+                                  widget.model.exception.split(":")[0] +
                                       " " +
-                                      model.statusCode!.keys.first.toString(),
+                                      widget.model.statusCode!.keys.first
+                                          .toString(),
                                 ),
                                 content: Text(
-                                  model.exception +
+                                  widget.model.exception +
                                       "\n- " +
-                                      model.statusCode!.values.first.toString(),
+                                      widget.model.statusCode!.values.first
+                                          .toString(),
                                 ),
                               );
                             });
@@ -624,9 +663,9 @@ class McView extends AnimatedWidget {
         ),
       );
     } else {
-      return model.loading
-          ? Center(child: loader ?? CircularProgressIndicator())
-          : builder(context, child);
+      return widget.model.loading
+          ? Center(child: widget.loader ?? CircularProgressIndicator())
+          : widget.builder();
     }
   }
 }
@@ -637,6 +676,7 @@ class McController {
   Map<String, dynamic> models = {};
 
   /// اضافة تموذج جديد
+  /// TODO: replace ! readonly parameter
   T add<T>(String key, T model) {
     if (key.contains('!')) {
       if (!models.containsKey(key.substring(1))) {

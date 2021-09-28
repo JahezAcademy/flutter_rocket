@@ -28,7 +28,7 @@ class CounterExample extends StatelessWidget {
               },
               secondsOfStream: 2,
               callType: CallType.callAsStream,
-              builder: (BuildContext context, Widget child) {
+              builder: () {
                 return Text(
                   counter.count.toString(),
                   style: Theme.of(context).textTheme.headline4,

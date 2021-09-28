@@ -6,7 +6,7 @@ class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // (!) means if you close and open this screen you will use same data without update it from Api
   // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
-  final Post post = McController().add<Post>('posts', Post());
+  final Post post = McController().add<Post>('!posts', Post());
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
   final String title;
@@ -35,7 +35,7 @@ class PostExample extends StatelessWidget {
             // call api if model is empty
             callType: CallType.callIfModelEmpty,
             showExceptionDetails: true,
-            builder: (BuildContext __, snp) {
+            builder: () {
               return RefreshIndicator(
                 onRefresh: () => rq.getObjData("posts", post, multi: true),
                 child: ListView.builder(
@@ -96,7 +96,7 @@ class Details extends StatelessWidget {
 //         width: MediaQuery.of(context).size.width,
 //         child: FutureBuilder(
 //           future: request.getObjData("posts", post, multi: true),
-//           builder: (BuildContext context, snp) {
+//           builder: () {
 //             return post.loading
 //                 ? Center(child: CircularProgressIndicator())
 //                 : ListView.builder(
@@ -140,7 +140,7 @@ class Details extends StatelessWidget {
 //           width: MediaQuery.of(context).size.width,
 //           child: McView(
 //             model: post,
-//             builder: (BuildContext context, Widget child) {
+//             builder: () {
 //               return ListView.builder(
 //                 itemCount: post.multi.length,
 //                 itemBuilder: (BuildContext context, int index) {
@@ -180,7 +180,7 @@ class Details extends StatelessWidget {
 //           width: MediaQuery.of(context).size.width,
 //           child: McView(
 //             model: post,
-//             builder: (BuildContext context, Widget child) {
+//             builder: () {
 //               return ExpansionTile(
 //                   title: Text(post.title),
 //                   children: [SizedBox(height: 5.0), Text(post.body)]);
