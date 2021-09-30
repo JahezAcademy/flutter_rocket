@@ -34,7 +34,20 @@ class PhotoExample extends StatelessWidget {
                             title: Text(currentphoto.title),
                             leading: Image.network(currentphoto.thumbnailUrl),
                           ),
-                          Image.network(currentphoto.url)
+                          Image.network(
+                            currentphoto.url,
+                            frameBuilder: (_, child, __, ___) {
+                              return Container(
+                                decoration: BoxDecoration(boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 10.0,
+                                      color: Colors.black.withAlpha(100),
+                                      offset: Offset.zero)
+                                ]),
+                                child: child,
+                              );
+                            },
+                          )
                         ],
                       ),
                     );
