@@ -1,4 +1,3 @@
-
 import 'mc_request.dart';
 
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
@@ -30,6 +29,11 @@ class McController {
   /// حذف النموذح
   void remove(String key) {
     models.remove(key);
+  }
+
+  // حذف لنموذج بشرط معين
+  void removeWhere(bool Function(String, dynamic) test) {
+    models.removeWhere(test);
   }
 
   factory McController([String? key, McModel? model]) {
