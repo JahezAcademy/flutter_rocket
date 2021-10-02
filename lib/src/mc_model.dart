@@ -7,8 +7,8 @@ abstract class McModel<T> extends ChangeNotifier {
   List<T> multi = [];
   bool failed = false;
   bool existData = false;
-  String? exception;
-  Map<int, String>? statusCode;
+  String exception = "";
+  Map<int, String> statusCode = {};
 
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
@@ -17,7 +17,7 @@ abstract class McModel<T> extends ChangeNotifier {
   }
 
   /// التقاط الخطأ
-  void setException(String _exception, Map<int, String>? status) {
+  void setException(String _exception, Map<int, String> status) {
     exception = _exception;
     statusCode = status;
     notifyListeners();

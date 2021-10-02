@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/src/mc_model.dart';
 
-
-
 /// call طريقة استدعاء دالة
 
 enum CallType {
@@ -17,9 +15,7 @@ enum CallType {
 
   /// يتم استدعاء الدالة عندما يكون النموذج فارغ
   callIfModelEmpty,
-
 }
-
 
 class McView extends StatefulWidget {
   /// [McView]
@@ -171,23 +167,20 @@ class _McViewState extends State<McView> {
                   ? ElevatedButton(
                       child: Text("show Details"),
                       onPressed: () {
-                        String exception = widget.model.exception ?? " : ";
-                        Map<int, String> statusCode = widget.model.statusCode ?? {};
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
                                 title: Text(
-                                  exception.split(":")[0] +
+                                   widget.model.exception.split(":")[0] +
                                       " " +
-                                      widget.model.statusCode!.keys.first
+                                    widget.model.statusCode.keys.first
                                           .toString(),
                                 ),
                                 content: Text(
-                                  exception +
+                                  widget.model.exception +
                                       "\n- " +
-                                      statusCode.values.first
-                                          .toString(),
+                                       widget.model.statusCode.values.first.toString(),
                                 ),
                               );
                             });

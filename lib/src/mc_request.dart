@@ -247,7 +247,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e) {
-      model.setException(e.toString(), currentStatus);
+      model.setException(e.toString(), currentStatus!);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -308,7 +308,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e) {
-      model.setException(e.toString(), currentStatus);
+      model.setException(e.toString(), currentStatus!);
       model.setFailed(true);
       return Future.value(model);
     }
