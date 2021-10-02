@@ -2,22 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mc/src/mc_model.dart';
 
-import 'mc_request.dart';
 
 
 /// call طريقة استدعاء دالة
 
 enum CallType {
+  /// يتم استدعاء الدالة يشكل متكرر
   callAsStream,
 
-  /// يتم استدعاء الدالة يشكل متكرر
+  /// يتم استدعاء الدالة مرة واحدة
   callAsFuture,
 
-  /// يتم استدعاء الدالة مرة واحدة
+  /// يتم استدعاء الدالة عندما يكون النموذج فارغ
   callIfModelEmpty,
 
-  /// يتم استدعاء الدالة عندما يكون النموذج فارغ
 }
 
 

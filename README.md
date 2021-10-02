@@ -98,9 +98,9 @@ class MyApp extends StatelessWidget {
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
-  // (!) means if you close and open this screen you will use same data without update it from Api
+  // readOnly parameter means if you close and open this screen you will use same data without update it from Api
   // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
-  final Post post = McController().add<Post>('!posts', Post());
+  final Post post = McController().add<Post>('posts', Post(),readOnly:true);
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
   final String title;

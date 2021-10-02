@@ -1,4 +1,5 @@
-import 'mc_request.dart';
+import 'package:mc/src/mc_model.dart';
+
 
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class McController {
@@ -6,14 +7,13 @@ class McController {
   Map<String, dynamic> models = {};
 
   /// اضافة تموذج جديد
-  /// TODO: replace ! readonly parameter
-  T add<T>(String key, T model) {
-    if (key.contains('!')) {
-      if (!models.containsKey(key.substring(1))) {
-        models[key.substring(1)] = model;
+  T add<T>(String key, T model,{bool readOnly = false}) {
+    if (readOnly) {
+      if (!models.containsKey(key)) {
+        models[key] = model;
         return model;
       } else {
-        return models[key.substring(1)];
+        return models[key];
       }
     } else {
       models[key] = model;
@@ -31,7 +31,7 @@ class McController {
     models.remove(key);
   }
 
-  // حذف لنموذج بشرط معين
+  // حذف نموذج بشرط معين
   void removeWhere(bool Function(String, dynamic) test) {
     models.removeWhere(test);
   }
