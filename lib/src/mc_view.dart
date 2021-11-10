@@ -71,6 +71,7 @@ class McView extends StatefulWidget {
       this.secondsOfStream = 1,
       this.loader,
       this.retryText = "Failed, retry",
+      this.exceptionWidget,
       this.styleButton,
       this.showExceptionDetails = false}) {
     /// call التحقق من طريقة الاستدعاء لدالة
@@ -103,6 +104,8 @@ class McView extends StatefulWidget {
   final McModel model;
   final String retryText;
   final ButtonStyle? styleButton;
+  final Widget Function(String exception, Map<int, String> error)?
+      exceptionWidget;
   final bool showExceptionDetails;
 
   @override
@@ -164,27 +167,8 @@ class _McViewState extends State<McView> {
                     widget.call();
                   }),
               widget.showExceptionDetails
-                  ? ElevatedButton(
-                      child: Text("show Details"),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(
-                                   widget.model.exception.split(":")[0] +
-                                      " " +
-                                    widget.model.statusCode.keys.first
-                                          .toString(),
-                                ),
-                                content: Text(
-                                  widget.model.exception +
-                                      "\n- " +
-                                       widget.model.statusCode.values.first.toString(),
-                                ),
-                              );
-                            });
-                      })
+                  ? widget.exceptionWidget!(
+                      widget.model.exception, widget.model.statusCode)
                   : const SizedBox(),
             ],
           ),
@@ -196,4 +180,5 @@ class _McViewState extends State<McView> {
           : widget.builder();
     }
   }
+
 }

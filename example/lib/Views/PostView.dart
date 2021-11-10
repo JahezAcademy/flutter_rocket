@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 import '../Models/PostModel.dart';
-
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
-  // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
+  // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
   final Post post = McController().add<Post>('posts', Post(),readOnly: true);
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
