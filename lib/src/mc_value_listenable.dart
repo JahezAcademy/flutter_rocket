@@ -13,4 +13,3 @@ class McValue<T> extends McListenable{
     notifyListener(_initial);
   }
 }
-

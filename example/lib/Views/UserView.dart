@@ -106,6 +106,7 @@ class UserExample extends StatelessWidget {
                         Text(user.phone),
                         Text(user.website),
                         SizedBox(height: 5),
+                       
                         ExpansionTile(
                             tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
                             leading: CircleAvatar(

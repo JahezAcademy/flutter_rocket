@@ -12,7 +12,8 @@ class PostExample extends StatelessWidget {
   final String title;
 
   @override
-  Widget build(BuildContext context) {   
+  Widget build(BuildContext context) {
+    McValue<String> mcValue = McValue<String>("Initial value");
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -23,43 +24,62 @@ class PostExample extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.data_usage),
               // Refresh Data from Api
-              onPressed: () => rq.getObjData("posts", post, multi: true))
+              onPressed: () {
+                mcValue.value = "Value Changed";
+                print(mcValue.value);
+                rq.getObjData("posts", post, multi: true);
+              })
         ],
       ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: McView(
-            call: () => rq.getObjData("posts", post, multi: true),
-            model: post,
-            exceptionWidget: (t, m) {
-              return t != null && m != null
-                  ? Column(
-                      children: [Text(t), Text(m.toString())],
-                    )
-                  : Text("error");
-            },
-            // call api if model is empty
-            callType: CallType.callIfModelEmpty,
-            showExceptionDetails: true,
-            builder: (context) {
-              return RefreshIndicator(
-                onRefresh: () => rq.getObjData("posts", post, multi: true),
-                child: ListView.builder(
-                  itemCount: post.multi.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: Text(post.multi[index].id.toString()),
-                      title: Text(post.multi[index].title),
-                      onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return Details(index);
-                      })),
-                    );
-                  },
-                ),
-              );
-            },
+          child: Column(
+            children: [
+             McMiniView(
+                () => Text(mcValue.value.toString()),
+                 mcValue,
+              ),
+              McView(
+                call: () => rq.getObjData("posts", post, multi: true),
+                model: post,
+                exceptionWidget: (t, m) {
+                  return t != null && m != null
+                      ? Column(
+                          children: [Text(t), Text(m.toString())],
+                        )
+                      : Text("error");
+                },
+                // call api if model is empty
+                callType: CallType.callIfModelEmpty,
+                showExceptionDetails: true,
+                builder: (context) {
+                  return RefreshIndicator(
+                    onRefresh: () {
+                      mcValue.value = "Value Changed";
+                      return rq.getObjData("posts", post, multi: true);
+                    },
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.852,
+                      child: ListView.builder(
+                        itemCount: post.multi.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            leading: Text(post.multi[index].id.toString()),
+                            title: Text(post.multi[index].title),
+                            onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                              return Details(index);
+                            })),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           )),
     );
   }

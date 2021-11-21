@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
+import 'mc_llistenable.dart';
 
 class McMiniView extends StatefulWidget {
-  final McValue mcValue;
+  final McListenable mcValue;
   final Widget Function() builder;
-  const McMiniView({
+  const McMiniView(
+    this.builder, 
+    this.mcValue,{
     Key? key,
-   required  this.mcValue,
-   required this.builder,
   }) : super(key: key);
 
   @override
@@ -18,8 +18,9 @@ class _McMiniViewState extends State<McMiniView> {
   final String _initial = "valueChanged";
   @override
   void initState() {
-    widget.mcValue.registerListener(_initial, _valueChanged);
     super.initState();
+
+    widget.mcValue.registerListener(_initial, _valueChanged);
   }
 
   @override
@@ -39,9 +40,10 @@ class _McMiniViewState extends State<McMiniView> {
 
   void _valueChanged() {
     setState(() {
-      // The listenable's state is our build state, and it changed already.
+      // Rebuild widget.
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return widget.builder();
