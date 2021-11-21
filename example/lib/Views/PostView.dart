@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 import '../Models/PostModel.dart';
+
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
   // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post = McController().add<Post>('posts', Post(),readOnly: true);
+  final Post post = McController().add<Post>('posts', Post(), readOnly: true);
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
   final String title;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {   
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -31,6 +32,13 @@ class PostExample extends StatelessWidget {
           child: McView(
             call: () => rq.getObjData("posts", post, multi: true),
             model: post,
+            exceptionWidget: (t, m) {
+              return t != null && m != null
+                  ? Column(
+                      children: [Text(t), Text(m.toString())],
+                    )
+                  : Text("error");
+            },
             // call api if model is empty
             callType: CallType.callIfModelEmpty,
             showExceptionDetails: true,

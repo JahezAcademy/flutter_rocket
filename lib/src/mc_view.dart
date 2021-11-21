@@ -125,7 +125,6 @@ class _McViewState extends State<McView> {
   @override
   void initState() {
     widget.model.registerListener(_initial, _handleChange);
-        print(widget.model.hasListeners);
     super.initState();
   }
 
