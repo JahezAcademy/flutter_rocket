@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/src/mc_model.dart';
 
+import 'mc_llistenable.dart';
+
 /// call طريقة استدعاء دالة
 
 enum CallType {
@@ -111,7 +113,7 @@ class McView extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<Listenable>('McModel', model));
+    properties.add(DiagnosticsProperty<McListenable>('McModel', model));
   }
 
   @override
@@ -119,24 +121,26 @@ class McView extends StatefulWidget {
 }
 
 class _McViewState extends State<McView> {
+  final String _initial = "initial";
   @override
   void initState() {
+    widget.model.registerListener(_initial, _handleChange);
+        print(widget.model.hasListeners);
     super.initState();
-    widget.model.addListener(_handleChange);
   }
 
   @override
   void didUpdateWidget(McView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(_handleChange);
-      widget.model.addListener(_handleChange);
+      oldWidget.model.removeListener(_initial);
+      widget.model.registerListener(_initial, _handleChange);
     }
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(_handleChange);
+    widget.model.removeListener(_initial);
     super.dispose();
   }
 
@@ -180,5 +184,4 @@ class _McViewState extends State<McView> {
           : widget.builder();
     }
   }
-
 }

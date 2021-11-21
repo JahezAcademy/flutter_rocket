@@ -26,8 +26,6 @@ class CounterExample extends StatelessWidget {
               call: () {
                 counter.count += 1;
               },
-              secondsOfStream: 2,
-              callType: CallType.callAsStream,
               builder: () {
                 return Text(
                   counter.count.toString(),

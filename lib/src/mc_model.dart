@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
+
+import 'mc_llistenable.dart';
 
 /// يجب ان ترث النماذج المستخدمة من هذا الكائن
-abstract class McModel<T> extends ChangeNotifier {
+abstract class McModel<T> extends McListenable{
+  McModel(){
+    this.registerListener(_initial, (){});
+  }
   bool loading = false;
   bool loadingChecker = false;
   List<T> multi = [];
@@ -9,23 +13,23 @@ abstract class McModel<T> extends ChangeNotifier {
   bool existData = false;
   String exception = "";
   Map<int, String> statusCode = {};
-
+  final String  _initial = "initial";
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
     loading = loadingChecker ? false : t;
-    notifyListeners();
+    notifyListener("initial");
   }
 
   /// التقاط الخطأ
   void setException(String _exception, Map<int, String> status) {
     exception = _exception;
     statusCode = status;
-    notifyListeners();
+    notifyListener(_initial);
   }
 
   void loadingChecking(bool value) {
     loadingChecker = value;
-    notifyListeners();
+    notifyListener(_initial);
   }
 
   bool hasListener() {
@@ -35,23 +39,23 @@ abstract class McModel<T> extends ChangeNotifier {
   ///في حالة وجود خطأ
   void setFailed(bool state) {
     failed = state;
-    notifyListeners();
+    notifyListener(_initial);
   }
 
   ///حذف النموذج من قائمة النماذج
   void delItem(int index) {
     multi.removeAt(index);
-    notifyListeners();
+    notifyListener(_initial);
   }
 
   /// ملئ النماذج من البيانات القادمة من الخادم
   void setMulti(List data) {
-    notifyListeners();
+    notifyListener(_initial);
   }
 
   /// من البيانات القادمة من الخادم الى نماذج
   void fromJson(Map<String, dynamic>? json) {
-    notifyListeners();
+    notifyListener(_initial);
   }
 
   ///json من النماذج الى بيانات
