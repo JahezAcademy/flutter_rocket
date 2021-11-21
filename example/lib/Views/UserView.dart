@@ -74,7 +74,7 @@ class UserExample extends StatelessWidget {
             // your model
             model: users,
             // your widget for show data from model
-            builder: () {
+            builder: (context) {
               return ListView.builder(
                 itemCount: users.multi.length,
                 itemBuilder: (BuildContext context, int index) {

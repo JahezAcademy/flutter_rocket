@@ -26,7 +26,7 @@ class CounterExample extends StatelessWidget {
               call: () {
                 counter.count += 1;
               },
-              builder: () {
+              builder: (context) {
                 return Text(
                   counter.count.toString(),
                   style: Theme.of(context).textTheme.headline4,

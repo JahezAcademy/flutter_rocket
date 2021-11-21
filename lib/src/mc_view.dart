@@ -98,7 +98,7 @@ class McView extends StatefulWidget {
   }
 
   static _myDefaultFunc() {}
-  final Widget Function() builder;
+  final Widget Function(BuildContext) builder;
   final dynamic Function() call;
   final CallType callType;
   final int secondsOfStream;
@@ -181,7 +181,7 @@ class _McViewState extends State<McView> {
     } else {
       return widget.model.loading
           ? Center(child: widget.loader ?? CircularProgressIndicator())
-          : widget.builder();
+          : widget.builder(context);
     }
   }
 }

@@ -21,7 +21,7 @@ class PhotoExample extends StatelessWidget {
 
             // get 5000 items
             call: getData,
-            builder: () {
+            builder: (context) {
               return ListView.builder(
                   itemCount: photo.multi.length,
                   itemBuilder: (BuildContext context, int index) {

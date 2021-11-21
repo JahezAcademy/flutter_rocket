@@ -12,7 +12,7 @@ abstract class McListenable {
   }
 
   void notifyListener(String key) {
-    _observers[key]!.call();
+    if (_observers.containsKey(key)) _observers[key]!.call();
   }
 
   void notifyListeners(List<String> keys) {
@@ -22,7 +22,7 @@ abstract class McListenable {
   }
 
   void removeListener(String key) {
-    _observers.remove(key);
+    if (_observers.containsKey(key)) _observers.remove(key);
   }
 
   void removeListeners(List<String> keys) {
