@@ -131,7 +131,7 @@ class McRequest extends McModel {
         } else {
           model.setMulti(result);
         }
-        return model.multi;
+        return model;
       } else {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (!complex!) {
