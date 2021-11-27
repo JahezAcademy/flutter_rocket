@@ -601,8 +601,8 @@ class McView extends AnimatedWidget {
                   ? ElevatedButton(
                       child: Text("show Details"),
                       onPressed: () {
-                        if (model.statusCode!.isEmpty)
-                          model.statusCode!.addAll({0: "Unknown"});
+                        if (model.statusCode == null)
+                          model.statusCode = {0: "Unknown"};
                         showDialog(
                             context: context,
                             builder: (context) {
