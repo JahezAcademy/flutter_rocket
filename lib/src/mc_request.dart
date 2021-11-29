@@ -201,22 +201,17 @@ class McRequest extends McModel {
     model.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
-    Map<int, String> currentStatus = {};
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .get(url, headers: headers)
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
 
       model.setFailed(false);
       return checkerObj<T>(response, model,
           multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus);
+    } catch (e, s) {
+      model.setException(e.toString(), s, response!.body);
       model.setFailed(true);
     }
   }
@@ -233,21 +228,16 @@ class McRequest extends McModel {
       Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    Map<int, String>? currentStatus;
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .put(url, body: json.encode(model.toJson()), headers: headers)
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
       model.setFailed(false);
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus!);
+    } catch (e, s) {
+      model.setException(e.toString(), s, response!.body);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -290,25 +280,20 @@ class McRequest extends McModel {
     model!.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
-    Map<int, String>? currentStatus;
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .post(url, headers: headers, body: json.encode(data))
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
-
+  
       if (setCookies) {
         updateCookie(response);
       }
       model.setFailed(false);
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus!);
+    } catch (e, s) {
+      model.setException(e.toString(), s, response!.body);
       model.setFailed(true);
       return Future.value(model);
     }

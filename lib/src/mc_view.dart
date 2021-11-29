@@ -106,7 +106,7 @@ class McView extends StatefulWidget {
   final McModel model;
   final String retryText;
   final ButtonStyle? styleButton;
-  final Widget Function(String exception, Map<int, String> error)?
+  final Widget Function(String exception, String? error)?
       exceptionWidget;
   final bool showExceptionDetails;
 
@@ -171,7 +171,7 @@ class _McViewState extends State<McView> {
                   }),
               widget.showExceptionDetails
                   ? widget.exceptionWidget!(
-                      widget.model.exception, widget.model.statusCode)
+                      widget.model.exception, widget.model.response)
                   : const SizedBox(),
             ],
           ),

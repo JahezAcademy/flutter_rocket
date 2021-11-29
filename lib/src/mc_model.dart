@@ -1,10 +1,9 @@
-
 import 'mc_llistenable.dart';
 
 /// يجب ان ترث النماذج المستخدمة من هذا الكائن
-abstract class McModel<T> extends McListenable{
-  McModel(){
-    this.registerListener(_initial, (){});
+abstract class McModel<T> extends McListenable {
+  McModel() {
+    this.registerListener(_initial, () {});
   }
   bool loading = false;
   bool loadingChecker = false;
@@ -12,8 +11,9 @@ abstract class McModel<T> extends McListenable{
   bool failed = false;
   bool existData = false;
   String exception = "";
-  Map<int, String> statusCode = {};
-  final String  _initial = "initial";
+  String? response;
+  final String _initial = "initial";
+
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
     loading = loadingChecker ? false : t;
@@ -21,9 +21,9 @@ abstract class McModel<T> extends McListenable{
   }
 
   /// التقاط الخطأ
-  void setException(String _exception, Map<int, String> status) {
+  void setException(String _exception,StackTrace stackTrace, String? _response) {
     exception = _exception;
-    statusCode = status;
+    response = _response;
     notifyListener(_initial);
   }
 
