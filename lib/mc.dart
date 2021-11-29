@@ -211,22 +211,17 @@ class McRequest extends McModel {
     model.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
-    Map<int, String> currentStatus = {};
+    http.Response? response;
     try {
       http.Response response = await http
           .get(url, headers: headers)
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
 
       model.setFailed(false);
       return checkerObj<T>(response, model,
           multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus);
+    } catch (e, s) {
+      model.setException(e.toString(), s, response);
       model.setFailed(true);
     }
   }
@@ -243,21 +238,16 @@ class McRequest extends McModel {
       Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    Map<int, String>? currentStatus;
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .put(url, body: json.encode(model.toJson()), headers: headers)
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
       model.setFailed(false);
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus);
+    } catch (e, s) {
+      model.setException(e.toString(), s, response);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -300,25 +290,19 @@ class McRequest extends McModel {
     model!.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
-    Map<int, String>? currentStatus;
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .post(url, headers: headers, body: json.encode(data))
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
-
       if (setCookies) {
         updateCookie(response);
       }
       model.setFailed(false);
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus);
+    } catch (e, s) {
+      model.setException(e.toString(), s, response);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -415,7 +399,6 @@ abstract class McModel<T> extends ChangeNotifier {
   bool failed = false;
   bool existData = false;
   late String exception;
-  Map<int, String>? statusCode;
 
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
@@ -424,9 +407,8 @@ abstract class McModel<T> extends ChangeNotifier {
   }
 
   /// التقاط الخطأ
-  void setException(String _exception, Map<int, String>? status) {
+  void setException(String _exception, StackTrace t, http.Response? response) {
     exception = _exception;
-    statusCode = status;
     notifyListeners();
   }
 
@@ -601,22 +583,12 @@ class McView extends AnimatedWidget {
                   ? ElevatedButton(
                       child: Text("show Details"),
                       onPressed: () {
-                        if (model.statusCode == null)
-                          model.statusCode = {0: "Unknown"};
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text(
-                                  model.exception.split(":")[0] +
-                                      " " +
-                                      model.statusCode!.keys.first.toString(),
-                                ),
-                                content: Text(
-                                  model.exception +
-                                      "\n- " +
-                                      model.statusCode!.values.first.toString(),
-                                ),
+                                title: Text(model.exception.split(":")[0]),
+                                content: Text(model.exception),
                               );
                             });
                       })
