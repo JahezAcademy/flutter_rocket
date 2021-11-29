@@ -213,7 +213,7 @@ class McRequest extends McModel {
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .get(url, headers: headers)
           .whenComplete(() => model.load(false));
 
@@ -221,7 +221,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e, s) {
-      model.setException(e.toString(), s, response);
+      model.setException(e.toString(), s, response!.body);
       model.setFailed(true);
     }
   }
@@ -247,7 +247,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e, s) {
-      model.setException(e.toString(), s, response);
+      model.setException(e.toString(), s, response!.body);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -302,7 +302,7 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e, s) {
-      model.setException(e.toString(), s, response);
+      model.setException(e.toString(), s, response!.body);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -399,6 +399,7 @@ abstract class McModel<T> extends ChangeNotifier {
   bool failed = false;
   bool existData = false;
   late String exception;
+  String? response;
 
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
@@ -407,7 +408,8 @@ abstract class McModel<T> extends ChangeNotifier {
   }
 
   /// التقاط الخطأ
-  void setException(String _exception, StackTrace t, http.Response? response) {
+  void setException(String _exception, StackTrace t, String? _response) {
+    response = _response;
     exception = _exception;
     notifyListeners();
   }
@@ -583,12 +585,14 @@ class McView extends AnimatedWidget {
                   ? ElevatedButton(
                       child: Text("show Details"),
                       onPressed: () {
+                        model.response ??= "";
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
                                 title: Text(model.exception.split(":")[0]),
-                                content: Text(model.exception),
+                                content: Text(
+                                    model.exception + '\n' + model.response!),
                               );
                             });
                       })
