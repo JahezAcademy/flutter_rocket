@@ -21,7 +21,8 @@ abstract class McModel<T> extends McListenable {
   }
 
   /// التقاط الخطأ
-  void setException(String _exception,StackTrace stackTrace, String? _response) {
+  void setException(
+      String _exception, StackTrace stackTrace, String? _response) {
     exception = _exception;
     response = _response;
     notifyListener(_initial);
@@ -65,7 +66,6 @@ abstract class McModel<T> extends McListenable {
 
   ///التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
   void rebuild() {
-    load(true);
-    load(false);
+    notifyListener(_initial);
   }
 }

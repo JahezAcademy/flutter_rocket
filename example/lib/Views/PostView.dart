@@ -43,7 +43,7 @@ class PostExample extends StatelessWidget {
               McView(
                 call: () => rq.getObjData("posts", post, multi: true),
                 model: post,
-                exceptionWidget: (t, m) {
+                onError: (t, m) {
                   return t != null && m != null
                       ? Column(
                           children: [Text(t), Text(m.toString())],

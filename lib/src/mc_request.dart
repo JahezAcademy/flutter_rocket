@@ -211,7 +211,11 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e, s) {
-      model.setException(e.toString(), s, response!.body);
+      String body = "";
+      if (response != null) {
+        body = response.body;
+      }
+      model.setException(e.toString(), s, body);
       model.setFailed(true);
     }
   }
@@ -237,7 +241,11 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e, s) {
-      model.setException(e.toString(), s, response!.body);
+      String body = "";
+      if (response != null) {
+        body = response.body;
+      }
+      model.setException(e.toString(), s, body);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -293,7 +301,11 @@ class McRequest extends McModel {
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e, s) {
-      model.setException(e.toString(), s, response!.body);
+      String body = "";
+      if (response != null) {
+        body = response.body;
+      }
+      model.setException(e.toString(), s, body);
       model.setFailed(true);
       return Future.value(model);
     }

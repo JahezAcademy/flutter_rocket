@@ -73,7 +73,7 @@ class McView extends StatefulWidget {
       this.secondsOfStream = 1,
       this.loader,
       this.retryText = "Failed, retry",
-      this.exceptionWidget,
+      this.onError,
       this.styleButton,
       this.showExceptionDetails = false}) {
     /// call التحقق من طريقة الاستدعاء لدالة
@@ -107,7 +107,7 @@ class McView extends StatefulWidget {
   final String retryText;
   final ButtonStyle? styleButton;
   final Widget Function(String exception, String? error)?
-      exceptionWidget;
+      onError;
   final bool showExceptionDetails;
 
   @override
@@ -170,7 +170,7 @@ class _McViewState extends State<McView> {
                     widget.call();
                   }),
               widget.showExceptionDetails
-                  ? widget.exceptionWidget!(
+                  ? widget.onError!(
                       widget.model.exception, widget.model.response)
                   : const SizedBox(),
             ],
