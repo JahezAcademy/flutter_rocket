@@ -74,8 +74,8 @@ class McView extends StatefulWidget {
       this.loader,
       this.retryText = "Failed, retry",
       this.onError,
-      this.styleButton,
-      this.showExceptionDetails = false}) {
+      this.styleButton
+      }) {
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
@@ -106,10 +106,7 @@ class McView extends StatefulWidget {
   final McModel model;
   final String retryText;
   final ButtonStyle? styleButton;
-  final Widget Function(String exception, String? error)?
-      onError;
-  final bool showExceptionDetails;
-
+  final Widget Function(String exception, String? error)? onError;
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -169,7 +166,7 @@ class _McViewState extends State<McView> {
                     widget.model.load(true);
                     widget.call();
                   }),
-              widget.showExceptionDetails
+              widget.onError != null
                   ? widget.onError!(
                       widget.model.exception, widget.model.response)
                   : const SizedBox(),

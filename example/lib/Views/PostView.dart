@@ -51,8 +51,7 @@ class PostExample extends StatelessWidget {
                       : Text("error");
                 },
                 // call api if model is empty
-                callType: CallType.callIfModelEmpty,
-                showExceptionDetails: true,
+                callType: CallType.callIfModelEmpty,                
                 builder: (context) {
                   return RefreshIndicator(
                     onRefresh: () {

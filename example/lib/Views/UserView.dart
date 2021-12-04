@@ -67,10 +67,7 @@ class UserExample extends StatelessWidget {
                 mc.get<McRequest>('rq').getObjData("users", users, multi: true),
             // call api every 1 sec
             callType: CallType.callAsStream,
-
-            secondsOfStream: 1,
-            // case exception show details of exception error
-            showExceptionDetails: true,
+            secondsOfStream: 1,           
             // your model
             model: users,
             // your widget for show data from model
