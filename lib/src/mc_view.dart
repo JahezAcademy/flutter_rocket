@@ -118,7 +118,7 @@ class McView extends StatefulWidget {
 }
 
 class _McViewState extends State<McView> {
-  final String _initial = "initial";
+  final String _initial = "rebuild";
   @override
   void initState() {
     widget.model.registerListener(_initial, _handleChange);

@@ -19,7 +19,6 @@ class _McMiniViewState extends State<McMiniView> {
   @override
   void initState() {
     super.initState();
-
     widget.mcValue.registerListener(_initial, _valueChanged);
   }
 

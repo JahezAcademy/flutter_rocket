@@ -13,7 +13,8 @@ class PostExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    McValue<String> mcValue = McValue<String>("Initial value");
+    McValue<String> mcValue = "Initial value".mini;
+    McValue<int> mcNum = 5.mini;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -24,11 +25,7 @@ class PostExample extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.data_usage),
               // Refresh Data from Api
-              onPressed: () {
-                mcValue.value = "Value Changed";
-                print(mcValue.value);
-                rq.getObjData("posts", post, multi: true);
-              })
+              onPressed: () => refresh(mcValue, mcNum))
         ],
       ),
       body: Container(
@@ -36,9 +33,13 @@ class PostExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
-             McMiniView(
-                () => Text(mcValue.value.toString()),
-                 mcValue,
+              McMiniView(
+                () => Text(mcValue.v.toString()),
+                mcValue,
+              ),
+              McMiniView(
+                () => Text(mcNum.v.toString()),
+                mcNum,
               ),
               McView(
                 call: () => rq.getObjData("posts", post, multi: true),
@@ -51,12 +52,11 @@ class PostExample extends StatelessWidget {
                       : Text("error");
                 },
                 // call api if model is empty
-                callType: CallType.callIfModelEmpty,                
+                callType: CallType.callIfModelEmpty,
                 builder: (context) {
                   return RefreshIndicator(
                     onRefresh: () {
-                      mcValue.value = "Value Changed";
-                      return rq.getObjData("posts", post, multi: true);
+                      return refresh(mcValue, mcNum);
                     },
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.852,
@@ -81,6 +81,12 @@ class PostExample extends StatelessWidget {
             ],
           )),
     );
+  }
+
+  Future<dynamic> refresh(McValue<String> mcValue, McValue<int> mcNum) {
+    mcValue.v = "Value Changed";
+    mcNum.v = 10;
+    return rq.getObjData("posts", post, multi: true);
   }
 }
 
@@ -223,3 +229,11 @@ class Details extends StatelessWidget {
 // ## multi[true]
 // Json: request.getJsonData("posts",multi: true).then((value) => print(value));
 // Model: request.getObjData("posts",yourModelHere,multi: true).then((value) => print(value));
+
+extension McString on String {
+  McValue<String> get mini => McValue<String>(this);
+}
+
+extension McInt on int {
+  McValue<int> get mini => McValue<int>(this);
+}
