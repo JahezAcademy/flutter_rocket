@@ -2,6 +2,11 @@ import 'dart:ui';
 
 abstract class McListenable {
   Map<String, VoidCallback> _observers = {};
+  List<McListenable> merges = [];
+
+  bool get isMerged {
+    return merges.isNotEmpty;
+  }
 
   void registerListener(String key, VoidCallback listener) {
     _observers[key] = listener;

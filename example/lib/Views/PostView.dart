@@ -10,11 +10,10 @@ class PostExample extends StatelessWidget {
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
   final String title;
-
+  final McValue<String> mcValue = "Initial value".mini;
+  final McValue<int> mcNum = 5.mini;
   @override
   Widget build(BuildContext context) {
-    McValue<String> mcValue = "Initial value".mini;
-    McValue<int> mcNum = 5.mini;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -40,6 +39,16 @@ class PostExample extends StatelessWidget {
               McMiniView(
                 () => Text(mcNum.v.toString()),
                 mcNum,
+              ),
+              // merge values
+              McMiniView(
+                () => Row(
+                  children: [
+                    Text(mcNum.v.toString()),
+                    Text(mcValue.v.toString()),
+                  ],
+                ),
+                McValue.merge([mcNum, mcValue]),
               ),
               McView(
                 call: () => rq.getObjData("posts", post, multi: true),

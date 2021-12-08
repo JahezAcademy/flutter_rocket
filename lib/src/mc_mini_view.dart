@@ -5,8 +5,8 @@ class McMiniView extends StatefulWidget {
   final McListenable mcValue;
   final Widget Function() builder;
   const McMiniView(
-    this.builder, 
-    this.mcValue,{
+    this.builder,
+    this.mcValue, {
     Key? key,
   }) : super(key: key);
 
@@ -15,29 +15,53 @@ class McMiniView extends StatefulWidget {
 }
 
 class _McMiniViewState extends State<McMiniView> {
-  final String _initial = "valueChanged";
+  final String _valueChanged = "valueChanged";
+  final String _mergesChanged = "mergesChanged";
   @override
   void initState() {
     super.initState();
-    widget.mcValue.registerListener(_initial, _valueChanged);
+    if (widget.mcValue.isMerged) {
+      widget.mcValue.merges.forEach((mcValue) {
+        mcValue.registerListener(_mergesChanged, _rebuildWidget);
+      });
+    } else {
+      widget.mcValue.registerListener(_valueChanged, _rebuildWidget);
+    }
   }
 
   @override
   void didUpdateWidget(McMiniView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.mcValue != oldWidget.mcValue) {
-      oldWidget.mcValue.removeListener(_initial);
-      widget.mcValue.registerListener(_initial, _valueChanged);
+    if (widget.mcValue.isMerged) {
+      if (widget.mcValue != oldWidget.mcValue) {
+        oldWidget.mcValue.merges.forEach((mcValue) {
+          mcValue.removeListener(_valueChanged);
+        });
+        widget.mcValue.merges.forEach((mcValue) {
+          mcValue.registerListener(_valueChanged, _rebuildWidget);
+        });
+      }
+    } else {
+      if (widget.mcValue != oldWidget.mcValue) {
+        oldWidget.mcValue.removeListener(_valueChanged);
+        widget.mcValue.registerListener(_valueChanged, _rebuildWidget);
+      }
     }
   }
 
   @override
   void dispose() {
-    widget.mcValue.removeListener(_initial);
+    if (widget.mcValue.isMerged) {
+      widget.mcValue.merges.forEach((mcValue) {
+        mcValue.removeListener(_valueChanged);
+      });
+    } else {
+      widget.mcValue.removeListener(_valueChanged);
+    }
     super.dispose();
   }
 
-  void _valueChanged() {
+  void _rebuildWidget() {
     setState(() {
       // Rebuild widget.
     });
