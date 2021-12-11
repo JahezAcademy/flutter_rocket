@@ -74,8 +74,3 @@ class _McMiniViewState extends State<McMiniView> {
   }
 }
 
-extension Easy<T> on T {
-  McValue<T> get mini {
-    return McValue<T>(this);
-  }
-}

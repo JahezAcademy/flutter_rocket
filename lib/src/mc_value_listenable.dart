@@ -25,3 +25,9 @@ class McValue<T> extends McListenable {
     super.registerListener(key, listener);
   }
 }
+
+extension Easy<T> on T {
+  McValue<T> get mini {
+    return McValue<T>(this);
+  }
+}
