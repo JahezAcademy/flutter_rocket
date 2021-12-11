@@ -12,6 +12,9 @@ class PostExample extends StatelessWidget {
   final String title;
   final McValue<String> mcValue = "Initial value".mini;
   final McValue<int> mcNum = 5.mini;
+  var listener = () {
+    print("-----------oooooo------------");
+  };
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +68,9 @@ class PostExample extends StatelessWidget {
                 builder: (context) {
                   return RefreshIndicator(
                     onRefresh: () {
+                      mcNum.removeListener("myListeener");
+                      mcNum.callListener("myListeener");
+
                       return refresh(mcValue, mcNum);
                     },
                     child: Container(
@@ -94,7 +100,18 @@ class PostExample extends StatelessWidget {
 
   Future<dynamic> refresh(McValue<String> mcValue, McValue<int> mcNum) {
     mcValue.v = "Value Changed";
-    mcNum.v = 10;
+    mcNum.v++;
+
+    if (mcNum.v == 6) {
+      mcNum.registerListener("myListeener", () {
+        print("-----------myListeener------------");
+      });
+
+      mcNum.registerListener("myListeener", listener);
+      mcNum.registerListener("valueChanged", () {
+        print("-----------------------");
+      });
+    }
     return rq.getObjData("posts", post, multi: true);
   }
 }
