@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mc/mc.dart';
 import 'mc_llistenable.dart';
 
 class McMiniView extends StatefulWidget {
@@ -70,5 +71,11 @@ class _McMiniViewState extends State<McMiniView> {
   @override
   Widget build(BuildContext context) {
     return widget.builder();
+  }
+}
+
+extension Easy<T> on T {
+  McValue<T> get mini {
+    return McValue<T>(this);
   }
 }

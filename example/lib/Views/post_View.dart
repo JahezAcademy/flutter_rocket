@@ -10,11 +10,6 @@ class PostExample extends StatelessWidget {
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
   final String title;
-  final McValue<String> mcValue = "Initial value".mini;
-  final McValue<int> mcNum = 5.mini;
-  var listener = () {
-    print("-----------oooooo------------");
-  };
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,91 +22,52 @@ class PostExample extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.data_usage),
               // Refresh Data from Api
-              onPressed: () => refresh(mcValue, mcNum))
+              onPressed: () => refresh())
         ],
       ),
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: [
-              McMiniView(
-                () => Text(mcValue.v.toString()),
-                mcValue,
-              ),
-              McMiniView(
-                () => Text(mcNum.v.toString()),
-                mcNum,
-              ),
-              // merge values
-              McMiniView(
-                () => Row(
-                  children: [
-                    Text(mcNum.v.toString()),
-                    Text(mcValue.v.toString()),
-                  ],
-                ),
-                McValue.merge([mcNum, mcValue]),
-              ),
-              McView(
-                call: () => rq.getObjData("posts", post, multi: true),
-                model: post,
-                onError: (t, m) {
-                  return t != null && m != null
-                      ? Column(
-                          children: [Text(t), Text(m.toString())],
-                        )
-                      : Text("error");
+          child: McView(
+            call: () => rq.getObjData("posts", post, multi: true),
+            model: post,
+            onError: (t, m) {
+              return t != null && m != null
+                  ? Column(
+                      children: [Text(t), Text(m.toString())],
+                    )
+                  : Text("error");
+            },
+            // call api if model is empty
+            callType: CallType.callIfModelEmpty,
+            builder: (context) {
+              return RefreshIndicator(
+                onRefresh: () {
+                  return refresh();
                 },
-                // call api if model is empty
-                callType: CallType.callIfModelEmpty,
-                builder: (context) {
-                  return RefreshIndicator(
-                    onRefresh: () {
-                      mcNum.removeListener("myListeener");
-                      mcNum.callListener("myListeener");
-
-                      return refresh(mcValue, mcNum);
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.852,
+                  child: ListView.builder(
+                    itemCount: post.multi.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        leading: Text(post.multi[index].id.toString()),
+                        title: Text(post.multi[index].title),
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return Details(index);
+                        })),
+                      );
                     },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.852,
-                      child: ListView.builder(
-                        itemCount: post.multi.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            leading: Text(post.multi[index].id.toString()),
-                            title: Text(post.multi[index].title),
-                            onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                              return Details(index);
-                            })),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+                  ),
+                ),
+              );
+            },
           )),
     );
   }
 
-  Future<dynamic> refresh(McValue<String> mcValue, McValue<int> mcNum) {
-    mcValue.v = "Value Changed";
-    mcNum.v++;
-
-    if (mcNum.v == 6) {
-      mcNum.registerListener("myListeener", () {
-        print("-----------myListeener------------");
-      });
-
-      mcNum.registerListener("myListeener", listener);
-      mcNum.registerListener("valueChanged", () {
-        print("-----------------------");
-      });
-    }
+  Future<dynamic> refresh() {
     return rq.getObjData("posts", post, multi: true);
   }
 }
@@ -256,10 +212,3 @@ class Details extends StatelessWidget {
 // Json: request.getJsonData("posts",multi: true).then((value) => print(value));
 // Model: request.getObjData("posts",yourModelHere,multi: true).then((value) => print(value));
 
-extension McString on String {
-  McValue<String> get mini => McValue<String>(this);
-}
-
-extension McInt on int {
-  McValue<int> get mini => McValue<int>(this);
-}

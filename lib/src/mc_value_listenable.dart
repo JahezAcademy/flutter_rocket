@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:mc/src/mc_llistenable.dart';
 
 class McValue<T> extends McListenable {
@@ -20,7 +19,7 @@ class McValue<T> extends McListenable {
     merges = _merges;
   }
 
-  ///for add listener for rebuild widget you can use valueChanged or mergesChanged as key
+  /// for add listener for rebuild widget you can use valueChanged or mergesChanged as key
   @override
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);
