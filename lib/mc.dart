@@ -14,3 +14,5 @@ export 'src/mc_view.dart';
 export 'src/mc_controller.dart';
 export 'src/mc_request.dart';
 export 'src/mc_extensions.dart';
+export 'src/mc_value_listenable.dart';
+export 'src/mc_mini_view.dart';

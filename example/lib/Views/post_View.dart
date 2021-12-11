@@ -4,13 +4,12 @@ import '../Models/PostModel.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
-  // (!) means if you close and open this screen you will use same data without update it from Api
-  // [mc] is instance of Mccontroller injected in Stateless and ful widget by extension for use it easily
-  final Post post = McController().add<Post>('!posts', Post());
+  // readOnly means if you close and open this screen you will use same data without update it from Api
+  // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
+  final Post post = McController().add<Post>('posts', Post(), readOnly: true);
   final McRequest rq = McController().get<McRequest>("rq");
   PostExample({this.title});
   final String title;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +22,7 @@ class PostExample extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.data_usage),
               // Refresh Data from Api
-              onPressed: () => rq.getObjData("posts", post, multi: true))
+              onPressed: () => refresh())
         ],
       ),
       body: Container(
@@ -32,29 +31,44 @@ class PostExample extends StatelessWidget {
           child: McView(
             call: () => rq.getObjData("posts", post, multi: true),
             model: post,
+            onError: (t, m) {
+              return t != null && m != null
+                  ? Column(
+                      children: [Text(t), Text(m.toString())],
+                    )
+                  : Text("error");
+            },
             // call api if model is empty
             callType: CallType.callIfModelEmpty,
-            showExceptionDetails: true,
-            builder: () {
+            builder: (context) {
               return RefreshIndicator(
-                onRefresh: () => rq.getObjData("posts", post, multi: true),
-                child: ListView.builder(
-                  itemCount: post.multi.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: Text(post.multi[index].id.toString()),
-                      title: Text(post.multi[index].title),
-                      onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return Details(index);
-                      })),
-                    );
-                  },
+                onRefresh: () {
+                  return refresh();
+                },
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.852,
+                  child: ListView.builder(
+                    itemCount: post.multi.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        leading: Text(post.multi[index].id.toString()),
+                        title: Text(post.multi[index].title),
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return Details(index);
+                        })),
+                      );
+                    },
+                  ),
                 ),
               );
             },
           )),
     );
+  }
+
+  Future<dynamic> refresh() {
+    return rq.getObjData("posts", post, multi: true);
   }
 }
 
@@ -197,3 +211,4 @@ class Details extends StatelessWidget {
 // ## multi[true]
 // Json: request.getJsonData("posts",multi: true).then((value) => print(value));
 // Model: request.getObjData("posts",yourModelHere,multi: true).then((value) => print(value));
+

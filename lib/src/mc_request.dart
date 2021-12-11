@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mc/src/mc_model.dart';
 
 class McRequest extends McModel {
   final String url;
@@ -200,22 +201,21 @@ class McRequest extends McModel {
     model.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
-    Map<int, String> currentStatus = {};
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .get(url, headers: headers)
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
 
       model.setFailed(false);
       return checkerObj<T>(response, model,
           multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus);
+    } catch (e, s) {
+      String body = "";
+      if (response != null) {
+        body = response.body;
+      }
+      model.setException(e.toString(), s, body);
       model.setFailed(true);
     }
   }
@@ -232,21 +232,20 @@ class McRequest extends McModel {
       Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    Map<int, String>? currentStatus;
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .put(url, body: json.encode(model.toJson()), headers: headers)
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
       model.setFailed(false);
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus);
+    } catch (e, s) {
+      String body = "";
+      if (response != null) {
+        body = response.body;
+      }
+      model.setException(e.toString(), s, body);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -289,25 +288,24 @@ class McRequest extends McModel {
     model!.load(true);
     String srch = params != null ? mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
-    Map<int, String>? currentStatus;
+    http.Response? response;
     try {
-      http.Response response = await http
+      response = await http
           .post(url, headers: headers, body: json.encode(data))
           .whenComplete(() => model.load(false));
-      if (response.statusCode >= 400) {
-        currentStatus = {
-          response.statusCode: msgByStatusCode(response.statusCode)
-        };
-      }
-
+  
       if (setCookies) {
         updateCookie(response);
       }
       model.setFailed(false);
       return checkerObj<T>(response, model,
           complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
-    } catch (e) {
-      model.setException(e.toString(), currentStatus);
+    } catch (e, s) {
+      String body = "";
+      if (response != null) {
+        body = response.body;
+      }
+      model.setException(e.toString(), s, body);
       model.setFailed(true);
       return Future.value(model);
     }
@@ -393,71 +391,5 @@ class McRequest extends McModel {
     int index = rawCookie.indexOf(';');
     headers['cookie'] =
         (index == -1) ? rawCookie : rawCookie.substring(0, index);
-  }
-}
-
-/// يجب ان ترث النماذج المستخدمة من هذا الكائن
-abstract class McModel<T> extends ChangeNotifier {
-  bool loading = false;
-  bool loadingChecker = false;
-  List<T>? multi;
-  bool failed = false;
-  bool existData = false;
-  String? exception;
-  Map<int, String>? statusCode;
-
-  /// تفعيل و الغاء جاري التحميل
-  void load(bool t) {
-    loading = loadingChecker ? false : t;
-    notifyListeners();
-  }
-
-  /// التقاط الخطأ
-  void setException(String _exception, Map<int, String>? status) {
-    exception = _exception;
-    statusCode = status;
-    notifyListeners();
-  }
-
-  void loadingChecking(bool value) {
-    loadingChecker = value;
-    notifyListeners();
-  }
-
-  bool hasListener() {
-    return super.hasListeners;
-  }
-
-  ///في حالة وجود خطأ
-  void setFailed(bool state) {
-    failed = state;
-    notifyListeners();
-  }
-
-  ///حذف النموذج من قائمة النماذج
-  void delItem(int index) {
-    multi!.removeAt(index);
-    notifyListeners();
-  }
-
-  /// ملئ النماذج من البيانات القادمة من الخادم
-  void setMulti(List data) {
-    notifyListeners();
-  }
-
-  /// من البيانات القادمة من الخادم الى نماذج
-  void fromJson(Map<String, dynamic>? json) {
-    notifyListeners();
-  }
-
-  ///json من النماذج الى بيانات
-  Map<String, dynamic> toJson() {
-    return {};
-  }
-
-  ///التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
-  void rebuild() {
-    load(true);
-    load(false);
   }
 }

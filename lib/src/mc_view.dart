@@ -2,24 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mc/src/mc_model.dart';
 
-import 'mc_request.dart';
-
+import 'mc_llistenable.dart';
 
 /// call طريقة استدعاء دالة
 
 enum CallType {
+  /// يتم استدعاء الدالة يشكل متكرر
   callAsStream,
 
-  /// يتم استدعاء الدالة يشكل متكرر
+  /// يتم استدعاء الدالة مرة واحدة
   callAsFuture,
 
-  /// يتم استدعاء الدالة مرة واحدة
-  callIfModelEmpty,
-
   /// يتم استدعاء الدالة عندما يكون النموذج فارغ
+  callIfModelEmpty,
 }
-
 
 class McView extends StatefulWidget {
   /// [McView]
@@ -75,8 +73,9 @@ class McView extends StatefulWidget {
       this.secondsOfStream = 1,
       this.loader,
       this.retryText = "Failed, retry",
-      this.styleButton,
-      this.showExceptionDetails = false}) {
+      this.onError,
+      this.styleButton
+      }) {
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
@@ -99,7 +98,7 @@ class McView extends StatefulWidget {
   }
 
   static _myDefaultFunc() {}
-  final Widget Function() builder;
+  final Widget Function(BuildContext) builder;
   final dynamic Function() call;
   final CallType callType;
   final int secondsOfStream;
@@ -107,12 +106,11 @@ class McView extends StatefulWidget {
   final McModel model;
   final String retryText;
   final ButtonStyle? styleButton;
-  final bool showExceptionDetails;
-
+  final Widget Function(String exception, String? error)? onError;
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<Listenable>('McModel', model));
+    properties.add(DiagnosticsProperty<McListenable>('McModel', model));
   }
 
   @override
@@ -120,24 +118,25 @@ class McView extends StatefulWidget {
 }
 
 class _McViewState extends State<McView> {
+  final String _initial = "rebuild";
   @override
   void initState() {
+    widget.model.registerListener(_initial, _handleChange);
     super.initState();
-    widget.model.addListener(_handleChange);
   }
 
   @override
   void didUpdateWidget(McView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(_handleChange);
-      widget.model.addListener(_handleChange);
+      oldWidget.model.removeListener(_initial);
+      widget.model.registerListener(_initial, _handleChange);
     }
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(_handleChange);
+    widget.model.removeListener(_initial);
     super.dispose();
   }
 
@@ -167,31 +166,9 @@ class _McViewState extends State<McView> {
                     widget.model.load(true);
                     widget.call();
                   }),
-              widget.showExceptionDetails
-                  ? ElevatedButton(
-                      child: Text("show Details"),
-                      onPressed: () {
-                        String exception = widget.model.exception ?? " : ";
-                        Map<int, String> statusCode = widget.model.statusCode ?? {};
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(
-                                  exception.split(":")[0] +
-                                      " " +
-                                      widget.model.statusCode!.keys.first
-                                          .toString(),
-                                ),
-                                content: Text(
-                                  exception +
-                                      "\n- " +
-                                      statusCode.values.first
-                                          .toString(),
-                                ),
-                              );
-                            });
-                      })
+              widget.onError != null
+                  ? widget.onError!(
+                      widget.model.exception, widget.model.response)
                   : const SizedBox(),
             ],
           ),
@@ -200,7 +177,7 @@ class _McViewState extends State<McView> {
     } else {
       return widget.model.loading
           ? Center(child: widget.loader ?? CircularProgressIndicator())
-          : widget.builder();
+          : widget.builder(context);
     }
   }
 }

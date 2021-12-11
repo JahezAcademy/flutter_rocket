@@ -67,14 +67,11 @@ class UserExample extends StatelessWidget {
                 mc.get<McRequest>('rq').getObjData("users", users, multi: true),
             // call api every 1 sec
             callType: CallType.callAsStream,
-
-            secondsOfStream: 1,
-            // case exception show details of exception error
-            showExceptionDetails: true,
+            secondsOfStream: 1,           
             // your model
             model: users,
             // your widget for show data from model
-            builder: () {
+            builder: (context) {
               return ListView.builder(
                 itemCount: users.multi.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -106,6 +103,7 @@ class UserExample extends StatelessWidget {
                         Text(user.phone),
                         Text(user.website),
                         SizedBox(height: 5),
+                       
                         ExpansionTile(
                             tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
                             leading: CircleAvatar(
