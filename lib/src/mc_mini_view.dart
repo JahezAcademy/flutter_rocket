@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
 import 'mc_llistenable.dart';
+import 'mc_value_listenable.dart';
 
 class McMiniView extends StatefulWidget {
   final McListenable mcValue;
@@ -16,17 +16,15 @@ class McMiniView extends StatefulWidget {
 }
 
 class _McMiniViewState extends State<McMiniView> {
-  final String _valueChanged = "valueChanged";
-  final String _mergesChanged = "mergesChanged";
   @override
   void initState() {
     super.initState();
     if (widget.mcValue.isMerged) {
       widget.mcValue.merges.forEach((mcValue) {
-        mcValue.registerListener(_mergesChanged, _rebuildWidget);
+        mcValue.registerListener(McValue.mergesRebuild, _rebuildWidget);
       });
     } else {
-      widget.mcValue.registerListener(_valueChanged, _rebuildWidget);
+      widget.mcValue.registerListener(McValue.miniRebuild, _rebuildWidget);
     }
   }
 
@@ -36,16 +34,16 @@ class _McMiniViewState extends State<McMiniView> {
     if (widget.mcValue.isMerged) {
       if (widget.mcValue != oldWidget.mcValue) {
         oldWidget.mcValue.merges.forEach((mcValue) {
-          mcValue.removeListener(_valueChanged);
+          mcValue.removeListener(McValue.mergesRebuild);
         });
         widget.mcValue.merges.forEach((mcValue) {
-          mcValue.registerListener(_valueChanged, _rebuildWidget);
+          mcValue.registerListener(McValue.mergesRebuild, _rebuildWidget);
         });
       }
     } else {
       if (widget.mcValue != oldWidget.mcValue) {
-        oldWidget.mcValue.removeListener(_valueChanged);
-        widget.mcValue.registerListener(_valueChanged, _rebuildWidget);
+        oldWidget.mcValue.removeListener(McValue.miniRebuild);
+        widget.mcValue.registerListener(McValue.miniRebuild, _rebuildWidget);
       }
     }
   }
@@ -54,10 +52,10 @@ class _McMiniViewState extends State<McMiniView> {
   void dispose() {
     if (widget.mcValue.isMerged) {
       widget.mcValue.merges.forEach((mcValue) {
-        mcValue.removeListener(_valueChanged);
+        mcValue.removeListener(McValue.mergesRebuild);
       });
     } else {
-      widget.mcValue.removeListener(_valueChanged);
+      widget.mcValue.removeListener(McValue.miniRebuild);
     }
     super.dispose();
   }
