@@ -53,7 +53,7 @@ class UserExample extends StatelessWidget {
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
                   });
                   // Call rebuild method required if data multi
-                  users.rebuild();
+                  users.rebuildWidget();
                 }),
           ],
         ),

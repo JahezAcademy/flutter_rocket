@@ -11,12 +11,12 @@ abstract class McModel<T> extends McListenable {
   bool existData = false;
   String exception = "";
   String? response;
-  final String _rebuild = "rebuild";
+  static final String rebuild = "rebuild";
 
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
     loading = loadingChecker ? false : t;
-    callListener(_rebuild);
+    callListener(rebuild);
   }
 
   /// التقاط الخطأ
@@ -24,12 +24,12 @@ abstract class McModel<T> extends McListenable {
       String _exception, StackTrace stackTrace, String? _response) {
     exception = _exception;
     response = _response;
-    callListener(_rebuild);
+    callListener(rebuild);
   }
 
   void loadingChecking(bool value) {
     loadingChecker = value;
-    callListener(_rebuild);
+    callListener(rebuild);
   }
 
   bool hasListener() {
@@ -39,23 +39,23 @@ abstract class McModel<T> extends McListenable {
   ///في حالة وجود خطأ
   void setFailed(bool state) {
     failed = state;
-    callListener(_rebuild);
+    callListener(rebuild);
   }
 
   ///حذف النموذج من قائمة النماذج
   void delItem(int index) {
     multi.removeAt(index);
-    callListener(_rebuild);
+    callListener(rebuild);
   }
 
   /// ملئ النماذج من البيانات القادمة من الخادم
   void setMulti(List data) {
-    callListener(_rebuild);
+    callListener(rebuild);
   }
 
   /// من البيانات القادمة من الخادم الى نماذج
   void fromJson(Map<String, dynamic>? json) {
-    callListener(_rebuild);
+    callListener(rebuild);
   }
 
   ///json من النماذج الى بيانات
@@ -64,11 +64,12 @@ abstract class McModel<T> extends McListenable {
   }
 
   ///التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
-  void rebuild() {
-    callListener(_rebuild);
+  void rebuildWidget() {
+    callListener(rebuild);
   }
 
   @override
+
   /// for add listener to rebuild widget you can use rebuild as key
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);

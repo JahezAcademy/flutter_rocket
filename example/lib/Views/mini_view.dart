@@ -46,14 +46,14 @@ class MiniView extends StatelessWidget {
           mcNum.v++;
           mcString.v = "Value Changed";
           if (mcNum.v == 6) {
-            mcNum.registerListener("valueChanged", valChanged);
-            mcNum.registerListener("mergesChanged", () {
+            mcNum.registerListener(McValue.miniRebuild, valChanged);
+            mcNum.registerListener(McValue.mergesRebuild, () {
               print(
                   'this listener called when widget of merges values rebuild');
             });
           }
           if (mcNum.v == 12) {
-            mcNum.removeListener("valueChanged", valChanged);
+            mcNum.removeListener(McValue.miniRebuild, valChanged);
             print("listener removed!!!");
           }
         },
