@@ -12,7 +12,7 @@ class McValue<T> extends McListenable {
     if (_value == newValue) return;
     _value = newValue;
     callListener(miniRebuild);
-    callListener(mergesRebuild);
+    if (keyHasListeners(mergesRebuild)) callListener(mergesRebuild);
   }
 
   McValue.merge(List<McListenable> _merges) {

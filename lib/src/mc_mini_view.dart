@@ -34,7 +34,7 @@ class _McMiniViewState extends State<McMiniView> {
     if (widget.mcValue.isMerged) {
       if (widget.mcValue != oldWidget.mcValue) {
         oldWidget.mcValue.merges.forEach((mcValue) {
-          mcValue.removeListener(McValue.mergesRebuild);
+          mcValue.removeListener(McValue.mergesRebuild, _rebuildWidget);
         });
         widget.mcValue.merges.forEach((mcValue) {
           mcValue.registerListener(McValue.mergesRebuild, _rebuildWidget);
@@ -42,7 +42,7 @@ class _McMiniViewState extends State<McMiniView> {
       }
     } else {
       if (widget.mcValue != oldWidget.mcValue) {
-        oldWidget.mcValue.removeListener(McValue.miniRebuild);
+        oldWidget.mcValue.removeListener(McValue.miniRebuild, _rebuildWidget);
         widget.mcValue.registerListener(McValue.miniRebuild, _rebuildWidget);
       }
     }
@@ -52,10 +52,10 @@ class _McMiniViewState extends State<McMiniView> {
   void dispose() {
     if (widget.mcValue.isMerged) {
       widget.mcValue.merges.forEach((mcValue) {
-        mcValue.removeListener(McValue.mergesRebuild);
+        mcValue.removeListener(McValue.mergesRebuild, _rebuildWidget);
       });
     } else {
-      widget.mcValue.removeListener(McValue.miniRebuild);
+      widget.mcValue.removeListener(McValue.miniRebuild, _rebuildWidget);
     }
     super.dispose();
   }
@@ -71,4 +71,3 @@ class _McMiniViewState extends State<McMiniView> {
     return widget.builder();
   }
 }
-

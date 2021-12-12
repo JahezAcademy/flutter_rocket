@@ -6,7 +6,7 @@ import 'mc_llistenable.dart';
 abstract class McModel<T> extends McListenable {
   bool loading = false;
   bool loadingChecker = false;
-  List<T> multi = [];
+  List<T>? multi;
   bool failed = false;
   bool existData = false;
   String exception = "";
@@ -44,7 +44,7 @@ abstract class McModel<T> extends McListenable {
 
   ///حذف النموذج من قائمة النماذج
   void delItem(int index) {
-    multi.removeAt(index);
+    multi!.removeAt(index);
     callListener(rebuild);
   }
 
@@ -69,7 +69,6 @@ abstract class McModel<T> extends McListenable {
   }
 
   @override
-
   /// for add listener to rebuild widget you can use rebuild as key
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);
