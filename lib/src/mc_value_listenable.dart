@@ -11,6 +11,10 @@ class McValue<T> extends McListenable {
   set v(T newValue) {
     if (_value == newValue) return;
     _value = newValue;
+    rebuildWidget();
+  }
+
+  void rebuildWidget() {
     callListener(miniRebuild);
     if (keyHasListeners(mergesRebuild)) callListener(mergesRebuild);
   }

@@ -6,45 +6,60 @@ class MiniView extends StatelessWidget {
   final String title;
   final McValue<String> mcString = "Initial value".mini;
   final McValue<int> mcNum = 5.mini;
+  final McValue<List> mcList = [].mini;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("use View for every value"),
-          McMiniView(() => Text(mcString.v), mcString),
-          McMiniView(
-              () => Text(mcNum.v.toString() +
-                  (mcNum.v.toString() == "11"
-                      ? " click to remove listener"
-                      : "")),
-              mcNum),
-          const SizedBox(
-            height: 60.0,
-          ),
-          Text("merge multiple values"),
-          McMiniView(
-              () => Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(mcString.v),
-                      Text("=>"),
-                      Text(mcNum.v.toString())
-                    ],
-                  ),
-              McValue.merge([mcString, mcNum])),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("use View for every value"),
+            McMiniView(() => Text(mcString.v), mcString),
+            McMiniView(
+                () => Text(mcNum.v.toString() +
+                    (mcNum.v.toString() == "11"
+                        ? " click to remove listener"
+                        : "")),
+                mcNum),
+            McMiniView(() {
+              return Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: ListView.builder(
+                    itemCount: mcList.v.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Center(child: Text(mcList.v[index].toString()));
+                    },
+                  ));
+            }, mcList),
+            const SizedBox(
+              height: 60.0,
+            ),
+            Text("merge multiple values"),
+            McMiniView(
+                () => Wrap(
+                      runAlignment: WrapAlignment.center,
+                      children: [
+                        Text(mcString.v),
+                        Text("=>"),
+                        Text(mcNum.v.toString()),
+                        Text("=>"),
+                        Text(mcList.v.toString())
+                      ],
+                    ),
+                McValue.merge([mcString, mcNum, mcList])),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
-        //change your field by json structure
         onPressed: () {
           mcNum.v++;
           mcString.v = "Value Changed";
+          mcList.v += [mcNum.v, mcString.v];
           if (mcNum.v == 6) {
             mcNum.registerListener(McValue.miniRebuild, valChanged);
             mcNum.registerListener(McValue.mergesRebuild, () {
