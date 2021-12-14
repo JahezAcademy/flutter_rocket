@@ -59,6 +59,7 @@ class MiniView extends StatelessWidget {
         onPressed: () {
           mcNum.v++;
           mcString.v = "Value Changed";
+          // dont use methods for add items or remove it use instead of it +/-
           mcList.v += [mcNum.v, mcString.v];
           if (mcNum.v == 6) {
             mcNum.registerListener(McValue.miniRebuild, valChanged);

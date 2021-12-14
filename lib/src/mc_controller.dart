@@ -1,13 +1,12 @@
 import 'package:mc/src/mc_model.dart';
 
-
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class McController {
   static final McController _controller = McController._internal();
   Map<String, dynamic> models = {};
 
   /// اضافة تموذج جديد
-  T add<T>(String key, T model,{bool readOnly = false}) {
+  T add<T>(String key, T model, {bool readOnly = false}) {
     if (readOnly) {
       if (!models.containsKey(key)) {
         models[key] = model;

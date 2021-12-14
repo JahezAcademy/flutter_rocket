@@ -212,10 +212,12 @@ class McRequest extends McModel {
           multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
     } catch (e, s) {
       String body = "";
+      int statusCode = 0;
       if (response != null) {
         body = response.body;
+        statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, body);
+      model.setException(e.toString(), s, McResponse(body, statusCode));
       model.setFailed(true);
     }
   }
@@ -242,10 +244,12 @@ class McRequest extends McModel {
           complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e, s) {
       String body = "";
+      int statusCode = 0;
       if (response != null) {
         body = response.body;
+        statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, body);
+      model.setException(e.toString(), s, McResponse(body, statusCode));
       model.setFailed(true);
       return Future.value(model);
     }
@@ -293,7 +297,7 @@ class McRequest extends McModel {
       response = await http
           .post(url, headers: headers, body: json.encode(data))
           .whenComplete(() => model.load(false));
-  
+
       if (setCookies) {
         updateCookie(response);
       }
@@ -302,10 +306,12 @@ class McRequest extends McModel {
           complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e, s) {
       String body = "";
+      int statusCode = 0;
       if (response != null) {
         body = response.body;
+        statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, body);
+      model.setException(e.toString(), s, McResponse(body, statusCode));
       model.setFailed(true);
       return Future.value(model);
     }

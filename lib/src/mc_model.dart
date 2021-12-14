@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'mc_llistenable.dart';
 
 /// يجب ان ترث النماذج المستخدمة من هذا الكائن
@@ -10,7 +9,7 @@ abstract class McModel<T> extends McListenable {
   bool failed = false;
   bool existData = false;
   String exception = "";
-  String? response;
+  McResponse? response;
   static final String rebuild = "rebuild";
 
   /// تفعيل و الغاء جاري التحميل
@@ -21,7 +20,7 @@ abstract class McModel<T> extends McListenable {
 
   /// التقاط الخطأ
   void setException(
-      String _exception, StackTrace stackTrace, String? _response) {
+      String _exception, StackTrace stackTrace, McResponse? _response) {
     exception = _exception;
     response = _response;
     callListener(rebuild);
@@ -69,8 +68,15 @@ abstract class McModel<T> extends McListenable {
   }
 
   @override
+
   /// for add listener to rebuild widget you can use rebuild as key
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);
   }
+}
+
+class McResponse {
+  McResponse(this.response, this.statusCode);
+  final response;
+  final int statusCode;
 }
