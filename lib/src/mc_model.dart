@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'mc_exception.dart';
 import 'mc_llistenable.dart';
 
 /// يجب ان ترث النماذج المستخدمة من هذا الكائن
@@ -8,8 +9,7 @@ abstract class McModel<T> extends McListenable {
   List<T>? multi;
   bool failed = false;
   bool existData = false;
-  String exception = "";
-  McResponse? response;
+  McException? response;
   static final String rebuild = "rebuild";
 
   /// تفعيل و الغاء جاري التحميل
@@ -19,9 +19,7 @@ abstract class McModel<T> extends McListenable {
   }
 
   /// التقاط الخطأ
-  void setException(
-      String _exception, StackTrace stackTrace, McResponse? _response) {
-    exception = _exception;
+  void setException( McException? _response) {
     response = _response;
     callListener(rebuild);
   }
@@ -75,8 +73,3 @@ abstract class McModel<T> extends McListenable {
   }
 }
 
-class McResponse {
-  McResponse(this.response, this.statusCode);
-  final response;
-  final int statusCode;
-}

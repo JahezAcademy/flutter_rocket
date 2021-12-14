@@ -31,12 +31,10 @@ class PostExample extends StatelessWidget {
           child: McView(
             call: () => rq.getObjData("posts", post, multi: true),
             model: post,
-            onError: (t, m) {
-              return t != null && m != null
-                  ? Column(
-                      children: [Text(t), Text(m.toString())],
-                    )
-                  : Text("error");
+            onError: (McException exception) {
+              return Column(
+                children: [Text(exception.exception), Text(exception.response)],
+              );
             },
             // call api if model is empty
             callType: CallType.callIfModelEmpty,

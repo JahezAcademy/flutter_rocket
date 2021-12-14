@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/src/mc_model.dart';
 
+import 'mc_exception.dart';
 import 'mc_llistenable.dart';
 
 /// call طريقة استدعاء دالة
@@ -106,7 +107,7 @@ class McView extends StatefulWidget {
   final McModel model;
   final String retryText;
   final ButtonStyle? styleButton;
-  final Widget Function(String exception, McResponse? error)? onError;
+  final Widget Function(McException? error)? onError;
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -167,8 +168,7 @@ class _McViewState extends State<McView> {
                     widget.call();
                   }),
               widget.onError != null
-                  ? widget.onError!(
-                      widget.model.exception, widget.model.response)
+                  ? widget.onError!(widget.model.response)
                   : const SizedBox(),
             ],
           ),

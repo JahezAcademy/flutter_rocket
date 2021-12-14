@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mc/src/mc_model.dart';
 
+import 'mc_exception.dart';
+
 class McRequest extends McModel {
   final String url;
   final Map<String, String> headers;
@@ -217,7 +219,11 @@ class McRequest extends McModel {
         body = response.body;
         statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, McResponse(body, statusCode));
+      model.setException(McException(
+          response: body,
+          statusCode: statusCode,
+          exception: e.toString(),
+          stackTrace: s));
       model.setFailed(true);
     }
   }
@@ -249,7 +255,11 @@ class McRequest extends McModel {
         body = response.body;
         statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, McResponse(body, statusCode));
+      model.setException(McException(
+          response: body,
+          statusCode: statusCode,
+          exception: e.toString(),
+          stackTrace: s));
       model.setFailed(true);
       return Future.value(model);
     }
@@ -311,7 +321,11 @@ class McRequest extends McModel {
         body = response.body;
         statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, McResponse(body, statusCode));
+      model.setException(McException(
+          response: body,
+          statusCode: statusCode,
+          exception: e.toString(),
+          stackTrace: s));
       model.setFailed(true);
       return Future.value(model);
     }
