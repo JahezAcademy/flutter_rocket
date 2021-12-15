@@ -29,7 +29,7 @@ class PostExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: McView(
-            call: () => rq.getObjData("posts", post, multi: true),
+            call: () => rq.getObjData("posqts", post, multi: true),
             model: post,
             onError: (McException exception) {
               return Column(

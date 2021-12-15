@@ -18,39 +18,44 @@ class MiniView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("use View for every value"),
-            McMiniView(() => Text(mcString.v), mcString),
-            McMiniView(
-                () => Text(mcNum.v.toString() +
-                    (mcNum.v.toString() == "11"
-                        ? " click to remove listener"
-                        : "")),
-                mcNum),
-            McMiniView(() {
-              return Container(
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  child: ListView.builder(
-                    itemCount: mcList.v.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Center(child: Text(mcList.v[index].toString()));
-                    },
-                  ));
-            }, mcList),
+            McMV(mcString, () => Text(mcString.v)),
+            McMV(
+              mcNum,
+              () => Text(mcNum.v.toString() +
+                  (mcNum.v.toString() == "11"
+                      ? " click to remove listener"
+                      : "")),
+            ),
+            McMV(
+              mcList,
+              () {
+                return Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: ListView.builder(
+                      itemCount: mcList.v.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Center(child: Text(mcList.v[index].toString()));
+                      },
+                    ));
+              },
+            ),
             const SizedBox(
               height: 60.0,
             ),
             Text("merge multiple values"),
-            McMiniView(
-                () => Wrap(
-                      runAlignment: WrapAlignment.center,
-                      children: [
-                        Text(mcString.v),
-                        Text("=>"),
-                        Text(mcNum.v.toString()),
-                        Text("=>"),
-                        Text(mcList.v.toString())
-                      ],
-                    ),
-                McValue.merge([mcString, mcNum, mcList])),
+            McMV(
+              McValue.merge([mcString, mcNum, mcList]),
+              () => Wrap(
+                runAlignment: WrapAlignment.center,
+                children: [
+                  Text(mcString.v),
+                  Text("=>"),
+                  Text(mcNum.v.toString()),
+                  Text("=>"),
+                  Text(mcList.v.toString())
+                ],
+              ),
+            ),
           ],
         ),
       ),

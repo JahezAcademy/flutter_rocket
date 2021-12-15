@@ -38,3 +38,11 @@
 - add [exception] & [statusCode] in McModel for models
 - add [params] & [data] as body parameter for post methods
 - add [debugging] parameter for enable or disable debugging
+- add [McMV] & [McValue] for simple case
+- add [merge] method in [McValue] for use multiple [McValue] in one [McMV]
+- replace exception & statusCode to McException bject for capture api, framework error
+- create [McListenable] & use it instead of [ChangeNotifier] object
+- add & call multi VoidCallback by one key
+- use McException on setException of McModel instead of exception & statusCode
+- add [onError] builder in McView for handle errors in widget
+- removed [showExceptionDetails] parameter in McView

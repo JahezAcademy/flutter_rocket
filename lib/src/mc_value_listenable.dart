@@ -15,7 +15,7 @@ class McValue<T> extends McListenable {
   }
 
   void rebuildWidget() {
-    callListener(miniRebuild);
+    if (keyHasListeners(miniRebuild)) callListener(miniRebuild);
     if (keyHasListeners(mergesRebuild)) callListener(mergesRebuild);
   }
 
