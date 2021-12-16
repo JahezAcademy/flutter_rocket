@@ -75,8 +75,7 @@ class McView extends StatefulWidget {
       this.loader,
       this.retryText = "Failed, retry",
       this.onError,
-      this.styleButton
-      }) {
+      this.styleButton}) {
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
@@ -107,7 +106,7 @@ class McView extends StatefulWidget {
   final McModel model;
   final String retryText;
   final ButtonStyle? styleButton;
-  final Widget Function(McException? error)? onError;
+  final Widget Function(McException? error, Function() reload)? onError;
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -119,10 +118,15 @@ class McView extends StatefulWidget {
 }
 
 class _McViewState extends State<McView> {
-  final String _initial = "rebuild";
+  late Function() reload;
   @override
   void initState() {
-    widget.model.registerListener(_initial, _handleChange);
+    reload = () {
+      widget.model.setFailed(false);
+      widget.model.load(true);
+      widget.call.call();
+    };
+    widget.model.registerListener(McModel.rebuild, _handleChange);
     super.initState();
   }
 
@@ -130,14 +134,14 @@ class _McViewState extends State<McView> {
   void didUpdateWidget(McView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(_initial);
-      widget.model.registerListener(_initial, _handleChange);
+      oldWidget.model.removeListener(McModel.rebuild);
+      widget.model.registerListener(McModel.rebuild, _handleChange);
     }
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(_initial);
+    widget.model.removeListener(McModel.rebuild);
     super.dispose();
   }
 
@@ -150,30 +154,9 @@ class _McViewState extends State<McView> {
   @override
   Widget build(BuildContext context) {
     if (widget.model.failed) {
-      return Center(
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.5,
-          height: MediaQuery.of(context).size.height * 0.2,
-          padding: EdgeInsets.symmetric(horizontal: 15.0),
-          //TODO: make more customizible
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                  child: Text(widget.retryText),
-                  style: widget.styleButton,
-                  onPressed: () {
-                    widget.model.setFailed(false);
-                    widget.model.load(true);
-                    widget.call();
-                  }),
-              widget.onError != null
-                  ? widget.onError!(widget.model.response)
-                  : const SizedBox(),
-            ],
-          ),
-        ),
-      );
+      return widget.onError != null
+          ? widget.onError!(widget.model.response, reload)
+          : const SizedBox();
     } else {
       return widget.model.loading
           ? Center(child: widget.loader ?? CircularProgressIndicator())
