@@ -2,13 +2,13 @@
 
 State management and request package, Model,View,Controller,Request MVCR.
 
-## Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
+# Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
 
 
 [![Pub](https://img.shields.io/pub/v/mc.svg)](https://pub.dartlang.org/packages/mc)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 
-## Getting Started
+# Getting Started
 
 In your flutter project, add the dependency to your `pubspec.yaml`
 
@@ -17,15 +17,65 @@ dependencies:
   ...
   mc: ^0.0.2+1
 ```
-for generate The appropriate model by json data use this website https://json2dart.web.app/
+# Usage
+## Simple case use McMV & McValue
+its very simple
 
-## Usage
+```
+class McMiniViewExample extends StatelessWidget {
+  // use mini for convert value to McValue
+  final McValue<String> myStringValue = "My Value".mini;
+  final McValue<int> myIntValue = 2021.mini;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        //use your value in McMV and if value changed will rebuild widget for show your new value
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // use value for every widget
+            McMV(myStringValue, () => Text(myStringValue.v)),
+            McMV(myStringValue, () => Text(myIntValue.v.toString())),
+            const SizedBox(
+              height: 25.0,
+            ),
+            // merge multi values in one widget
+            McMV(McValue.merge([myStringValue, myIntValue]), () {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(myStringValue.v),
+                  Text(myIntValue.v.toString())
+                ],
+              );
+            })
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: () {
+          // change value
+          myStringValue.v = "Value Changed";
+          myIntValue.v = 2022;
+        },
+        tooltip: 'change Value',
+        child: Icon(Icons.change_circle),
+      ),
+    );
+  }
+}
 
-/////////////////////////////-- Model --/////////////////////////////
+```
 
-```dart
+## Complex case (state management & request)
+
+firstly you need to create your McModel from your json data by this [Link](https://json2dart.web.app/)
+you get something like this:
+
+```
 import 'package:mc/mc.dart';
-
 
 class Post extends McModel<Post> {
   List<Post> multi;
@@ -33,6 +83,11 @@ class Post extends McModel<Post> {
   int id;
   String title;
   String body;
+
+  final String userIdStr = 'userId';
+  final String idStr = 'id';
+  final String titleStr = 'title';
+  final String bodyStr = 'body';
 
   Post({
     this.userId,
@@ -55,11 +110,12 @@ class Post extends McModel<Post> {
     data['id'] = this.id;
     data['title'] = this.title;
     data['body'] = this.body;
+
     return data;
   }
 
   void setMulti(List data) {
-    List<Post> listOfpost = data.map((e) {
+    List listOfpost = data.map((e) {
       Post post = Post();
       post.fromJson(e);
       return post;
@@ -67,140 +123,152 @@ class Post extends McModel<Post> {
     multi = listOfpost;
   }
 }
+```
+
+Now second step create your McRequest in constructor or initState of first widget and pass url & headers
 
 ```
-/////////////////////////////-- View --/////////////////////////////
-```dart
-
-import 'package:mc/mc.dart';
-import 'Request.dart';
-import 'PostModel.dart';
-import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  MyApp() {
+    const String baseUrl = 'https://jsonplaceholder.typicode.com';
+    // create request object
+    McRequest request = McRequest(url: baseUrl);
+    // save it, for use it from any screen by key
+    mc.add('request', request);    
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MVCR Package',
-      theme: ThemeData(
-        primaryColor: Colors.brown,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'MVCR Package'),
+      ...
     );
   }
-}
+}...
+```
+
+Next step its build [McView] Widget & pass your [McModel] in [model] & [McRequest] method in [call] parameter
+
+
+```
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
-  // readOnly parameter means if you close and open this screen you will use same data without update it from Api
+  // readOnly means if you close and open this screen you will use same data without update it from Api
   // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post = McController().add<Post>('posts', Post(),readOnly:true);
-  final McRequest rq = McController().get<McRequest>("rq");
+  final Post post = McController().add<Post>('posts', Post(), readOnly: true);
+  // get request by key
+  final McRequest request = McController().get<McRequest>("request");
   PostExample({this.title});
   final String title;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Refresh Posts with swip to down or from here =>",
-          style: TextStyle(fontSize: 11.0),
+        appBar: AppBar(
+          title: Text(
+            "Refresh Posts with swip to down or from here =>",
+            style: TextStyle(fontSize: 11.0),
+          ),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.data_usage),
+                // Refresh Data from Api
+                onPressed: () => refresh())
+          ],
         ),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.data_usage),
-              // Refresh Data from Api
-              onPressed: () => rq.getObjData("posts", post, multi: true))
-        ],
-      ),
-      body: Container(
+        body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: McView(
-            call: () => rq.getObjData("posts", post, multi: true),
-            model: post,
-            showExceptionDetails: true,
-            callType: CallType.callIfModelEmpty,
-            builder: () {
-              return RefreshIndicator(
-                onRefresh: () => rq.getObjData("posts", post, multi: true),
-                child: ListView.builder(
-                  itemCount: post.multi.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: Text(post.multi[index].id.toString()),
-                      title: Text(post.multi[index].title),
-                      onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return Details(index);
-                      })),
-                    );
-                  },
-                ),
-              );
-            },
-          )),
+          child: RefreshIndicator(
+              onRefresh: () {
+                return refresh();
+              },
+              child: McView(
+                // call api method
+                call: () => request.getObjData("posqts", post, multi: true),
+                // your model generated
+                model: post,
+                // handle errors
+                onError: (McException exception,Function() reload) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(exception.exception),
+                        Text(exception.response),
+                        TextButton(onPressed: reload, child: Text("retry"))
+                      ],
+                    ),
+                  );
+                },
+                // call api if model is empty & you can choose another ways like default way asFuture(call once) & asStream (call every //[secondsOfStream] seconds)
+                callType: CallType.callIfModelEmpty,
+                // or
+                // callType: CallType.callAsStream,
+                // secondsOfStream: 1,
+                // customized your loading (default widget is CircularProgressIndicator)
+                loader:CustomLoading(),
+                builder: (context) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.852,
+                    child: ListView.builder(
+                      itemCount: post.multi.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        // your data saved in multi list as Post model
+                        Post currentPost = post.multi[index];
+                        return ListTile(
+                            leading: Text(post.id.toString()),
+                            title: Text(post.title),
+                            onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                    return Details(index);
+                                  }),
+                                ));
+                      },
+                    ),
+                  );
+                },
+              )),
+        ));
+  }
+
+  Future<dynamic> refresh() {
+    // use hrrp method you want (get,post,put) + ObjData if you used model in McView and you can use JsonData for get data directly from api
+    return request.getObjData(
+    // endpoint
+    "posts",
+    // your model
+    post, 
+    // if you received data as List multi will be true & if data as map you not should to define multi its false as default
+    multi: true,
+    // parameters for send it with request
+    params:{"key":"value"},
+    // inspect method for determine exact json use for generate your model in first step
+    // if your api send data directly without any supplement values you not should define it
+    inspect:(data)=>data["response"]
     );
   }
 }
-```
-/////////////////////////////////--Another View to use same data--////////////////////////////////// 
-```dart
-import 'package:mc/mc.dart';
-import 'Request.dart';
-import 'PostModel.dart';
-import 'package:flutter/material.dart';
 
-/////We will use same data on this page by controller
-class Details extends StatelessWidget {
-  final int index;
-  Post post;
-  //you can it directly here or in constractor with mc
-  //Post post = McController().get<Post>('posts')
-  Details(this.index) {
-    //get your model by key
-    post = mc.get<Post>("posts");
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ListTile(
-          leading: Text(post.multi[index].id.toString()),
-          title: Text(post.multi[index].title),
-          subtitle: Text(post.multi[index].body),
-        ),
-      ),
-    );
-  }
-}
 ```
-/////////////////////////////-- Request --/////////////////////////////
-```dart
-import 'package:mc/mc.dart';
+& last item its McController for save your model or any value and get it anywhere by key
 
-//your url with http or https protocol
-String baseUrl = 'jsonplaceholder.typicode.com';
-String token = "4acabed770cf............................";
-Map<String, String> apiHeaders = {
-  "Authorization": "Token " + token,
-  "Content-Type": "application/json",
-  "Accept": "application/json, text/plain, */*",
-  "X-Requested-With": "XMLHttpRequest",
-};
-McRequest request = McRequest(url: baseUrl);
-// Save request object in controller for use it in another screen add (!) if you want to set readonly for this object 
-McController('!request',request)
+```
+// instead of object use mc extension 
+McController().add("key",value,readOnly:true); // you can't edit it if readonly true
+// or
+// [add] return value
+mc.add<Type>("key",value);
+// [get] return value
+mc.get<Type>("key");
+// [remove]
+mc.remove("key");
+// remove with condition
+mc.removeWhere((key,value)=>key.contains("ke"));
+
 ```
 
-## [More example](https://github.com/ourflutter/mc/tree/main/example)
+## [More examples](https://github.com/ourflutter/mc/tree/main/example)
 # License
     MIT License
     

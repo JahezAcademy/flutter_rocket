@@ -67,7 +67,7 @@ abstract class McModel<T> extends McListenable {
 
   @override
 
-  /// for add listener to rebuild widget you can use rebuild as key
+  /// for add listener to rebuild widget you can use McModel.rebuild as key
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);
   }
