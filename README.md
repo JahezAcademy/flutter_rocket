@@ -233,7 +233,7 @@ class PostExample extends StatelessWidget {
   }
 
   Future<dynamic> refresh() {
-    // use hrrp method you want (get,post,put) + ObjData if you used model in McView and you can use JsonData for get data directly from api
+    // use http method you want (get,post,put) + ObjData if you used model in McView and you can use JsonData for get data directly from api
     return request.getObjData(
     // endpoint
     "posts",
@@ -254,7 +254,7 @@ class PostExample extends StatelessWidget {
 & last item its McController for save your model or any value and get it anywhere by key
 
 ```dart
-// instead of object use mc extension 
+// inside of object use mc extension 
 McController().add("key",value,readOnly:true); // you can't edit it if readonly true
 // or
 // [add] return value
@@ -267,7 +267,9 @@ mc.remove("key");
 mc.removeWhere((key,value)=>key.contains("ke"));
 
 ```
-
+## Graphic tutorial 
+![JPG](https://github.com/OurFlutterC/mc/blob/staging/mc_package.jpg)
+[explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
 ## [More examples](https://github.com/ourflutter/mc/tree/main/example)
 # License
     MIT License
