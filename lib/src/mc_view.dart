@@ -106,7 +106,7 @@ class McView extends StatefulWidget {
   final McModel model;
   final String retryText;
   final ButtonStyle? styleButton;
-  final Widget Function(McException? error, Function() reload)? onError;
+  final Widget Function(McException error, Function() reload)? onError;
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
