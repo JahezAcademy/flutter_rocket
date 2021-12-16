@@ -48,11 +48,11 @@ class McRequest extends McModel {
 
   @protected
   checkerJson(http.Response response,
-      {bool? complex, Function(dynamic data)? inspect, String? endpoint}) {
+      {Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var data = json.decode(utf8.decode(response.bodyBytes));
-      if (complex!) {
-        data = inspect!(data);
+      if (inspect != null) {
+        data = inspect(data);
       }
       return data;
     } else {
@@ -109,16 +109,13 @@ class McRequest extends McModel {
 
   @protected
   dynamic checkerObj<T>(http.Response response, McModel<T> model,
-      {bool? multi,
-      bool? complex,
-      Function(dynamic data)? inspect,
-      String? endpoint}) {
+      {bool? multi, Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       model.existData = true;
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
-        if (complex!) {
-          result = inspect!(result);
+        if (inspect != null) {
+          result = inspect(result);
           model.setMulti(result);
         } else {
           model.setMulti(result);
@@ -126,11 +123,11 @@ class McRequest extends McModel {
         return model.multi;
       } else {
         var result = json.decode(utf8.decode(response.bodyBytes));
-        if (!complex!) {
+        if (inspect != null) {
+          result = inspect(result);
           model.fromJson(result);
           return model;
         } else {
-          result = inspect!(result);
           model.fromJson(result);
           return model;
         }
@@ -175,8 +172,7 @@ class McRequest extends McModel {
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     try {
       http.Response response = await http.get(url, headers: headers);
-      return checkerJson(response,
-          complex: complex, inspect: inspect, endpoint: endpoint);
+      return checkerJson(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError!(e);
     }
@@ -198,7 +194,6 @@ class McRequest extends McModel {
   Future getObjData<T>(String endpoint, McModel<T> model,
       {Map<String, dynamic>? params,
       bool multi = false,
-      bool complex = false,
       Function(dynamic data)? inspect}) async {
     model.load(true);
     String srch = params != null ? mapToString(params) : "";
@@ -211,7 +206,7 @@ class McRequest extends McModel {
 
       model.setFailed(false);
       return checkerObj<T>(response, model,
-          multi: multi, complex: complex, inspect: inspect, endpoint: endpoint);
+          multi: multi, inspect: inspect, endpoint: endpoint);
     } catch (e, s) {
       String body = "";
       int statusCode = 0;
@@ -235,9 +230,7 @@ class McRequest extends McModel {
   /// [inspect] => List<Map>
 
   Future<McModel> putObjData<T>(int id, String endpoint, McModel<T> model,
-      {bool complex = false,
-      bool multi = false,
-      Function(dynamic data)? inspect}) async {
+      {bool multi = false, Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     http.Response? response;
@@ -247,7 +240,7 @@ class McRequest extends McModel {
           .whenComplete(() => model.load(false));
       model.setFailed(false);
       return checkerObj<T>(response, model,
-          complex: complex, inspect: inspect, multi: multi, endpoint: endpoint);
+          inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e, s) {
       String body = "";
       int statusCode = 0;
@@ -272,15 +265,13 @@ class McRequest extends McModel {
   /// [inspect] => List<Map>
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
-      {bool complex = false,
-      Function(dynamic data)? inspect,
+      {Function(dynamic data)? inspect,
       Function(Object error)? onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
       http.Response response =
           await http.put(url, body: json.encode(data), headers: headers);
-      return checkerJson(response,
-          complex: complex, inspect: inspect, endpoint: endpoint);
+      return checkerJson(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError!(e);
     }
@@ -294,7 +285,6 @@ class McRequest extends McModel {
 
   Future<McModel> postObjData<T>(String endPoint,
       {McModel<T>? model,
-      bool complex = false,
       bool multi = false,
       Function(dynamic data)? inspect,
       Map<String, dynamic>? data,
@@ -313,7 +303,7 @@ class McRequest extends McModel {
       }
       model.setFailed(false);
       return checkerObj<T>(response, model,
-          complex: complex, inspect: inspect, multi: multi, endpoint: endPoint);
+          inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e, s) {
       String body = "";
       int statusCode = 0;
@@ -339,7 +329,6 @@ class McRequest extends McModel {
 
   Future postJsonData(String endPoint,
       {Map<String, dynamic>? data,
-      bool complex = false,
       Function(dynamic data)? inspect,
       Function(Object error)? onError,
       Map<String, dynamic>? params}) async {
@@ -351,8 +340,7 @@ class McRequest extends McModel {
       if (setCookies) {
         updateCookie(response);
       }
-      return checkerJson(response,
-          complex: complex, inspect: inspect, endpoint: endPoint);
+      return checkerJson(response, inspect: inspect, endpoint: endPoint);
     } catch (e) {
       onError!(e);
     }
@@ -385,18 +373,13 @@ class McRequest extends McModel {
     files?.forEach((key, value) async {
       request.files.add(await http.MultipartFile.fromPath(key, value));
     });
-
-    /// request.files.addAll(files!.map((key, value) async {
-    ///   return await http.MultipartFile.fromPath(key, value))
-    /// });
+  
     request.fields.addAll(fields!);
     request.headers.addAll(this.headers);
 
     var response = await request.send();
     if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.toBytes();
-
-      ///var responseString = String.fromCharCodes(responseData);
       var result = json.decode(utf8.decode(responseData));
       return result;
     } else {

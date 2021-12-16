@@ -24,19 +24,41 @@ its very simple
 ```
 class McMiniViewExample extends StatelessWidget {
   // use mini for convert value to McValue
-  final McValue<String> myValue = "My Value".mini;
+  final McValue<String> myStringValue = "My Value".mini;
+  final McValue<int> myIntValue = 2021.mini;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         //use your value in McMV and if value changed will rebuild widget for show your new value
-        child: McMV(myValue, () => Text(myValue.v)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // use value for every widget
+            McMV(myStringValue, () => Text(myStringValue.v)),
+            McMV(myStringValue, () => Text(myIntValue.v.toString())),
+            const SizedBox(
+              height: 25.0,
+            ),
+            // merge multi values in one widget
+            McMV(McValue.merge([myStringValue, myIntValue]), () {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(myStringValue.v),
+                  Text(myIntValue.v.toString())
+                ],
+              );
+            })
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           // change value
-          myValue.v = "Value Changed";
+          myStringValue.v = "Value Changed";
+          myIntValue.v = 2022;
         },
         tooltip: 'change Value',
         child: Icon(Icons.change_circle),
@@ -111,7 +133,7 @@ class MyApp extends StatelessWidget {
     const String baseUrl = 'https://jsonplaceholder.typicode.com';
     // create request object
     McRequest request = McRequest(url: baseUrl);
-    // save it, for use it from any screen by screen
+    // save it, for use it from any screen by key
     mc.add('request', request);    
   }
 
@@ -128,6 +150,7 @@ Next step its build [McView] Widget & pass your [McModel] in [model] & [McReques
 
 
 ```
+
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
@@ -140,78 +163,108 @@ class PostExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Refresh Posts with swip to down or from here =>",
-          style: TextStyle(fontSize: 11.0),
+        appBar: AppBar(
+          title: Text(
+            "Refresh Posts with swip to down or from here =>",
+            style: TextStyle(fontSize: 11.0),
+          ),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.data_usage),
+                // Refresh Data from Api
+                onPressed: () => refresh())
+          ],
         ),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.data_usage),
-              // Refresh Data from Api
-              onPressed: () => refresh())
-        ],
-      ),
-      body: Container(
+        body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: McView(
-            call: () => request.getObjData("posqts", post, multi: true),
-            model: post,
-            onError: (McException exception) {
-              return Column(
-                children: [Text(exception.exception), Text(exception.response)],
-              );
-            },
-            // call api if model is empty
-            callType: CallType.callIfModelEmpty,
-            loader:CustomLoading(),
-            builder: (context) {
-              return RefreshIndicator(
-                onRefresh: () {
-                  return refresh();
+          child: RefreshIndicator(
+              onRefresh: () {
+                return refresh();
+              },
+              child: McView(
+                // call api method
+                call: () => request.getObjData("posqts", post, multi: true),
+                // your model generated
+                model: post,
+                // handle errors
+                onError: (McException exception,Function() reload) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(exception.exception),
+                        Text(exception.response),
+                        TextButton(onPressed: reload, child: Text("retry"))
+                      ],
+                    ),
+                  );
                 },
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.852,
-                  child: ListView.builder(
-                    itemCount: post.multi.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        leading: Text(post.multi[index].id.toString()),
-                        title: Text(post.multi[index].title),
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return Details(index);
-                        })),
-                      );
-                    },
-                  ),
-                ),
-              );
-            },
-          )),
-    );
+                // call api if model is empty & you can choose another ways like default way asFuture(call once) & asStream (call every //[secondsOfStream] seconds)
+                callType: CallType.callIfModelEmpty,
+                // or
+                // callType: CallType.callAsStream,
+                // secondsOfStream: 1,
+                // customized your loading (default widget is CircularProgressIndicator)
+                loader:CustomLoading(),
+                builder: (context) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.852,
+                    child: ListView.builder(
+                      itemCount: post.multi.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        // your data saved in multi list as Post model
+                        Post currentPost = post.multi[index];
+                        return ListTile(
+                            leading: Text(post.id.toString()),
+                            title: Text(post.title),
+                            onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                    return Details(index);
+                                  }),
+                                ));
+                      },
+                    ),
+                  );
+                },
+              )),
+        ));
   }
 
   Future<dynamic> refresh() {
-    return request.getObjData("posts", post, multi: true);
+    // use hrrp method you want (get,post,put) + ObjData if you used model in McView and you can use JsonData for get data directly from api
+    return request.getObjData(
+    // endpoint
+    "posts",
+    // your model
+    post, 
+    // if you received data as List multi will be true & if data as map you not should to define multi its false as default
+    multi: true,
+    // parameters for send it with request
+    params:{"key":"value"},
+    // inspect method for determine exact json use for generate your model in first step
+    // if your api send data directly without any supplement values you not should define it
+    inspect:(data)=>data["response"]
+    );
   }
 }
+
 ```
 & last item its McController for save your model or any value and get it anywhere by key
 
 ```
-// inside of object use mc extension 
+// instead of object use mc extension 
 McController().add("key",value,readOnly:true); // you can't edit it if readonly true
 // or
-// add
+// [add] return value
 mc.add<Type>("key",value);
-// get
+// [get] return value
 mc.get<Type>("key");
-// remove
-mc.remove<Type>("key");
+// [remove]
+mc.remove("key");
 // remove with condition
-mc.removeWhere<Type>((key,value)=>key.contains("ke"));
+mc.removeWhere((key,value)=>key.contains("ke"));
 
 ```
 

@@ -46,3 +46,5 @@
 - use McException on setException of McModel instead of exception & statusCode
 - add [onError] builder in McView for handle errors in widget
 - removed [showExceptionDetails] parameter in McView
+- removed complex parameter in McRequest methods
+- in McView passed on onError builder McException msg of error and reload method for use it for retry 
