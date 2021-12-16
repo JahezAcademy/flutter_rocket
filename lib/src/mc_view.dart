@@ -155,7 +155,7 @@ class _McViewState extends State<McView> {
   Widget build(BuildContext context) {
     if (widget.model.failed) {
       return widget.onError != null
-          ? widget.onError!(widget.model.response, reload)
+          ? widget.onError!(widget.model.exception, reload)
           : const SizedBox();
     } else {
       return widget.model.loading

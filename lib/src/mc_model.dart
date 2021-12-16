@@ -9,7 +9,7 @@ abstract class McModel<T> extends McListenable {
   List<T>? multi;
   bool failed = false;
   bool existData = false;
-  McException? response;
+  McException exception = McException();
   static final String rebuild = "rebuild";
 
   /// تفعيل و الغاء جاري التحميل
@@ -19,8 +19,8 @@ abstract class McModel<T> extends McListenable {
   }
 
   /// التقاط الخطأ
-  void setException( McException? _response) {
-    response = _response;
+  void setException( McException _response) {
+    exception = _response;
     callListener(rebuild);
   }
 
@@ -67,7 +67,7 @@ abstract class McModel<T> extends McListenable {
 
   @override
 
-  /// for add listener to rebuild widget you can use McModel.rebuild as key
+  /// for add listener to rebuild widget you can use rebuild as key
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);
   }
