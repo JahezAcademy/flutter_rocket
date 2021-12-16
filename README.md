@@ -21,7 +21,7 @@ dependencies:
 ## Simple case use McMV & McValue
 its very simple
 
-```
+```dart
 class McMiniViewExample extends StatelessWidget {
   // use mini for convert value to McValue
   final McValue<String> myStringValue = "My Value".mini;
@@ -74,7 +74,7 @@ class McMiniViewExample extends StatelessWidget {
 firstly you need to create your McModel from your json data by this [Link](https://json2dart.web.app/)
 you get something like this:
 
-```
+```dart
 import 'package:mc/mc.dart';
 
 class Post extends McModel<Post> {
@@ -127,7 +127,7 @@ class Post extends McModel<Post> {
 
 Now second step create your McRequest in constructor or initState of first widget and pass url & headers
 
-```
+```dart
 class MyApp extends StatelessWidget {
   MyApp() {
     const String baseUrl = 'https://jsonplaceholder.typicode.com';
@@ -149,7 +149,7 @@ class MyApp extends StatelessWidget {
 Next step its build [McView] Widget & pass your [McModel] in [model] & [McRequest] method in [call] parameter
 
 
-```
+```dart
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
@@ -253,7 +253,7 @@ class PostExample extends StatelessWidget {
 ```
 & last item its McController for save your model or any value and get it anywhere by key
 
-```
+```dart
 // instead of object use mc extension 
 McController().add("key",value,readOnly:true); // you can't edit it if readonly true
 // or

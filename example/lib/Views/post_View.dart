@@ -39,7 +39,7 @@ class PostExample extends StatelessWidget {
                 // your model generated
                 model: post,
                 // handle errors
-                onError: (McException exception,Function() reload) {
+                onError: (McException exception, Function() reload) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
