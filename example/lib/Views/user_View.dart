@@ -66,8 +66,8 @@ class UserExample extends StatelessWidget {
             call: () =>
                 mc.get<McRequest>('rq').getObjData("users", users, multi: true),
             // call api every 1 sec
-            callType: CallType.callAsStream,
-            secondsOfStream: 1,           
+            // callType: CallType.callAsStream,
+            // secondsOfStream: 1,
             // your model
             model: users,
             // your widget for show data from model
@@ -103,7 +103,6 @@ class UserExample extends StatelessWidget {
                         Text(user.phone),
                         Text(user.website),
                         SizedBox(height: 5),
-                       
                         ExpansionTile(
                             tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
                             leading: CircleAvatar(

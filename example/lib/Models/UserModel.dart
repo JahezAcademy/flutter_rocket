@@ -19,7 +19,7 @@ class User extends McModel<User> {
   final String phoneStr = "phone";
   final String websiteStr = "website";
   final String companyStr = "company";
-  final String imageStr = "img";
+  final String imageStr = "image";
 
   User(
       {this.id,

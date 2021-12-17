@@ -35,6 +35,7 @@ class App extends StatelessWidget {
         title: 'MVCR Package',
         theme: ThemeData(
           primaryColor: Colors.brown,
+          appBarTheme: AppBarTheme(backgroundColor: Colors.brown),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: MyApp());
@@ -79,6 +80,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     cntx = context;
     return Scaffold(
+      appBar: AppBar(
+        title: Text("MC PACKAGE"),
+        centerTitle: true,
+      ),
       body: Center(
         child: Container(
           height: context.h * 0.6,
@@ -124,7 +129,10 @@ class Example extends StatelessWidget {
       child: TextButton(
           child: Text(
             title,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24.0,
+                color: Colors.brown),
           ),
           onPressed: () => Navigator.pushNamed(context, "/$to")),
     );

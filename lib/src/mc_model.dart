@@ -5,7 +5,7 @@ import 'mc_llistenable.dart';
 /// يجب ان ترث النماذج المستخدمة من هذا الكائن
 abstract class McModel<T> extends McListenable {
   bool loading = false;
-  bool loadingChecker = false;
+  bool _loadingChecker = false;
   List<T>? multi;
   bool failed = false;
   bool existData = false;
@@ -14,7 +14,7 @@ abstract class McModel<T> extends McListenable {
 
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
-    loading = loadingChecker ? false : t;
+    loading = _loadingChecker ? false : t;
     callListener(rebuild);
   }
 
@@ -25,7 +25,7 @@ abstract class McModel<T> extends McListenable {
   }
 
   void loadingChecking(bool value) {
-    loadingChecker = value;
+    _loadingChecker = value;
     callListener(rebuild);
   }
 
@@ -60,14 +60,14 @@ abstract class McModel<T> extends McListenable {
     return {};
   }
 
-  ///التحكم في اعادة البناء عن طريق تفعيل جاري التحميل و الغاءه
+  ///التحكم في اعادة البناء يدويا
   void rebuildWidget() {
     callListener(rebuild);
   }
 
   @override
 
-  /// for add listener to rebuild widget you can use rebuild as key
+  /// لاضافة اوامر سيتم تنفيذها اذا تم عمل اعادة البناء للجزء المرتبط مع هذا النموذج
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);
   }

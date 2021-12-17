@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mc/src/mc_model.dart';
-
 import 'mc_exception.dart';
 
-class McRequest extends McModel {
+class McRequest {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
@@ -47,7 +45,7 @@ class McRequest extends McModel {
       this.debugging = true});
 
   @protected
-  checkerJson(http.Response response,
+  dynamic _jsonData(http.Response response,
       {Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var data = json.decode(utf8.decode(response.bodyBytes));
@@ -56,12 +54,16 @@ class McRequest extends McModel {
       }
       return data;
     } else {
-      getDebugging(response, endpoint);
-      return json.decode(utf8.decode(response.bodyBytes));
+      _getDebugging(response, endpoint);
+      try {
+        return json.decode(utf8.decode(response.bodyBytes));
+      } catch (e) {
+        return response.body;
+      }
     }
   }
 
-  getDebugging(http.Response response, String? endpoint) {
+  _getDebugging(http.Response response, String? endpoint) {
     if (debugging) {
       print("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
       print("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
@@ -108,7 +110,7 @@ class McRequest extends McModel {
   }
 
   @protected
-  dynamic checkerObj<T>(http.Response response, McModel<T> model,
+  dynamic _objData<T>(http.Response response, McModel<T> model,
       {bool? multi, Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       model.existData = true;
@@ -134,13 +136,13 @@ class McRequest extends McModel {
       }
     } else {
       model.load(false);
-      getDebugging(response, endpoint);
+      _getDebugging(response, endpoint);
       throw Exception('Failed to load Data');
     }
   }
 
   @protected
-  String mapToString(Map mp) {
+  String _mapToString(Map mp) {
     String result = "";
     mp.forEach((key, value) {
       String and = mp.keys.last != key ? "&" : "";
@@ -168,11 +170,11 @@ class McRequest extends McModel {
       bool complex = false,
       Function(Object error)? onError,
       Function(dynamic data)? inspect}) async {
-    String srch = params != null ? mapToString(params) : "";
+    String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     try {
       http.Response response = await http.get(url, headers: headers);
-      return checkerJson(response, inspect: inspect, endpoint: endpoint);
+      return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError!(e);
     }
@@ -196,7 +198,7 @@ class McRequest extends McModel {
       bool multi = false,
       Function(dynamic data)? inspect}) async {
     model.load(true);
-    String srch = params != null ? mapToString(params) : "";
+    String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     http.Response? response;
     try {
@@ -205,7 +207,7 @@ class McRequest extends McModel {
           .whenComplete(() => model.load(false));
 
       model.setFailed(false);
-      return checkerObj<T>(response, model,
+      return _objData<T>(response, model,
           multi: multi, inspect: inspect, endpoint: endpoint);
     } catch (e, s) {
       String body = "";
@@ -239,7 +241,7 @@ class McRequest extends McModel {
           .put(url, body: json.encode(model.toJson()), headers: headers)
           .whenComplete(() => model.load(false));
       model.setFailed(false);
-      return checkerObj<T>(response, model,
+      return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e, s) {
       String body = "";
@@ -271,7 +273,7 @@ class McRequest extends McModel {
     try {
       http.Response response =
           await http.put(url, body: json.encode(data), headers: headers);
-      return checkerJson(response, inspect: inspect, endpoint: endpoint);
+      return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError!(e);
     }
@@ -290,7 +292,7 @@ class McRequest extends McModel {
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     model!.load(true);
-    String srch = params != null ? mapToString(params) : "";
+    String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
     http.Response? response;
     try {
@@ -299,10 +301,10 @@ class McRequest extends McModel {
           .whenComplete(() => model.load(false));
 
       if (setCookies) {
-        updateCookie(response);
+        _updateCookie(response);
       }
       model.setFailed(false);
-      return checkerObj<T>(response, model,
+      return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e, s) {
       String body = "";
@@ -332,15 +334,15 @@ class McRequest extends McModel {
       Function(dynamic data)? inspect,
       Function(Object error)? onError,
       Map<String, dynamic>? params}) async {
-    String srch = params != null ? mapToString(params) : "";
+    String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
     try {
       http.Response response =
           await http.post(url, body: json.encode(data), headers: headers);
       if (setCookies) {
-        updateCookie(response);
+        _updateCookie(response);
       }
-      return checkerJson(response, inspect: inspect, endpoint: endPoint);
+      return _jsonData(response, inspect: inspect, endpoint: endPoint);
     } catch (e) {
       onError!(e);
     }
@@ -373,7 +375,7 @@ class McRequest extends McModel {
     files?.forEach((key, value) async {
       request.files.add(await http.MultipartFile.fromPath(key, value));
     });
-  
+
     request.fields.addAll(fields!);
     request.headers.addAll(this.headers);
 
@@ -389,7 +391,7 @@ class McRequest extends McModel {
     }
   }
 
-  void updateCookie(http.Response response) {
+  void _updateCookie(http.Response response) {
     String rawCookie = response.headers['set-cookie']!;
     int index = rawCookie.indexOf(';');
     headers['cookie'] =
