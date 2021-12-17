@@ -51,31 +51,23 @@ class McView extends StatefulWidget {
   ///
   ///[secondsOfStream]
   ///
-  ///يمكنك تحديد عدد الثواني من اجل تجديد البيانات callAsStream في حالة اختيار
+  /// في حالة اختيار [call] عدد الثواني لاعادة استدعاء دالة
+  ///[CallType.callAsStream]
   ///
-  ///[retryText]
+  ///[onError]
+  ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثة
   ///
-  ///النص الذي سيظهر في الور في حالة وجود خطأ
-  ///
-  ///[styleButton]
-  ///
-  ///تصميم الزر يمكنك التحكم من حلاله في الألوان ...
-  ///
-  ///[showExceptionDetails]
-  ///
-  ///تفعيل او الغاء ظهور تفاصيل الخطأ
-  ///
-  McView(
-      {Key? key,
-      required this.model,
-      required this.builder,
-      this.call = _myDefaultFunc,
-      this.callType = CallType.callAsFuture,
-      this.secondsOfStream = 1,
-      this.loader,
-      this.retryText = "Failed, retry",
-      this.onError,
-      this.styleButton}) {
+
+  McView({
+    Key? key,
+    required this.model,
+    required this.builder,
+    this.call = _myDefaultFunc,
+    this.callType = CallType.callAsFuture,
+    this.secondsOfStream = 1,
+    this.loader,
+    this.onError,
+  }) {
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
@@ -98,15 +90,29 @@ class McView extends StatefulWidget {
   }
 
   static _myDefaultFunc() {}
+
+  ///البناء دالة ترجع المحتويات المراد اعادة بناءها لتغيير قيمتها
   final Widget Function(BuildContext) builder;
+
+  ///الدالة الخاصة بطلب البيانات من لخادم
   final dynamic Function() call;
+
+  ///[call] طريقة استدعاء دالة
   final CallType callType;
+
+  ///في حالة اختيار [call] عدد الثواني لاعادة استدعاء دالة
+  ///[CallType.callAsStream]
   final int secondsOfStream;
+
+  ///الجزء الخاص بانتظار تحميل البيانات و هو اختياري
   final Widget? loader;
+
+  ///النموذج الذي يحتوي على البيانات المراد تجديدها
   final McModel model;
-  final String retryText;
-  final ButtonStyle? styleButton;
+
+  ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   final Widget Function(McException error, Function() reload)? onError;
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);

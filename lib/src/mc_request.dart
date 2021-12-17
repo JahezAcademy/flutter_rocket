@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mc/src/mc_model.dart';
 import 'mc_exception.dart';
 
-class McRequest extends McModel {
+class McRequest {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
