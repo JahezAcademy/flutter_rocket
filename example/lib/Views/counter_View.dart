@@ -9,7 +9,9 @@ class CounterExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(title),
+      ),
       body: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -26,9 +28,9 @@ class CounterExample extends StatelessWidget {
               call: () {
                 counter.count += 1;
               },
-              secondsOfStream: 2,
               callType: CallType.callAsStream,
-              builder: (BuildContext context, Widget child) {
+              secondsOfStream: 1,
+              builder: (context) {
                 return Text(
                   counter.count.toString(),
                   style: Theme.of(context).textTheme.headline4,

@@ -53,7 +53,7 @@ class UserExample extends StatelessWidget {
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
                   });
                   // Call rebuild method required if data multi
-                  users.rebuild();
+                  users.rebuildWidget();
                 }),
           ],
         ),
@@ -66,15 +66,12 @@ class UserExample extends StatelessWidget {
             call: () =>
                 mc.get<McRequest>('rq').getObjData("users", users, multi: true),
             // call api every 1 sec
-            callType: CallType.callAsStream,
-
-            secondsOfStream: 1,
-            // case exception show details of exception error
-            showExceptionDetails: true,
+            // callType: CallType.callAsStream,
+            // secondsOfStream: 1,
             // your model
             model: users,
             // your widget for show data from model
-            builder: (BuildContext __, _) {
+            builder: (context) {
               return ListView.builder(
                 itemCount: users.multi.length,
                 itemBuilder: (BuildContext context, int index) {

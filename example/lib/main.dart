@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
-import 'Views/CounterView.dart';
-import 'Views/PhotoView.dart';
-import 'Views/PostView.dart';
-import 'Views/UserView.dart';
+import 'Views/counter_View.dart';
+import 'Views/mini_view.dart';
+import 'Views/photo_View.dart';
+import 'Views/post_View.dart';
+import 'Views/user_View.dart';
 
 void main() {
   runApp(App());
@@ -15,6 +16,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         routes: <String, WidgetBuilder>{
+          '/miniView': (BuildContext context) => new MiniView(
+                title: "MiniView Example",
+              ),
           '/counter': (BuildContext context) => new CounterExample(
                 title: "Counter",
               ),
@@ -31,6 +35,7 @@ class App extends StatelessWidget {
         title: 'MVCR Package',
         theme: ThemeData(
           primaryColor: Colors.brown,
+          appBarTheme: AppBarTheme(backgroundColor: Colors.brown),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: MyApp());
@@ -50,7 +55,7 @@ class MyApp extends StatelessWidget {
   ];
   int index = 0;
   MyApp() {
-    String baseUrl = 'https://jsonplaceholder.typicode.com';
+    const String baseUrl = 'https://jsonplaceholder.typicode.com';
     // create request object
     McRequest request = McRequest(url: baseUrl);
     // save it, for use it from any screen
@@ -75,9 +80,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     cntx = context;
     return Scaffold(
+      appBar: AppBar(
+        title: Text("MC PACKAGE"),
+        centerTitle: true,
+      ),
       body: Center(
         child: Container(
-          height: context.h * 0.5,
+          height: context.h * 0.6,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -96,10 +105,11 @@ class MyApp extends StatelessWidget {
                       ),
                     );
                   }),
+              Example("Mini View", "miniView"),
               Example("Counter View", "counter"),
               Example("10 Users", "user"),
               Example("100 Posts", "post"),
-              Example("5000 Photos", "photo")
+              Example("5000 Photos", "photo"),
             ],
           ),
         ),
@@ -119,7 +129,10 @@ class Example extends StatelessWidget {
       child: TextButton(
           child: Text(
             title,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24.0,
+                color: Colors.brown),
           ),
           onPressed: () => Navigator.pushNamed(context, "/$to")),
     );
