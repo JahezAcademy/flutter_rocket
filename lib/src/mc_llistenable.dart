@@ -1,7 +1,8 @@
+import 'dart:collection';
 import 'dart:ui';
 
 abstract class McListenable {
-  Map<String, List<VoidCallback>> _observers = {};
+  HashMap<String, List<VoidCallback>> _observers = HashMap();
   List<McListenable> merges = [];
   bool get isMerged {
     return merges.isNotEmpty;
