@@ -12,13 +12,15 @@ extension McInObj on Object {
 
 extension CustomLinkedList on LinkedList<MyLinkedListEntry<VoidCallback>> {
   void removeWhere(bool test(MyLinkedListEntry<VoidCallback> element)) {
-    MyLinkedListEntry<VoidCallback>? willRemove;
+    List<MyLinkedListEntry<VoidCallback>>? removeIt = [];
     forEach((entry) {
       if (test(entry)) {
-        print("hello");
-        willRemove = entry;
+        removeIt.add(entry);
       }
     });
-    if (willRemove != null) remove(willRemove!);
+    if (removeIt.isNotEmpty)
+      removeIt.forEach((entry) {
+        remove(entry);
+      });
   }
 }
