@@ -6,7 +6,7 @@ class Counter extends McModel<Counter> {
   Counter({
     this.count = 0,
   });
-  fromJson(Map<String, dynamic> json) {
+  fromJson(covariant Map<String, dynamic> json) {
     count = json['count'] ?? count;
     return super.fromJson(json);
   }

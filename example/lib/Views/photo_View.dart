@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class PhotoExample extends StatelessWidget {
-  PhotoExample({this.title});
+  PhotoExample({required this.title});
   final String title;
   final Photo photo = McController().add<Photo>('photos', Photo());
   final McRequest request = McController().get<McRequest>('rq');
@@ -23,19 +23,19 @@ class PhotoExample extends StatelessWidget {
             call: getData,
             builder: (context) {
               return ListView.builder(
-                  itemCount: photo.multi.length,
+                  itemCount: photo.multi!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Photo currentphoto = photo.multi[index];
+                    Photo currentphoto = photo.multi![index];
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
                           ListTile(
-                            title: Text(currentphoto.title),
-                            leading: Image.network(currentphoto.thumbnailUrl),
+                            title: Text(currentphoto.title!),
+                            leading: Image.network(currentphoto.thumbnailUrl!),
                           ),
                           Image.network(
-                            currentphoto.url,
+                            currentphoto.url!,
                             frameBuilder: (_, child, __, ___) {
                               return Container(
                                 decoration: BoxDecoration(boxShadow: [

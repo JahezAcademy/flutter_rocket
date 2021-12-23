@@ -44,7 +44,7 @@ class App extends StatelessWidget {
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   final ValueNotifier<double> dx = ValueNotifier<double>(0.1);
-  BuildContext cntx;
+  late BuildContext cntx;
   final List<String> exps = [
     "Mc Package",
     "Link your app with API easily",
@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
                         exps[index],
                         style: Theme.of(context)
                             .textTheme
-                            .headline5
+                            .headline5!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                     );
