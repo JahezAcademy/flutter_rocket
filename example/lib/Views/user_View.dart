@@ -71,6 +71,7 @@ class UserExample extends StatelessWidget {
             // call api every 1 sec
             callType: CallType.callAsStream,
             secondsOfStream: 1,
+
             // your model
             model: users,
             // your widget for show data from model

@@ -1,44 +1,39 @@
-import 'package:mc/src/mc_model.dart';
-
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class McController {
   static final McController _controller = McController._internal();
-  Map<String, dynamic> models = {};
+  Map<String, dynamic> _models = {};
 
   /// اضافة تموذج جديد
   T add<T>(String key, T model, {bool readOnly = false}) {
     if (readOnly) {
-      if (!models.containsKey(key)) {
-        models[key] = model;
+      if (!_models.containsKey(key)) {
+        _models[key] = model;
         return model;
       } else {
-        return models[key];
+        return _models[key];
       }
     } else {
-      models[key] = model;
+      _models[key] = model;
       return model;
     }
   }
 
   /// الوصول لنموذج
   T get<T>(String key) {
-    return models[key];
+    return _models[key];
   }
 
   /// حذف النموذح
   void remove(String key) {
-    models.remove(key);
+    _models.remove(key);
   }
 
   // حذف نموذج بشرط معين
   void removeWhere(bool Function(String, dynamic) test) {
-    models.removeWhere(test);
+    _models.removeWhere(test);
   }
 
-  factory McController([String? key, McModel? model]) {
-    if (key != null && model != null) {
-      _controller.add(key, model);
-    }
+  factory McController() {
     return _controller;
   }
 

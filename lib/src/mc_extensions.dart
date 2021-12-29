@@ -1,11 +1,12 @@
 import 'dart:collection';
 import 'dart:ui';
-
 import 'package:mc/src/mc_controller.dart';
-
 import 'mc_llistenable.dart';
 
 /// Extensions helper
+
+/// لتسهيل الوصول ل [McController]
+
 extension McInObj on Object {
   McController get mc => McController();
 }
