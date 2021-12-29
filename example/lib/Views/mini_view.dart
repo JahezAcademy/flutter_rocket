@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class MiniView extends StatelessWidget {
-  MiniView({this.title});
+  MiniView({required this.title});
   final String title;
   final McValue<String> mcString = "Initial value".mini;
   final McValue<int> mcNum = 5.mini;

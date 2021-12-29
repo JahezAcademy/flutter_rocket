@@ -9,7 +9,7 @@ class PostExample extends StatelessWidget {
   final Post post = McController().add<Post>('posts', Post(), readOnly: true);
   // get request by key
   final McRequest request = McController().get<McRequest>("rq");
-  PostExample({this.title});
+  PostExample({required this.title});
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -62,13 +62,13 @@ class PostExample extends StatelessWidget {
                   return Container(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(
-                      itemCount: post.multi.length,
+                      itemCount: post.multi!.length,
                       itemBuilder: (BuildContext context, int index) {
                         // your data saved in multi list as Post model
-                        Post currentPost = post.multi[index];
+                        Post currentPost = post.multi![index];
                         return ListTile(
                             leading: Text(currentPost.id.toString()),
-                            title: Text(currentPost.title),
+                            title: Text(currentPost.title!),
                             onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -109,12 +109,12 @@ class Details extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(post.multi[index].title)),
+      appBar: AppBar(title: Text(post.multi![index].title!)),
       body: Center(
         child: ListTile(
-          leading: Text(post.multi[index].id.toString()),
-          title: Text(post.multi[index].title),
-          subtitle: Text(post.multi[index].body),
+          leading: Text(post.multi![index].id.toString()),
+          title: Text(post.multi![index].title!),
+          subtitle: Text(post.multi![index].body!),
         ),
       ),
     );

@@ -4,7 +4,7 @@ import 'package:mc/mc.dart';
 
 class CounterExample extends StatelessWidget {
   final String title;
-  CounterExample({this.title});
+  CounterExample({required this.title});
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
