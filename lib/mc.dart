@@ -225,8 +225,13 @@ class McRequest extends McModel {
       int statusCode = 0;
       if (response != null) {
         body = response.body;
+        statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, McResponse(body, statusCode));
+      model.setException(McResponse(
+          response: body,
+          statusCode: statusCode,
+          exception: e.toString(),
+          stackTrace: s));
       model.setFailed(true);
     }
   }
@@ -256,8 +261,13 @@ class McRequest extends McModel {
       int statusCode = 0;
       if (response != null) {
         body = response.body;
+        statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, McResponse(body, statusCode));
+      model.setException(McResponse(
+          response: body,
+          statusCode: statusCode,
+          exception: e.toString(),
+          stackTrace: s));
       model.setFailed(true);
       return Future.value(model);
     }
@@ -316,8 +326,13 @@ class McRequest extends McModel {
       int statusCode = 0;
       if (response != null) {
         body = response.body;
+        statusCode = response.statusCode;
       }
-      model.setException(e.toString(), s, McResponse(body, statusCode));
+      model.setException(McResponse(
+          response: body,
+          statusCode: statusCode,
+          exception: e.toString(),
+          stackTrace: s));
       model.setFailed(true);
       return Future.value(model);
     }
@@ -413,7 +428,6 @@ abstract class McModel<T> extends ChangeNotifier {
   List<T>? multi;
   bool failed = false;
   bool existData = false;
-  late String exception;
   McResponse? response;
 
   /// تفعيل و الغاء جاري التحميل
@@ -423,9 +437,8 @@ abstract class McModel<T> extends ChangeNotifier {
   }
 
   /// التقاط الخطأ
-  void setException(String _exception, StackTrace t, McResponse? _response) {
+  void setException(McResponse _response) {
     response = _response;
-    exception = _exception;
     notifyListeners();
   }
 
@@ -600,15 +613,17 @@ class McView extends AnimatedWidget {
                   ? ElevatedButton(
                       child: Text("show Details"),
                       onPressed: () {
-                        model.response ??= McResponse("", 0);
+                        model.response ??= McResponse();
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text(model.exception.split(":")[0]),
-                                content: Text(model.exception +
-                                    '\n' +
-                                    model.response!.response),
+                                title: Text(
+                                    model.response!.exception.split(":")[0]),
+                                content: Text(
+                                    model.response!.statusCode.toString() +
+                                        '\n' +
+                                        model.response!.response),
                               );
                             });
                       })
@@ -676,7 +691,13 @@ extension Mcful on State {
 }
 
 class McResponse {
-  McResponse(this.response, this.statusCode);
+  McResponse(
+      {this.response = "",
+      this.statusCode = 0,
+      this.exception = "",
+      this.stackTrace = StackTrace.empty});
   final String response;
   final int statusCode;
+  final String exception;
+  final StackTrace stackTrace;
 }
