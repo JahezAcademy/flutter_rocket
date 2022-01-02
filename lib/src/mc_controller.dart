@@ -35,6 +35,8 @@ class McController {
     return _models.hasKey(key);
   }
 
+  List<String> get keys => _models.keys.toList();
+
   // حذف نموذج بشرط معين
   void removeWhere(bool Function(String, dynamic) test) {
     _models.removeWhere(test);
