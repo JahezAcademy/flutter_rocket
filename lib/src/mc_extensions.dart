@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:ui';
 import 'package:mc/src/mc_controller.dart';
+import 'mc_constants.dart';
 import 'mc_llistenable.dart';
 
 /// Extensions helper
@@ -34,4 +35,13 @@ extension HasKey on HashMap {
     });
     return checker;
   }
+}
+
+extension toScreenSize on num {
+  double get h =>
+      (McController().get(heightScreen) * this) /
+      McController().get(heightDesign);
+  double get w =>
+      (McController().get(widthScreen) * this) /
+      McController().get(widthDesign);
 }
