@@ -24,3 +24,13 @@ extension CustomLinkedList on LinkedList<MyLinkedListEntry<VoidCallback>> {
       });
   }
 }
+
+extension HasKey on HashMap {
+  bool hasKey(String key) {
+    bool checker = false;
+    this.forEach((_key, value) {
+      if (key == _key) checker = true;
+    });
+    return checker;
+  }
+}
