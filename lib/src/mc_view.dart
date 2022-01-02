@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/src/mc_model.dart';
 
+import 'mc_constants.dart';
 import 'mc_exception.dart';
 import 'mc_llistenable.dart';
 
@@ -132,7 +133,7 @@ class _McViewState extends State<McView> {
       widget.model.load(true);
       widget.call.call();
     };
-    widget.model.registerListener(McModel.rebuild, _handleChange);
+    widget.model.registerListener(rebuild, _handleChange);
     super.initState();
   }
 
@@ -140,14 +141,14 @@ class _McViewState extends State<McView> {
   void didUpdateWidget(McView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(McModel.rebuild);
-      widget.model.registerListener(McModel.rebuild, _handleChange);
+      oldWidget.model.removeListener(rebuild);
+      widget.model.registerListener(rebuild, _handleChange);
     }
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(McModel.rebuild);
+    widget.model.removeListener(rebuild);
     super.dispose();
   }
 

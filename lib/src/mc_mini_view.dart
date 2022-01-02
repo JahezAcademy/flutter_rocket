@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'mc_constants.dart';
 import 'mc_llistenable.dart';
-import 'mc_value_listenable.dart';
 
 class McMV extends StatefulWidget {
   final McListenable mcValue;
@@ -21,10 +21,10 @@ class _McMVState extends State<McMV> {
     super.initState();
     if (widget.mcValue.isMerged) {
       widget.mcValue.merges.forEach((mcValue) {
-        mcValue.registerListener(McValue.mergesRebuild, _rebuildWidget);
+        mcValue.registerListener(mergesRebuild, _rebuildWidget);
       });
     } else {
-      widget.mcValue.registerListener(McValue.miniRebuild, _rebuildWidget);
+      widget.mcValue.registerListener(miniRebuild, _rebuildWidget);
     }
   }
 
@@ -34,16 +34,16 @@ class _McMVState extends State<McMV> {
     if (widget.mcValue.isMerged) {
       if (widget.mcValue != oldWidget.mcValue) {
         oldWidget.mcValue.merges.forEach((mcValue) {
-          mcValue.removeListener(McValue.mergesRebuild, _rebuildWidget);
+          mcValue.removeListener(mergesRebuild, _rebuildWidget);
         });
         widget.mcValue.merges.forEach((mcValue) {
-          mcValue.registerListener(McValue.mergesRebuild, _rebuildWidget);
+          mcValue.registerListener(mergesRebuild, _rebuildWidget);
         });
       }
     } else {
       if (widget.mcValue != oldWidget.mcValue) {
-        oldWidget.mcValue.removeListener(McValue.miniRebuild, _rebuildWidget);
-        widget.mcValue.registerListener(McValue.miniRebuild, _rebuildWidget);
+        oldWidget.mcValue.removeListener(miniRebuild, _rebuildWidget);
+        widget.mcValue.registerListener(miniRebuild, _rebuildWidget);
       }
     }
   }
@@ -52,10 +52,10 @@ class _McMVState extends State<McMV> {
   void dispose() {
     if (widget.mcValue.isMerged) {
       widget.mcValue.merges.forEach((mcValue) {
-        mcValue.removeListener(McValue.mergesRebuild, _rebuildWidget);
+        mcValue.removeListener(mergesRebuild, _rebuildWidget);
       });
     } else {
-      widget.mcValue.removeListener(McValue.miniRebuild, _rebuildWidget);
+      widget.mcValue.removeListener(miniRebuild, _rebuildWidget);
     }
     super.dispose();
   }
