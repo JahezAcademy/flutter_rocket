@@ -24,7 +24,7 @@
 - add setCookies parameter for enable and disable setCookie
 ## [0.0.1+9] 
 - Add generics types
-- Add on McView [call] parameter for call request method & [callType] for define how call function will call (call as future or as stream or call when model is empty) & [secondsOfStream] for define seconds for update data from call method when choose callAsStream
+- Add on McView [call] parameter for call request method & [callType] for define how call function will call (call as future or as stream or call when model is empty) & [secondsOfStream] for define seconds for update data from call method when choose callAsStream callType
 
 ## [0.0.2] 
 
@@ -46,5 +46,6 @@
 - use McException on setException of McModel instead of exception & statusCode
 - add [onError] builder in McView for handle errors in widget
 - removed [showExceptionDetails] parameter in McView
-- removed complex parameter in McRequest methods
-- in McView passed on onError builder McException msg of error and reload method for use it for retry 
+- removed [complex] parameter in [McRequest] methods
+- in [McView] passed on [onError] builder [McException] msg of error and reload method for use it for retry 
+- removed unused parameter on [McView] Builder

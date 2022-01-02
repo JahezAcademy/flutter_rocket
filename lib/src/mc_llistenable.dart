@@ -63,6 +63,10 @@ abstract class McListenable {
   List<String> get getListenersKeys {
     return _observers.keys.toList();
   }
+
+  void dispose() {
+    _observers.clear();
+  }
 }
 
 class MyLinkedListEntry<T>

@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'mc_extensions.dart';
-import 'package:mc/src/mc_model.dart';
 
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class McController {
@@ -41,10 +40,7 @@ class McController {
     _models.removeWhere(test);
   }
 
-  factory McController([String? key, McModel? model]) {
-    if (key != null && model != null) {
-      _controller.add(key, model);
-    }
+  factory McController() {
     return _controller;
   }
 
