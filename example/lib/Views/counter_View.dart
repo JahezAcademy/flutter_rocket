@@ -25,10 +25,8 @@ class CounterExample extends StatelessWidget {
             McView(
               model: counter,
               // call & secondsOfStream & callType optional parameters you can use McView Widget without them
-              call: () {
-                counter.count += 1;
-              },
-              callType: CallType.callAsStream,
+              call: add,
+              //callType: CallType.callAsStream,
               secondsOfStream: 1,
               builder: (context) {
                 return Text(
@@ -51,5 +49,11 @@ class CounterExample extends StatelessWidget {
         child: Icon(Icons.minimize),
       ),
     );
+  }
+
+  Future<void> add() async {
+    await Future.delayed(Duration(seconds: 2));
+    counter.count += 50;
+    print(50);
   }
 }

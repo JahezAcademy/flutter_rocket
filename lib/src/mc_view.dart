@@ -56,7 +56,7 @@ class McView extends StatefulWidget {
   ///[CallType.callAsStream]
   ///
   ///[onError]
-  ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثة
+  ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   ///
 
   McView({
@@ -69,21 +69,23 @@ class McView extends StatefulWidget {
     this.loader,
     this.onError,
   }) {
+    model.load(true);
+
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
-        call();
+        Future.value(call()).whenComplete(() => model.load(false));
         break;
       case CallType.callIfModelEmpty:
         if (!model.existData) {
-          call();
+          Future.value(call()).whenComplete(() => model.load(false));
         }
         break;
       case CallType.callAsStream:
-        call();
+        Future.value(call()).whenComplete(() => model.load(false));
         Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
           model.loadingChecking(true);
-          call();
+          Future.value(call()).whenComplete(() => model.load(false));
           if (!model.hasListener()) timer.cancel();
         });
         break;
