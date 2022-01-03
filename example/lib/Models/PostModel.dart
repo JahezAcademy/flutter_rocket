@@ -1,6 +1,7 @@
 import 'package:mc/mc.dart';
 
 class Post extends McModel<Post> {
+  List<Post>? multi;
   int? userId;
   int? id;
   String? title;
@@ -16,7 +17,8 @@ class Post extends McModel<Post> {
     this.title,
     this.body,
   });
-  fromJson(covariant Map<String, dynamic> json) {
+
+  void fromJson(covariant Map<String, dynamic> json) {
     userId = json['userId'] ?? userId;
     id = json['id'] ?? id;
     title = json['title'] ?? title;
@@ -32,5 +34,14 @@ class Post extends McModel<Post> {
     data['body'] = this.body;
 
     return data;
+  }
+
+  void setMulti(List data) {
+    List<Post> listOfpost = data.map((e) {
+      Post post = Post();
+      post.fromJson(e);
+      return post;
+    }).toList();
+    multi = listOfpost;
   }
 }

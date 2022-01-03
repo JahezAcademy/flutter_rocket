@@ -1,6 +1,7 @@
 import 'package:mc/mc.dart';
 
 class Photo extends McModel<Photo> {
+  List<Photo>? multi;
   int? albumId;
   int? id;
   String? title;
@@ -19,7 +20,8 @@ class Photo extends McModel<Photo> {
     this.url,
     this.thumbnailUrl,
   });
-  fromJson(covariant Map<String, dynamic> json) {
+
+  void fromJson(covariant Map<String, dynamic> json) {
     albumId = json['albumId'] ?? albumId;
     id = json['id'] ?? id;
     title = json['title'] ?? title;
@@ -37,5 +39,14 @@ class Photo extends McModel<Photo> {
     data['thumbnailUrl'] = this.thumbnailUrl;
 
     return data;
+  }
+
+  void setMulti(List data) {
+    List<Photo> listOfphotos = data.map((e) {
+      Photo photos = Photo();
+      photos.fromJson(e);
+      return photos;
+    }).toList();
+    multi = listOfphotos;
   }
 }

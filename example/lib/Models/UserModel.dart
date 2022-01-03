@@ -1,8 +1,10 @@
-import 'package:example/Models/user/address.dart';
-import 'package:example/Models/user/company.dart';
 import 'package:mc/mc.dart';
 
+import 'user/address.dart';
+import 'user/company.dart';
+
 class User extends McModel<User> {
+  List<User>? multi;
   int? id;
   String? name;
   String? username;
@@ -15,26 +17,28 @@ class User extends McModel<User> {
 
   String idVar = "id";
   String nameVar = "name";
-  String imageVar = "image";
   String usernameVar = "username";
   String emailVar = "email";
   String addressVar = "address";
   String phoneVar = "phone";
   String websiteVar = "website";
   String companyVar = "company";
-  User({
-    this.id,
-    this.name,
-    this.username,
-    this.email,
-    this.address,
-    this.phone,
-    this.website,
-    this.company,
-  }) {
+  String imageVar = "image";
+
+  User(
+      {this.id,
+      this.name,
+      this.username,
+      this.email,
+      this.address,
+      this.phone,
+      this.website,
+      this.company,
+      this.image}) {
     address ??= Address();
     company ??= Company();
   }
+
   void fromJson(covariant Map<String, dynamic> json) {
     id = json['id'] ?? id;
     name = json['name'] ?? name;
@@ -43,6 +47,7 @@ class User extends McModel<User> {
     address!.fromJson(json['address'] ?? address!.toJson());
     phone = json['phone'] ?? phone;
     image = json['image'] ?? image;
+
     website = json['website'] ?? website;
     company!.fromJson(json['company'] ?? company!.toJson());
     return super.fromJson(json);
@@ -53,13 +58,22 @@ class User extends McModel<User> {
     data['id'] = this.id;
     data['name'] = this.name;
     data['username'] = this.username;
-    data['image'] = this.image;
     data['email'] = this.email;
     data['address'] = this.address!.toJson();
     data['phone'] = this.phone;
     data['website'] = this.website;
     data['company'] = this.company!.toJson();
+    data['image'] = this.image;
 
     return data;
+  }
+
+  void setMulti(List data) {
+    List<User> listOfuser = data.map((e) {
+      User user = User();
+      user.fromJson(e);
+      return user;
+    }).toList();
+    multi = listOfuser;
   }
 }

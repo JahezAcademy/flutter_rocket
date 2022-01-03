@@ -33,7 +33,6 @@ class Company extends McModel<Company> {
   }
 
   void setMulti(List data) {
-
     List<Company> listOfcompany = data.map((e) {
       Company company = Company();
       company.fromJson(e);

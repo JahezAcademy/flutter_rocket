@@ -141,6 +141,8 @@ class McRequest {
     }
   }
 
+  static _onError(Object e) => print(e);
+
   @protected
   String _mapToString(Map mp) {
     String result = "";
@@ -168,7 +170,7 @@ class McRequest {
   Future getJsonData(String endpoint,
       {Map<String, dynamic>? params,
       bool complex = false,
-      Function(Object error)? onError,
+      Function(Object error) onError = _onError,
       Function(dynamic data)? inspect}) async {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
@@ -176,7 +178,7 @@ class McRequest {
       http.Response response = await http.get(url, headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 
@@ -268,14 +270,14 @@ class McRequest {
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {Function(dynamic data)? inspect,
-      Function(Object error)? onError}) async {
+      Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
       http.Response response =
           await http.put(url, body: json.encode(data), headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 
@@ -332,7 +334,7 @@ class McRequest {
   Future postJsonData(String endPoint,
       {Map<String, dynamic>? data,
       Function(dynamic data)? inspect,
-      Function(Object error)? onError,
+      Function(Object error) onError = _onError,
       Map<String, dynamic>? params}) async {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
@@ -344,7 +346,7 @@ class McRequest {
       }
       return _jsonData(response, inspect: inspect, endpoint: endPoint);
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 
@@ -355,13 +357,13 @@ class McRequest {
   /// [inspect] => List<Map>
   ///
   Future delJsonData(int id, String endpoint,
-      {Function(Object error)? onError}) async {
+      {Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
       http.Response response = await http.delete(url, headers: headers);
       return response.body;
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 

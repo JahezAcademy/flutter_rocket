@@ -1,12 +1,12 @@
 import 'dart:ui';
 import 'package:mc/src/mc_llistenable.dart';
 
+import 'mc_constants.dart';
+
 class McValue<T> extends McListenable {
   McValue(this._value);
   T get v => _value!;
   T? _value;
-  static final String miniRebuild = "MiniRebuild";
-  static final String mergesRebuild = "MergesRebuild";
 
   set v(T newValue) {
     if (_value == newValue) return;
