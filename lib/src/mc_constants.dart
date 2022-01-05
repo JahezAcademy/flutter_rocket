@@ -1,7 +1,5 @@
-const String heightScreen = "heightScreen";
-const String heightDesign = "heightDesign";
-const String widthScreen = "widthScreen";
-const String widthDesign = "widthDesign";
+const String sizeScreen = "sizeScreen";
+const String sizeDesign = "sizeDesign";
 
 const String miniRebuild = "MiniRebuild";
 const String mergesRebuild = "MergesRebuild";
