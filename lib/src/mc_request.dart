@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mc/src/mc_model.dart';
@@ -65,12 +66,12 @@ class McRequest {
 
   _getDebugging(http.Response response, String? endpoint) {
     if (debugging) {
-      print("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
-      print("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
-      print("\x1B[38;5;2m [Response] => " + response.body + " \x1B[0m");
-      print(
+      log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
+      log("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
+      log("\x1B[38;5;2m [Response] => " + response.body + " \x1B[0m");
+      log(
           "\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
-      print("\x1B[38;5;2m ################################ \x1B[0m");
+      log("\x1B[38;5;2m ################################ \x1B[0m");
     }
   }
 
