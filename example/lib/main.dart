@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
-import 'Views/counter_View.dart';
 import 'Views/mini_view.dart';
-import 'Views/photo_View.dart';
-import 'Views/post_View.dart';
-import 'Views/user_View.dart';
+
 
 void main() {
   runApp(App());
@@ -18,19 +14,7 @@ class App extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/miniView': (BuildContext context) => new MiniView(
                 title: "MiniView Example",
-              ),
-          '/counter': (BuildContext context) => new CounterExample(
-                title: "Counter",
-              ),
-          '/user': (BuildContext context) => new UserExample(
-                title: "10 Users",
-              ),
-          '/post': (BuildContext context) => new PostExample(
-                title: "100 Posts",
-              ),
-          '/photo': (BuildContext context) => new PhotoExample(
-                title: "5000 Photos",
-              ),
+              ),         
         },
         title: 'MVCR Package',
         theme: ThemeData(
@@ -54,12 +38,7 @@ class MyApp extends StatelessWidget {
     "this animation make by crazy code with timer"
   ];
   int index = 0;
-  MyApp() {
-    const String baseUrl = 'https://jsonplaceholder.typicode.com';
-    // create request object
-    McRequest request = McRequest(url: baseUrl);
-    // save it, for use it from any screen
-    mc.add('rq', request);
+  MyApp() {   
     Timer.periodic(Duration(milliseconds: 5), (timer) {
       if (dx.value <=
           MediaQuery.of(cntx).size.width +
@@ -106,10 +85,7 @@ class MyApp extends StatelessWidget {
                     );
                   }),
               Example("Mini View", "miniView"),
-              Example("Counter View", "counter"),
-              Example("10 Users", "user"),
-              Example("100 Posts", "post"),
-              Example("5000 Photos", "photo"),
+             
             ],
           ),
         ),
