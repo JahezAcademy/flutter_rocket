@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:example/views/counter_View.dart';
+import 'package:example/views/mini_view.dart';
+import 'package:example/views/photo_View.dart';
+import 'package:example/views/post_View.dart';
+import 'package:example/views/user_View.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
-import 'Views/counter_View.dart';
-import 'Views/mini_view.dart';
-import 'Views/photo_View.dart';
-import 'Views/post_View.dart';
-import 'Views/user_View.dart';
 
 void main() {
   runApp(App());

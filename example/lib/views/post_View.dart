@@ -1,6 +1,7 @@
+import 'package:example/models/post_model.dart';
+import 'package:example/requests/post_request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
-import '../Models/post_model.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
@@ -23,7 +24,7 @@ class PostExample extends StatelessWidget {
             IconButton(
                 icon: Icon(Icons.data_usage),
                 // Refresh Data from Api
-                onPressed: () => refresh())
+                onPressed: () => GetPosts.getPosts(post))
           ],
         ),
         body: Container(
@@ -31,11 +32,11 @@ class PostExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
               onRefresh: () {
-                return refresh();
+                return GetPosts.getPosts(post);
               },
               child: McView(
                 // call api method
-                call: () => request.getObjData("posts", post, multi: true),
+                call: () => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
                 // handle errors
@@ -81,23 +82,6 @@ class PostExample extends StatelessWidget {
                 },
               )),
         ));
-  }
-
-  Future<dynamic> refresh() {
-    // use hrrp method you want (get,post,put) + ObjData if you used model in McView and you can use JsonData for get data directly from api
-    return request.getObjData(
-      // endpoint
-      "posts",
-      // your model
-      post,
-      // if you received data as List multi will be true & if data as map you not should to define multi its false as default
-      multi: true,
-      // parameters for send it with request
-      // params:{"key":"value"},
-      // inspect method for determine exact json use for generate your model in first step
-      // if your api send data directly without any supplement values you not should define it
-      // inspect:(data)=>data["response"]
-    );
   }
 }
 

@@ -1,7 +1,8 @@
-import 'package:example/Models/user_model.dart';
-import 'package:example/Models/user/address.dart';
-import 'package:example/Models/user/company.dart';
-import 'package:example/Models/user/geo.dart';
+import 'package:example/models/user/address.dart';
+import 'package:example/models/user/company.dart';
+import 'package:example/models/user/geo.dart';
+import 'package:example/models/user_model.dart';
+import 'package:example/requests/user_request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
@@ -66,12 +67,11 @@ class UserExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: McView(
             // call api by McRequest saved in McController and make model on ready
-            call: () =>
-                mc.get<McRequest>('rq').getObjData("users", users, multi: true),
+            call: () => GetUsers.getUsers(users),
             // call api every 1 sec
             callType: CallType.callAsStream,
-            secondsOfStream: 1,
-
+            // update data from server after 2 sec
+            secondsOfStream: 2,
             // your model
             model: users,
             // your widget for show data from model
