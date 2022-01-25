@@ -127,21 +127,16 @@ class McRequest extends McModel {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (complex!) {
           result = inspect!(result);
-          model.setMulti(result);
-        } else {
-          model.setMulti(result);
         }
+        model.setMulti(result ?? []);
         return model;
       } else {
         var result = json.decode(utf8.decode(response.bodyBytes));
-        if (!complex!) {
-          model.fromJson(result);
-          return model;
-        } else {
+        if (complex!) {
           result = inspect!(result);
-          model.fromJson(result);
-          return model;
         }
+        model.fromJson(result);
+        return model;
       }
     } else {
       model.load(false);
