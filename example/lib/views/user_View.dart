@@ -1,4 +1,4 @@
-import 'package:example/Models/UserModel.dart';
+import 'package:example/Models/user_model.dart';
 import 'package:example/Models/user/address.dart';
 import 'package:example/Models/user/company.dart';
 import 'package:example/Models/user/geo.dart';

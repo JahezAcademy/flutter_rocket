@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
-import '../Models/PostModel.dart';
+import '../Models/post_model.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen

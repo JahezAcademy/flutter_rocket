@@ -1,4 +1,4 @@
-import 'package:example/Models/PhotoModel.dart';
+import 'package:example/Models/photo_model.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 

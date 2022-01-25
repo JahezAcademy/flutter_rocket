@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Models/CounterModel.dart';
+import '../Models/counter_model.dart';
 import 'package:mc/mc.dart';
 
 class CounterExample extends StatelessWidget {

@@ -69,8 +69,7 @@ class McRequest {
       log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
       log("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
       log("\x1B[38;5;2m [Response] => " + response.body + " \x1B[0m");
-      log(
-          "\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
+      log("\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
       log("\x1B[38;5;2m ################################ \x1B[0m");
     }
   }
@@ -118,22 +117,18 @@ class McRequest {
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
-          result = inspect(result);
-          model.setMulti(result);
-        } else {
-          model.setMulti(result);
+          result = inspect(result ?? []);
         }
+        model.setMulti(result);
+
         return model.multi;
       } else {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
           result = inspect(result);
-          model.fromJson(result);
-          return model;
-        } else {
-          model.fromJson(result);
-          return model;
         }
+        model.fromJson(result);
+        return model;
       }
     } else {
       model.load(false);
