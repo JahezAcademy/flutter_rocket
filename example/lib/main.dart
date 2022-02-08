@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
     // create request object
     McRequest request = McRequest(url: baseUrl);
     // save it, for use it from any screen
-    mc.add('rq', request);
+    mc.add(mcRequestKey, request);
     Timer.periodic(Duration(milliseconds: 5), (timer) {
       if (dx.value <=
           MediaQuery.of(cntx).size.width +

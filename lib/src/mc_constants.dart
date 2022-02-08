@@ -1,3 +1,6 @@
+// default key for McRequest object
+const String mcRequestKey = "mcRequest";
+
 const String sizeScreen = "sizeScreen";
 const String sizeDesign = "sizeDesign";
 

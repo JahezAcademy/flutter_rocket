@@ -1,13 +1,15 @@
 import 'package:example/models/post_model.dart';
 import 'package:mc/mc.dart';
 
+const String postsEndpoint = "posts";
+
 class GetPosts {
-  static Future getPosts(Post post) =>
-      McController().get<McRequest>('rq').getObjData(
+  static Future getPosts(Post postModel) =>
+      McController().get<McRequest>(mcRequestKey).getObjData(
         // endpoint
-        "posts",
+        postsEndpoint,
         // your model
-        post,
+        postModel,
         inspect: (d) {
           print(d);
           return d;

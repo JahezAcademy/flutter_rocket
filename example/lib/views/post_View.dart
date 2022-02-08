@@ -7,9 +7,9 @@ class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
   // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post = McController().add<Post>('posts', Post(), readOnly: true);
-  // get request by key
-  final McRequest request = McController().get<McRequest>("rq");
+  final Post post =
+      McController().add<Post>(postsEndpoint, Post(), readOnly: true);
+
   PostExample({required this.title});
   final String title;
   @override
@@ -88,7 +88,7 @@ class PostExample extends StatelessWidget {
 class Details extends StatelessWidget {
   final int index;
   //get your model by key
-  final Post post = McController().get<Post>('posts');
+  final Post post = McController().get<Post>(postsEndpoint);
   Details(this.index);
   @override
   Widget build(BuildContext context) {

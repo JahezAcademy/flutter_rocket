@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class UserExample extends StatelessWidget {
-  final User users = McController().add<User>("users", User());
+  final User users = McController().add<User>(usersEndpoint, User());
   UserExample({required this.title});
   final String title;
   @override
@@ -25,9 +25,7 @@ class UserExample extends StatelessWidget {
               child: Wrap(
                 children: [Icon(Icons.get_app), Text("Get Data")],
               ),
-              onPressed: () => mc
-                  .get<McRequest>('rq')
-                  .getObjData<User>("users", users, multi: true),
+              onPressed: () => GetUsers.getUsers(users),
             ),
             TextButton(
                 child: Text(
@@ -166,7 +164,7 @@ class OneUser extends StatelessWidget {
   late Address address;
   late Geo geo;
   OneUser(this.index) {
-    user = mc.get<User>('users').multi![index];
+    user = mc.get<User>(usersEndpoint).multi![index];
     company = user.company!;
     address = user.address!;
     geo = address.geo!;

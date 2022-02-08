@@ -6,8 +6,7 @@ import 'package:mc/mc.dart';
 class PhotoExample extends StatelessWidget {
   PhotoExample({required this.title});
   final String title;
-  final Photo photo = McController().add<Photo>('photos', Photo());
-  final McRequest request = McController().get<McRequest>('rq');
+  final Photo photo = McController().add<Photo>(photosEndpoint, Photo());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
