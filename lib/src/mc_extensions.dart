@@ -1,5 +1,5 @@
 import 'dart:collection';
-import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:mc/src/mc_controller.dart';
 import 'mc_constants.dart';
 import 'mc_llistenable.dart';
@@ -37,11 +37,27 @@ extension HasKey on HashMap {
   }
 }
 
-extension toScreenSize on num {
-  double get h =>
-      (McController().get(heightScreen) * this) /
-      McController().get(heightDesign);
-  double get w =>
-      (McController().get(widthScreen) * this) /
-      McController().get(widthDesign);
+extension ToScreenSize on num {
+  double get h {
+    assert(McController().get(sizeScreen) != null,
+        "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
+    assert(McController().get(sizeDesign) != null,
+        "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
+    return (McController().get<Size>(sizeScreen).height * this) /
+        McController().get<Size>(sizeDesign).height;
+  }
+
+  double get w {
+    assert(McController().get(sizeScreen) != null,
+        "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
+    assert(McController().get(sizeDesign) != null,
+        "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
+    return (McController().get<Size>(sizeScreen).width * this) /
+        McController().get<Size>(sizeDesign).width;
+  }
+}
+
+extension SizeScreen on BuildContext {
+  double get height => MediaQuery.of(this).size.height;
+  double get width => MediaQuery.of(this).size.width;
 }

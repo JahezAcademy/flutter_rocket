@@ -1,12 +1,12 @@
-import 'package:example/Models/PhotoModel.dart';
+import 'package:example/models/photo_model.dart';
+import 'package:example/requests/photo_request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class PhotoExample extends StatelessWidget {
   PhotoExample({required this.title});
   final String title;
-  final Photo photo = McController().add<Photo>('photos', Photo());
-  final McRequest request = McController().get<McRequest>('rq');
+  final Photo photo = McController().add<Photo>(photosEndpoint, Photo());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,9 +18,8 @@ class PhotoExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: McView(
             model: photo,
-
             // get 5000 items
-            call: getData,
+            call: () => GetPhotos.getPhotos(photo),
             builder: (context) {
               return ListView.builder(
                   itemCount: photo.multi!.length,
@@ -56,6 +55,4 @@ class PhotoExample extends StatelessWidget {
           )),
     );
   }
-
-  Future getData() => request.getObjData("photos", photo, multi: true);
 }

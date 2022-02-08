@@ -1,12 +1,13 @@
-import 'package:example/Models/UserModel.dart';
-import 'package:example/Models/user/address.dart';
-import 'package:example/Models/user/company.dart';
-import 'package:example/Models/user/geo.dart';
+import 'package:example/models/user/address.dart';
+import 'package:example/models/user/company.dart';
+import 'package:example/models/user/geo.dart';
+import 'package:example/models/user_model.dart';
+import 'package:example/requests/user_request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class UserExample extends StatelessWidget {
-  final User users = McController().add<User>("users", User());
+  final User users = McController().add<User>(usersEndpoint, User());
   UserExample({required this.title});
   final String title;
   @override
@@ -24,9 +25,7 @@ class UserExample extends StatelessWidget {
               child: Wrap(
                 children: [Icon(Icons.get_app), Text("Get Data")],
               ),
-              onPressed: () => mc
-                  .get<McRequest>('rq')
-                  .getObjData<User>("users", users, multi: true),
+              onPressed: () => GetUsers.getUsers(users),
             ),
             TextButton(
                 child: Text(
@@ -66,12 +65,11 @@ class UserExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: McView(
             // call api by McRequest saved in McController and make model on ready
-            call: () =>
-                mc.get<McRequest>('rq').getObjData("users", users, multi: true),
+            call: () => GetUsers.getUsers(users),
             // call api every 1 sec
             callType: CallType.callAsStream,
-            secondsOfStream: 1,
-
+            // update data from server after 2 sec
+            secondsOfStream: 2,
             // your model
             model: users,
             // your widget for show data from model
@@ -166,7 +164,7 @@ class OneUser extends StatelessWidget {
   late Address address;
   late Geo geo;
   OneUser(this.index) {
-    user = mc.get<User>('users').multi![index];
+    user = mc.get<User>(usersEndpoint).multi![index];
     company = user.company!;
     address = user.address!;
     geo = address.geo!;

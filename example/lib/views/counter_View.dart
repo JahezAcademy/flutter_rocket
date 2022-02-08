@@ -1,5 +1,5 @@
+import 'package:example/models/counter_model.dart';
 import 'package:flutter/material.dart';
-import '../Models/CounterModel.dart';
 import 'package:mc/mc.dart';
 
 class CounterExample extends StatelessWidget {
@@ -8,11 +8,14 @@ class CounterExample extends StatelessWidget {
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
+    // mc.add(sizeDesign, Size(100, 200));
+    // mc.add(sizeScreen, Size(context.width, context.height));
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
       ),
       body: Container(
+        //width: 10.w,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Column(
