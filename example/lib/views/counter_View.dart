@@ -1,6 +1,6 @@
 import 'package:example/models/counter_model.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
+import 'package:mc/mvc_rocket.dart';
 
 class CounterExample extends StatelessWidget {
   final String title;
@@ -8,8 +8,8 @@ class CounterExample extends StatelessWidget {
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
-    // mc.add(sizeDesign, Size(100, 200));
-    // mc.add(sizeScreen, Size(context.width, context.height));
+    // rocket.add(sizeDesign, Size(100, 200));
+    // rocket.add(sizeScreen, Size(context.width, context.height));
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -25,9 +25,9 @@ class CounterExample extends StatelessWidget {
               'Number of once call parameter called & you can also click on add icon',
               textAlign: TextAlign.center,
             ),
-            McView(
+            RocketView(
               model: counter,
-              // call & secondsOfStream & callType optional parameters you can use McView Widget without them
+              // call & secondsOfStream & callType optional parameters you can use RocketView Widget without them
               call: add,
               //callType: CallType.callAsStream,
               secondsOfStream: 1,

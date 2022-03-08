@@ -21,8 +21,8 @@ enum CallType {
   callIfModelEmpty,
 }
 
-class McView extends StatefulWidget {
-  /// [McView]
+class RocketView extends StatefulWidget {
+  /// [RocketView]
   ///
   /// انشاء البناء الخاص باعادة بناء المحتويات الخاصة به.
   ///
@@ -59,7 +59,7 @@ class McView extends StatefulWidget {
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   ///
 
-  McView({
+  RocketView({
     Key? key,
     required this.model,
     required this.builder,
@@ -85,7 +85,7 @@ class McView extends StatefulWidget {
         Future.value(call()).whenComplete(() => model.load(false));
         Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
           model.loadingChecking(true);
-          Future.value(call()).whenComplete(() => model.load(false));
+          call();
           if (!model.hasListener()) timer.cancel();
         });
         break;
@@ -111,22 +111,22 @@ class McView extends StatefulWidget {
   final Widget? loader;
 
   ///النموذج الذي يحتوي على البيانات المراد تجديدها
-  final McModel model;
+  final RocketModel model;
 
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
-  final Widget Function(McException error, Function() reload)? onError;
+  final Widget Function(RocketException error, Function() reload)? onError;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<McListenable>('McModel', model));
+    properties.add(DiagnosticsProperty<RocketListenable>('McModel', model));
   }
 
   @override
-  _McViewState createState() => _McViewState();
+  _ViewRocketState createState() => _ViewRocketState();
 }
 
-class _McViewState extends State<McView> {
+class _ViewRocketState extends State<RocketView> {
   late Function() reload;
   @override
   void initState() {
@@ -140,7 +140,7 @@ class _McViewState extends State<McView> {
   }
 
   @override
-  void didUpdateWidget(McView oldWidget) {
+  void didUpdateWidget(RocketView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
       oldWidget.model.removeListener(rebuild);

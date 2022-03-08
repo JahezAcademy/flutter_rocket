@@ -1,6 +1,6 @@
-import 'package:mc/mc.dart';
+import 'package:mc/mvc_rocket.dart';
 
-class Post extends McModel<Post> {
+class Post extends RocketModel<Post> {
   List<Post>? multi;
   int? userId;
   int? id;

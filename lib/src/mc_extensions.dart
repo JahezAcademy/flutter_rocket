@@ -6,10 +6,10 @@ import 'mc_llistenable.dart';
 
 /// Extensions helper
 
-/// لتسهيل الوصول ل [McController]
+/// لتسهيل الوصول ل [RocketController]
 
-extension McInObj on Object {
-  McController get mc => McController();
+extension RocketInObj on Object {
+  RocketController get rocket => RocketController();
 }
 
 extension CustomLinkedList on LinkedList<MyLinkedListEntry<VoidCallback>> {
@@ -39,25 +39,25 @@ extension HasKey on HashMap {
 
 extension ToScreenSize on num {
   double get h {
-    assert(McController().get(sizeScreen) != null,
+    assert(RocketController().get(sizeScreenKey) != null,
         "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
-    assert(McController().get(sizeDesign) != null,
+    assert(RocketController().get(sizeDesignKey) != null,
         "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
-    return (McController().get<Size>(sizeScreen).height * this) /
-        McController().get<Size>(sizeDesign).height;
+    return (RocketController().get<Size>(sizeScreenKey).height * this) /
+        RocketController().get<Size>(sizeDesignKey).height;
   }
 
   double get w {
-    assert(McController().get(sizeScreen) != null,
+    assert(RocketController().get(sizeScreenKey) != null,
         "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
-    assert(McController().get(sizeDesign) != null,
+    assert(RocketController().get(sizeDesignKey) != null,
         "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
-    return (McController().get<Size>(sizeScreen).width * this) /
-        McController().get<Size>(sizeDesign).width;
+    return (RocketController().get<Size>(sizeScreenKey).width * this) /
+        RocketController().get<Size>(sizeDesignKey).width;
   }
 }
 
-extension SizeScreen on BuildContext {
+extension SizeDevice on BuildContext {
   double get height => MediaQuery.of(this).size.height;
   double get width => MediaQuery.of(this).size.width;
 }

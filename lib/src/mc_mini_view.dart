@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'mc_constants.dart';
 import 'mc_llistenable.dart';
 
-class McMV extends StatefulWidget {
-  final McListenable mcValue;
+class RocketMiniView extends StatefulWidget {
+  final RocketListenable mcValue;
   final Widget Function() builder;
-  const McMV(
+  const RocketMiniView(
     this.mcValue,
     this.builder, {
     Key? key,
   }) : super(key: key);
 
   @override
-  _McMVState createState() => _McMVState();
+  _MiniViewRocketState createState() => _MiniViewRocketState();
 }
 
-class _McMVState extends State<McMV> {
+class _MiniViewRocketState extends State<RocketMiniView> {
   @override
   void initState() {
     super.initState();
@@ -29,7 +29,7 @@ class _McMVState extends State<McMV> {
   }
 
   @override
-  void didUpdateWidget(McMV oldWidget) {
+  void didUpdateWidget(RocketMiniView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.mcValue.isMerged) {
       if (widget.mcValue != oldWidget.mcValue) {

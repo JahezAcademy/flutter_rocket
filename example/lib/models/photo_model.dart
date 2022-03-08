@@ -1,6 +1,6 @@
-import 'package:mc/mc.dart';
+import 'package:mc/mvc_rocket.dart';
 
-class Photo extends McModel<Photo> {
+class Photo extends RocketModel<Photo> {
   List<Photo>? multi;
   int? albumId;
   int? id;

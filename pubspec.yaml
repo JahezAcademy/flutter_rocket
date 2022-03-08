@@ -1,7 +1,7 @@
 name: mc
-description: State management & request package, Model,View,Controller,Request MVCR.
-version: 0.0.2+1
-homepage: https://github.com/ourflutter/mc
+description: State management & request package, Model,View,Controller,Request  MVCRocket .
+version: 0.0.1
+homepage: https://github.com/JahezAcademy/mc
 
 environment:
   sdk: '>=2.12.0 <3.0.0'

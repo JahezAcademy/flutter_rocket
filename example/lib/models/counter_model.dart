@@ -1,6 +1,6 @@
-import 'package:mc/mc.dart';
+import 'package:mc/mvc_rocket.dart';
 
-class Counter extends McModel<Counter> {
+class Counter extends RocketModel<Counter> {
   int count;
 
   Counter({

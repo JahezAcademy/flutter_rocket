@@ -3,8 +3,8 @@ import 'package:mc/src/mc_llistenable.dart';
 
 import 'mc_constants.dart';
 
-class McValue<T> extends McListenable {
-  McValue(this._value);
+class RocketValue<T> extends RocketListenable {
+  RocketValue(this._value);
   T get v => _value!;
   T? _value;
 
@@ -19,11 +19,11 @@ class McValue<T> extends McListenable {
     if (keyHasListeners(mergesRebuild)) callListener(mergesRebuild);
   }
 
-  McValue.merge(List<McListenable> _merges) {
+  RocketValue.merge(List<RocketListenable> _merges) {
     merges = _merges;
   }
 
-  /// for add listener for rebuild widget you can use McValue.miniRebuild or McValue.mergesRebuild as key
+  /// for add listener for rebuild widget you can use miniRebuild or mergesRebuild as key
   @override
   void registerListener(String key, VoidCallback listener) {
     super.registerListener(key, listener);
@@ -31,7 +31,7 @@ class McValue<T> extends McListenable {
 }
 
 extension Easy<T> on T {
-  McValue<T> get mini {
-    return McValue<T>(this);
+  RocketValue<T> get mini {
+    return RocketValue<T>(this);
   }
 }
