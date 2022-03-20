@@ -1,18 +1,21 @@
+import 'package:example/models/counter_model.dart';
 import 'package:flutter/material.dart';
-import '../Models/CounterModel.dart';
 import 'package:mc/mc.dart';
 
 class CounterExample extends StatelessWidget {
   final String title;
-  CounterExample({this.title});
+  CounterExample({required this.title});
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
+    // mc.add(sizeDesign, Size(100, 200));
+    // mc.add(sizeScreen, Size(context.width, context.height));
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
       ),
       body: Container(
+        //width: 10.w,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Column(
@@ -25,10 +28,8 @@ class CounterExample extends StatelessWidget {
             McView(
               model: counter,
               // call & secondsOfStream & callType optional parameters you can use McView Widget without them
-              call: () {
-                counter.count += 1;
-              },
-              callType: CallType.callAsStream,
+              call: add,
+              //callType: CallType.callAsStream,
               secondsOfStream: 1,
               builder: (context) {
                 return Text(
@@ -51,5 +52,11 @@ class CounterExample extends StatelessWidget {
         child: Icon(Icons.minimize),
       ),
     );
+  }
+
+  Future<void> add() async {
+    await Future.delayed(Duration(seconds: 2));
+    counter.count += 50;
+    print(50);
   }
 }

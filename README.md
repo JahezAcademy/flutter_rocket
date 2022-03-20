@@ -1,6 +1,7 @@
 # mc
 
 State management and request package, Model,View,Controller,Request MVCR.
+This package mark as discontinued you will found it with new name MVCRocket
 
 # Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
 
@@ -15,7 +16,7 @@ In your flutter project, add the dependency to your `pubspec.yaml`
 ```yaml
 dependencies:
   ...
-  mc: ^0.0.2+1
+  mc: ^0.0.2+3
 ```
 # Usage
 ## Simple case use McMV & McValue

@@ -1,7 +1,10 @@
+import 'dart:collection';
+import 'mc_extensions.dart';
+
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class McController {
   static final McController _controller = McController._internal();
-  Map<String, dynamic> _models = {};
+  HashMap<String, dynamic> _models = HashMap();
 
   /// اضافة تموذج جديد
   T add<T>(String key, T model, {bool readOnly = false}) {
@@ -27,6 +30,12 @@ class McController {
   void remove(String key) {
     _models.remove(key);
   }
+
+  bool hasKey(String key) {
+    return _models.hasKey(key);
+  }
+
+  List<String> get keys => _models.keys.toList();
 
   // حذف نموذج بشرط معين
   void removeWhere(bool Function(String, dynamic) test) {

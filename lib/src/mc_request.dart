@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mc/src/mc_model.dart';
@@ -65,12 +66,11 @@ class McRequest {
 
   _getDebugging(http.Response response, String? endpoint) {
     if (debugging) {
-      print("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
-      print("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
-      print("\x1B[38;5;2m [Response] => " + response.body + " \x1B[0m");
-      print(
-          "\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
-      print("\x1B[38;5;2m ################################ \x1B[0m");
+      log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
+      log("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
+      log("\x1B[38;5;2m [Response] => " + response.body + " \x1B[0m");
+      log("\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
+      log("\x1B[38;5;2m ################################ \x1B[0m");
     }
   }
 
@@ -117,22 +117,18 @@ class McRequest {
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
-          result = inspect(result);
-          model.setMulti(result);
-        } else {
-          model.setMulti(result);
+          result = inspect(result ?? []);
         }
+        model.setMulti(result);
+
         return model.multi;
       } else {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
           result = inspect(result);
-          model.fromJson(result);
-          return model;
-        } else {
-          model.fromJson(result);
-          return model;
         }
+        model.fromJson(result);
+        return model;
       }
     } else {
       model.load(false);
@@ -140,6 +136,8 @@ class McRequest {
       throw Exception('Failed to load Data');
     }
   }
+
+  static _onError(Object e) => print(e);
 
   @protected
   String _mapToString(Map mp) {
@@ -168,7 +166,7 @@ class McRequest {
   Future getJsonData(String endpoint,
       {Map<String, dynamic>? params,
       bool complex = false,
-      Function(Object error)? onError,
+      Function(Object error) onError = _onError,
       Function(dynamic data)? inspect}) async {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
@@ -176,7 +174,7 @@ class McRequest {
       http.Response response = await http.get(url, headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 
@@ -268,14 +266,14 @@ class McRequest {
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {Function(dynamic data)? inspect,
-      Function(Object error)? onError}) async {
+      Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
       http.Response response =
           await http.put(url, body: json.encode(data), headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 
@@ -332,7 +330,7 @@ class McRequest {
   Future postJsonData(String endPoint,
       {Map<String, dynamic>? data,
       Function(dynamic data)? inspect,
-      Function(Object error)? onError,
+      Function(Object error) onError = _onError,
       Map<String, dynamic>? params}) async {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
@@ -344,7 +342,7 @@ class McRequest {
       }
       return _jsonData(response, inspect: inspect, endpoint: endPoint);
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 
@@ -355,13 +353,13 @@ class McRequest {
   /// [inspect] => List<Map>
   ///
   Future delJsonData(int id, String endpoint,
-      {Function(Object error)? onError}) async {
+      {Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
       http.Response response = await http.delete(url, headers: headers);
       return response.body;
     } catch (e) {
-      onError!(e);
+      onError(e);
     }
   }
 

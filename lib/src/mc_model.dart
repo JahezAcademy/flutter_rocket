@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'mc_constants.dart';
 import 'mc_exception.dart';
 import 'mc_llistenable.dart';
 
@@ -10,7 +11,6 @@ abstract class McModel<T> extends McListenable {
   bool failed = false;
   bool existData = false;
   McException exception = McException();
-  static final String rebuild = "rebuild";
 
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
@@ -19,7 +19,7 @@ abstract class McModel<T> extends McListenable {
   }
 
   /// التقاط الخطأ
-  void setException( McException _response) {
+  void setException(McException _response) {
     exception = _response;
     callListener(rebuild);
   }
@@ -33,13 +33,13 @@ abstract class McModel<T> extends McListenable {
     return super.hasListeners;
   }
 
-  ///في حالة وجود خطأ
+  ///في حالة وجود خط أ
   void setFailed(bool state) {
     failed = state;
     callListener(rebuild);
   }
 
-  ///حذف النموذج من قائمة النماذج
+  /// حذف النموذج من قائمة النماذج
   void delItem(int index) {
     multi!.removeAt(index);
     callListener(rebuild);
@@ -55,12 +55,12 @@ abstract class McModel<T> extends McListenable {
     callListener(rebuild);
   }
 
-  ///json من النماذج الى بيانات
+  /// json من النماذج الى بيانات
   Map<String, dynamic> toJson() {
     return {};
   }
 
-  ///التحكم في اعادة البناء يدويا
+  /// التحكم في اعادة البناء يدويا
   void rebuildWidget() {
     callListener(rebuild);
   }
@@ -72,4 +72,3 @@ abstract class McModel<T> extends McListenable {
     super.registerListener(key, listener);
   }
 }
-

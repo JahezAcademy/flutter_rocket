@@ -1,15 +1,16 @@
+import 'package:example/models/post_model.dart';
+import 'package:example/requests/post_request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
-import '../Models/PostModel.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
   // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post = McController().add<Post>('posts', Post(), readOnly: true);
-  // get request by key
-  final McRequest request = McController().get<McRequest>("rq");
-  PostExample({this.title});
+  final Post post =
+      McController().add<Post>(postsEndpoint, Post(), readOnly: true);
+
+  PostExample({required this.title});
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class PostExample extends StatelessWidget {
             IconButton(
                 icon: Icon(Icons.data_usage),
                 // Refresh Data from Api
-                onPressed: () => refresh())
+                onPressed: () => GetPosts.getPosts(post))
           ],
         ),
         body: Container(
@@ -31,11 +32,11 @@ class PostExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
               onRefresh: () {
-                return refresh();
+                return GetPosts.getPosts(post);
               },
               child: McView(
                 // call api method
-                call: () => request.getObjData("posts", post, multi: true),
+                call: () => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
                 // handle errors
@@ -62,13 +63,13 @@ class PostExample extends StatelessWidget {
                   return Container(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(
-                      itemCount: post.multi.length,
+                      itemCount: post.multi!.length,
                       itemBuilder: (BuildContext context, int index) {
                         // your data saved in multi list as Post model
-                        Post currentPost = post.multi[index];
+                        Post currentPost = post.multi![index];
                         return ListTile(
                             leading: Text(currentPost.id.toString()),
-                            title: Text(currentPost.title),
+                            title: Text(currentPost.title!),
                             onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -82,39 +83,22 @@ class PostExample extends StatelessWidget {
               )),
         ));
   }
-
-  Future<dynamic> refresh() {
-    // use hrrp method you want (get,post,put) + ObjData if you used model in McView and you can use JsonData for get data directly from api
-    return request.getObjData(
-      // endpoint
-      "posts",
-      // your model
-      post,
-      // if you received data as List multi will be true & if data as map you not should to define multi its false as default
-      multi: true,
-      // parameters for send it with request
-      // params:{"key":"value"},
-      // inspect method for determine exact json use for generate your model in first step
-      // if your api send data directly without any supplement values you not should define it
-      // inspect:(data)=>data["response"]
-    );
-  }
 }
 
 class Details extends StatelessWidget {
   final int index;
   //get your model by key
-  final Post post = McController().get<Post>('posts');
+  final Post post = McController().get<Post>(postsEndpoint);
   Details(this.index);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(post.multi[index].title)),
+      appBar: AppBar(title: Text(post.multi![index].title!)),
       body: Center(
         child: ListTile(
-          leading: Text(post.multi[index].id.toString()),
-          title: Text(post.multi[index].title),
-          subtitle: Text(post.multi[index].body),
+          leading: Text(post.multi![index].id.toString()),
+          title: Text(post.multi![index].title!),
+          subtitle: Text(post.multi![index].body!),
         ),
       ),
     );

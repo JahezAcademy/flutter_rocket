@@ -1,28 +1,37 @@
+import 'dart:collection';
 import 'dart:ui';
+import 'mc_extensions.dart';
 
 abstract class McListenable {
-  Map<String, List<VoidCallback>> _observers = {};
+  HashMap<String, LinkedList<MyLinkedListEntry<VoidCallback>>> _observers =
+      HashMap();
   List<McListenable> merges = [];
   bool get isMerged {
     return merges.isNotEmpty;
   }
 
   void registerListener(String key, VoidCallback listener) {
-    if (_observers[key] == null) _observers[key] = [];
-    _observers[key]!.add(listener);
+    if (_observers[key] == null)
+      _observers[key] = LinkedList<MyLinkedListEntry<VoidCallback>>();
+    _observers[key]!.add(MyLinkedListEntry(listener));
   }
 
   void registerListeners(Map<String, List<VoidCallback>> listeners) {
-    _observers.addAll(listeners);
+    listeners.forEach((key, value) {
+      value.forEach((element) {
+        _observers[key]!.add(MyLinkedListEntry(element));
+      });
+    });
   }
 
   void callListener(String key) {
-    if (_observers.containsKey(key)) _observers[key]!.forEach((l) => l.call());
+    if (_observers.containsKey(key))
+      _observers[key]!.forEach((l) => l.callBack.call());
   }
 
   void callListeners(List<String> keys) {
     _observers.forEach((key, value) {
-      if (keys.contains(key)) value.forEach((l) => l.call());
+      if (keys.contains(key)) value.forEach((l) => l.callBack.call());
     });
   }
 
@@ -30,7 +39,7 @@ abstract class McListenable {
     if (_observers.containsKey(key))
       listener == null
           ? _observers.remove(key)
-          : _observers[key]!.removeWhere((l) => l == listener);
+          : _observers[key]!.removeWhere((l) => l.callBack == listener);
   }
 
   void removeListeners(List<String> keys, [List<VoidCallback>? listeners]) {
@@ -46,7 +55,8 @@ abstract class McListenable {
   }
 
   bool keyHasListeners(String key) {
-    if (_observers[key] == null) _observers[key] = [];
+    if (_observers[key] == null)
+      _observers[key] = LinkedList<MyLinkedListEntry<VoidCallback>>();
     return _observers[key]!.isNotEmpty;
   }
 
@@ -57,4 +67,12 @@ abstract class McListenable {
   void dispose() {
     _observers.clear();
   }
+}
+
+class MyLinkedListEntry<T>
+    extends LinkedListEntry<MyLinkedListEntry<VoidCallback>> {
+  VoidCallback callBack;
+  MyLinkedListEntry(this.callBack);
+  @override
+  String toString() => '${super.toString()}: $callBack';
 }

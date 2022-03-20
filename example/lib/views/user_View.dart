@@ -1,10 +1,14 @@
-import 'package:example/Models/UserModel.dart';
+import 'package:example/models/user/address.dart';
+import 'package:example/models/user/company.dart';
+import 'package:example/models/user/geo.dart';
+import 'package:example/models/user_model.dart';
+import 'package:example/requests/user_request.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
 
 class UserExample extends StatelessWidget {
-  final User users = McController().add<User>("users", User());
-  UserExample({this.title});
+  final User users = McController().add<User>(usersEndpoint, User());
+  UserExample({required this.title});
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -21,9 +25,7 @@ class UserExample extends StatelessWidget {
               child: Wrap(
                 children: [Icon(Icons.get_app), Text("Get Data")],
               ),
-              onPressed: () => mc
-                  .get<McRequest>('rq')
-                  .getObjData<User>("users", users, multi: true),
+              onPressed: () => GetUsers.getUsers(users),
             ),
             TextButton(
                 child: Text(
@@ -46,10 +48,10 @@ class UserExample extends StatelessWidget {
 
                   // [2]-change data with fromJson method directly:
 
-                  users.multi[0].fromJson({
-                    users.nameStr: "Mohammed CHAHBOUN 💙",
-                    users.companyStr: newCompany.toJson(),
-                    users.imageStr:
+                  users.multi![0].fromJson({
+                    users.nameVar: "Mohammed CHAHBOUN 💙",
+                    users.companyVar: newCompany.toJson(),
+                    users.imageVar:
                         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
                   });
                   // Call rebuild method required if data multi
@@ -63,22 +65,22 @@ class UserExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: McView(
             // call api by McRequest saved in McController and make model on ready
-            call: () =>
-                mc.get<McRequest>('rq').getObjData("users", users, multi: true),
+            call: () => GetUsers.getUsers(users),
             // call api every 1 sec
-            // callType: CallType.callAsStream,
-            // secondsOfStream: 1,
+            callType: CallType.callAsStream,
+            // update data from server after 2 sec
+            secondsOfStream: 2,
             // your model
             model: users,
             // your widget for show data from model
             builder: (context) {
               return ListView.builder(
-                itemCount: users.multi.length,
+                itemCount: users.multi!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  User user = users.multi[index];
-                  Company company = user.company;
-                  Address address = user.address;
-                  Geo geo = address.geo;
+                  User user = users.multi![index];
+                  Company company = user.company!;
+                  Address address = user.address!;
+                  Geo geo = address.geo!;
                   return ExpansionTile(
                       leading: InkWell(
                         onLongPress: () => users.delItem(index),
@@ -90,18 +92,18 @@ class UserExample extends StatelessWidget {
                           backgroundColor: Theme.of(context).primaryColor,
                           backgroundImage: user.image == null
                               ? null
-                              : NetworkImage(user.image),
+                              : NetworkImage(user.image!),
                           child: user.image == null ? Icon(Icons.person) : null,
                         ),
                       ),
-                      title: Text("User :" + user.name),
+                      title: Text("User :" + user.name!),
                       children: [
                         SizedBox(height: 5.0),
                         Text(user.id.toString()),
-                        Text(user.username),
-                        Text(user.email),
-                        Text(user.phone),
-                        Text(user.website),
+                        Text(user.username!),
+                        Text(user.email!),
+                        Text(user.phone!),
+                        Text(user.website!),
                         SizedBox(height: 5),
                         ExpansionTile(
                             tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
@@ -109,11 +111,11 @@ class UserExample extends StatelessWidget {
                               backgroundColor: Theme.of(context).primaryColor,
                               child: Icon(Icons.home),
                             ),
-                            title: Text("Company :" + company.name),
+                            title: Text("Company :" + company.name!),
                             children: [
                               SizedBox(height: 5.0),
-                              Text(company.bs),
-                              Text(company.catchPhrase),
+                              Text(company.bs!),
+                              Text(company.catchPhrase!),
                             ]),
                         SizedBox(height: 5),
                         ExpansionTile(
@@ -122,13 +124,13 @@ class UserExample extends StatelessWidget {
                               backgroundColor: Theme.of(context).primaryColor,
                               child: Icon(Icons.place),
                             ),
-                            title: Text("Address :" + address.city),
+                            title: Text("Address :" + address.city!),
                             children: [
                               SizedBox(height: 5.0),
-                              Text(address.street),
-                              Text(address.suite),
-                              Text(address.zipcode),
-                              Text(address.city),
+                              Text(address.street!),
+                              Text(address.suite!),
+                              Text(address.zipcode!),
+                              Text(address.city!),
                               SizedBox(height: 5.0),
                               ExpansionTile(
                                   tilePadding:
@@ -141,8 +143,8 @@ class UserExample extends StatelessWidget {
                                   title: Text("geo adrdress"),
                                   children: [
                                     SizedBox(height: 5.0),
-                                    Text(geo.lat),
-                                    Text(geo.lng),
+                                    Text(geo.lat!),
+                                    Text(geo.lng!),
                                   ]),
                             ]),
                       ]);
@@ -157,15 +159,15 @@ class UserExample extends StatelessWidget {
 // ignore: must_be_immutable
 class OneUser extends StatelessWidget {
   final int index;
-  User user;
-  Company company;
-  Address address;
-  Geo geo;
+  late User user;
+  late Company company;
+  late Address address;
+  late Geo geo;
   OneUser(this.index) {
-    user = mc.get<User>('users').multi[index];
-    company = user.company;
-    address = user.address;
-    geo = address.geo;
+    user = mc.get<User>(usersEndpoint).multi![index];
+    company = user.company!;
+    address = user.address!;
+    geo = address.geo!;
   }
 
   @override
@@ -176,17 +178,17 @@ class OneUser extends StatelessWidget {
             leading: CircleAvatar(
               backgroundColor: Theme.of(context).primaryColor,
               backgroundImage:
-                  user.image == null ? null : NetworkImage(user.image),
+                  user.image == null ? null : NetworkImage(user.image!),
               child: user.image == null ? Icon(Icons.person) : null,
             ),
-            title: Text("User :" + user.name),
+            title: Text("User :" + user.name!),
             children: [
               SizedBox(height: 5.0),
               Text(user.id.toString()),
-              Text(user.username),
-              Text(user.email),
-              Text(user.phone),
-              Text(user.website),
+              Text(user.username!),
+              Text(user.email!),
+              Text(user.phone!),
+              Text(user.website!),
               SizedBox(height: 5),
               ExpansionTile(
                   tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
@@ -194,11 +196,11 @@ class OneUser extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                     child: Icon(Icons.home),
                   ),
-                  title: Text("Company :" + company.name),
+                  title: Text("Company :" + company.name!),
                   children: [
                     SizedBox(height: 5.0),
-                    Text(company.bs),
-                    Text(company.catchPhrase),
+                    Text(company.bs!),
+                    Text(company.catchPhrase!),
                   ]),
               SizedBox(height: 5),
               ExpansionTile(
@@ -207,13 +209,13 @@ class OneUser extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                     child: Icon(Icons.place),
                   ),
-                  title: Text("Address :" + address.city),
+                  title: Text("Address :" + address.city!),
                   children: [
                     SizedBox(height: 5.0),
-                    Text(address.street),
-                    Text(address.suite),
-                    Text(address.zipcode),
-                    Text(address.city),
+                    Text(address.street!),
+                    Text(address.suite!),
+                    Text(address.zipcode!),
+                    Text(address.city!),
                     SizedBox(height: 5.0),
                     ExpansionTile(
                         tilePadding: EdgeInsets.symmetric(horizontal: 80.0),
@@ -224,8 +226,8 @@ class OneUser extends StatelessWidget {
                         title: Text("geo adrdress"),
                         children: [
                           SizedBox(height: 5.0),
-                          Text(geo.lat),
-                          Text(geo.lng),
+                          Text(geo.lat!),
+                          Text(geo.lng!),
                         ]),
                   ]),
             ]),

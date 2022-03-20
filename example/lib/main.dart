@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:example/views/counter_View.dart';
+import 'package:example/views/mini_view.dart';
+import 'package:example/views/photo_View.dart';
+import 'package:example/views/post_View.dart';
+import 'package:example/views/user_View.dart';
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
-import 'Views/counter_View.dart';
-import 'Views/mini_view.dart';
-import 'Views/photo_View.dart';
-import 'Views/post_View.dart';
-import 'Views/user_View.dart';
 
 void main() {
   runApp(App());
@@ -45,7 +45,7 @@ class App extends StatelessWidget {
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   final ValueNotifier<double> dx = ValueNotifier<double>(0.1);
-  BuildContext cntx;
+  late BuildContext cntx;
   final List<String> exps = [
     "Mc Package",
     "Link your app with API easily",
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
     // create request object
     McRequest request = McRequest(url: baseUrl);
     // save it, for use it from any screen
-    mc.add('rq', request);
+    mc.add(mcRequestKey, request);
     Timer.periodic(Duration(milliseconds: 5), (timer) {
       if (dx.value <=
           MediaQuery.of(cntx).size.width +
@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
                         exps[index],
                         style: Theme.of(context)
                             .textTheme
-                            .headline5
+                            .headline5!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                     );
