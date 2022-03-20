@@ -49,3 +49,17 @@
 - removed [complex] parameter in [McRequest] methods
 - in [McView] passed on [onError] builder [McException] msg of error and reload method for use it for retry 
 - removed unused parameter on [McView] Builder
+
+## [0.0.2+2]
+- add default value for onError on [McRequest] methods
+- make loading automatic on [McView]
+- use [Size] object instead of height an width double & inject [sizeScreen] extension in [BuildContext]
+- use [log] instead of [print] for debugging mode
+- optimized [_objData] method in [McRequest]
+- optimized examples structure
+- use [HashMap] instead of Map & add [hasKey] extension on [HashMap]
+- use [LinkedList] instead of [List] & add extensions needed
+- add const keys for RocketController [mcRequestKey], [sizeScreenKey] & [sizeDesignKey]
+- Rename package from [mc] to [MVCRocket]
+- Marked [mc] as discontinued package
+- Publish package with new name [MVCRocket]
