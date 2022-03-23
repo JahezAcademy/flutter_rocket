@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/src/mc_model.dart';
+import 'mc_model.dart';
 import 'mc_constants.dart';
 import 'mc_exception.dart';
 import 'mc_llistenable.dart';

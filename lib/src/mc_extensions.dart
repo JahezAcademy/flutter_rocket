@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:mc/src/mc_controller.dart';
+import 'mc_controller.dart';
 import 'mc_constants.dart';
 import 'mc_llistenable.dart';
 
