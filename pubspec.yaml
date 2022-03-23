@@ -1,6 +1,6 @@
 name: mvc_rocket
 description: State management & request package, Model,View,Controller,Request MVCR.
-version: 0.0.2+2
+version: 1.0.0
 homepage: https://github.com/JahezAcademy/MVCRocket
 
 environment:
