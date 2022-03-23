@@ -1,5 +1,5 @@
 import 'package:example/models/post_model.dart';
-import 'package:mc/mvc_rocket.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 const String postsEndpoint = "posts";
 

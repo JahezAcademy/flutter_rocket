@@ -75,7 +75,7 @@ firstly you need to create your  cket from your json data by this [Link](https:/
 you get something like this:
 
 ```dart
-import 'package:mc/mvc_rocket.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class Post extends RocketModel<Post> {
   List<Post> multi;
@@ -270,9 +270,9 @@ rocket.removeWhere((key,value)=>key.contains("ke"));
 
 ```
 ## Graphic tutorial 
-![JPG](https://github.com/OurFlutterC/mc/blob/staging/mc_package.jpg)
+![JPG](https://github.com/OurFlutterC/mvc_rocket/blob/staging/mc_package.jpg)
 [explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
-## [More examples](https://github.com/ourflutter/mc/tree/main/example)
+## [More examples](https://github.com/ourflutter/mvc_rocket/tree/main/example)
 # License
     MIT License
     

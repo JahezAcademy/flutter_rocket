@@ -105,7 +105,7 @@ packages:
   mvc_rocket:
     dependency: "direct main"
     description:
-      path: "/Users/mac/Developer/MVCRocket"
+      path: "/Users/mac/Developer/mvc_rocket"
       relative: false
     source: path
     version: "0.0.2+2"

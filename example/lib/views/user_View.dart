@@ -4,7 +4,7 @@ import 'package:example/models/user_submodel/company_submodel.dart';
 import 'package:example/models/user_submodel/geo_submodel.dart';
 import 'package:example/requests/user_request.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/mvc_rocket.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class UserExample extends StatelessWidget {
   final User users = RocketController().add<User>(usersEndpoint, User());

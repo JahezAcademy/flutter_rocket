@@ -1,4 +1,4 @@
-import 'package:mc/mvc_rocket.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 import 'geo_submodel.dart';
 
