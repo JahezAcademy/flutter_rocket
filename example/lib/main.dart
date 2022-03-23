@@ -5,7 +5,7 @@ import 'package:example/views/photo_View.dart';
 import 'package:example/views/post_View.dart';
 import 'package:example/views/user_View.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/mvc_rocket.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 void main() {
   runApp(App());
