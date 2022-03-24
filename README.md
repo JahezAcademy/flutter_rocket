@@ -1,4 +1,4 @@
-# mc
+#  🚀 MVCRocket 🚀
 
 MVCRocket State management and request package, Model,View,Controller,Request MVCR.
 
@@ -8,17 +8,8 @@ MVCRocket State management and request package, Model,View,Controller,Request MV
 [![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mc)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 
-# Getting Started
-
-In your flutter project, add the dependency to your `pubspec.yaml`
-
-```yaml
-dependencies:
-  ...
-  mc: ^0.0.2
-```
 # Usage
-## Simple case use McMV & RocketValue
+## Simple case use RocketMiniView & RocketValue
 its very simple
 
 ```dart
@@ -30,18 +21,18 @@ class McMiniViewExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        //use your value in McMV and if value changed will rebuild widget for show your new value
+        //use your value in RocketMiniView and if value changed will rebuild widget for show your new value
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // use value for every widget
-            McMV(myStringValue, () => Text(myStringValue.v)),
-            McMV(myStringValue, () => Text(myIntValue.v.toString())),
+            RocketMiniView(myStringValue, () => Text(myStringValue.v)),
+            RocketMiniView(myStringValue, () => Text(myIntValue.v.toString())),
             const SizedBox(
               height: 25.0,
             ),
             // merge multi values in one widget
-            McMV(RocketValue.merge([myStringValue, myIntValue]), () {
+            RocketMiniView(RocketValue.merge([myStringValue, myIntValue]), () {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -270,9 +261,9 @@ rocket.removeWhere((key,value)=>key.contains("ke"));
 
 ```
 ## Graphic tutorial 
-![JPG](https://github.com/OurFlutterC/mvc_rocket/blob/staging/mc_package.jpg)
+![JPG](https://github.com/JahezAcademy/mvc_rocket/blob/🚀-MVCRocket-🚀/mvcRocket_package.jpg)
 [explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
-## [More examples](https://github.com/ourflutter/mvc_rocket/tree/main/example)
+## [More examples](https://github.com/JahezAcademy/mvc_rocket/tree/main/example)
 # License
     MIT License
     

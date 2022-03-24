@@ -97,18 +97,18 @@ class MiniView extends StatelessWidget {
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       body: Container(
-//         //use your value in McMV and if value changed will rebuild widget for show your new value
+//         //use your value in RocketMiniView and if value changed will rebuild widget for show your new value
 //         child: Column(
 //           mainAxisAlignment: MainAxisAlignment.center,
 //           children: [
 //             // use McValue for every widget
-//             McMV(myStringValue, () => Text(myStringValue.v)),
-//             McMV(myStringValue, () => Text(myIntValue.v.toString())),
+//             RocketMiniView(myStringValue, () => Text(myStringValue.v)),
+//             RocketMiniView(myStringValue, () => Text(myIntValue.v.toString())),
 //             const SizedBox(
 //               height: 25.0,
 //             ),
 //             // merge multi MCValue in one widget
-//             McMV(McValue.merge([myStringValue, myIntValue]), () {
+//             RocketMiniView(McValue.merge([myStringValue, myIntValue]), () {
 //               return Row(
 //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //                 children: [
