@@ -57,7 +57,7 @@ extension ToScreenSize on num {
   }
 }
 
-extension SizeDevice on BuildContext {
-  double get height => MediaQuery.of(this).size.height;
-  double get width => MediaQuery.of(this).size.width;
-}
+// extension SizeDevice on BuildContext {
+//   double get height => MediaQuery.of(this).size.height;
+//   double get width => MediaQuery.of(this).size.width;
+// }

@@ -261,7 +261,7 @@ rocket.removeWhere((key,value)=>key.contains("ke"));
 
 ```
 ## Graphic tutorial 
-![JPG](https://github.com/JahezAcademy/mvc_rocket/blob/🚀-MVCRocket-🚀/mvcRocket_package.jpg)
+![JPG](https://github.com/JahezAcademy/mvc_rocket/blob/MVCRocket/mvcRocket_package.jpg)
 [explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
 ## [More examples](https://github.com/JahezAcademy/mvc_rocket/tree/main/example)
 # License
