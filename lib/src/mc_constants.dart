@@ -7,3 +7,11 @@ const String sizeDesignKey = "sizeDesign";
 const String miniRebuild = "miniRebuild";
 const String mergesRebuild = "mergesRebuild";
 const String rebuild = "rebuild";
+
+
+enum HttpMethods{
+  post,
+  get,
+  delete,
+  put
+}

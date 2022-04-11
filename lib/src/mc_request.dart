@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mvc_rocket/src/mc_constants.dart';
 import 'mc_model.dart';
 import 'mc_exception.dart';
 
@@ -139,7 +140,7 @@ class RocketRequest {
 
   static _onError(Object e) => print(e);
 
-  //TODO: rename to maptoParams & inject into Map
+  //DONE: rename to maptoParams & inject into Map
   @protected
   String _mapToString(Map mp) {
     String result = "";
@@ -364,13 +365,13 @@ class RocketRequest {
     }
   }
 
-  //TODO: use enum instead of string for check http method
+  //DONE: use enum instead of string for check http method
   Future sendFile(
       String endpoint, Map<String, String>? fields, Map<String, String>? files,
-      {String id = "", String method = "POST"}) async {
-    String end = method == "POST" ? '$id' : "$id/";
+      {String id = "", HttpMethods method = HttpMethods.post}) async {
+    String end = method == HttpMethods.post ? '$id' : "$id/";
     var request =
-        http.MultipartRequest(method, Uri.parse("$url/$endpoint/$end"));
+        http.MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
 
     files?.forEach((key, value) async {
       request.files.add(await http.MultipartFile.fromPath(key, value));
