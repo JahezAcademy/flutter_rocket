@@ -1,5 +1,5 @@
-class McException {
-  McException(
+class RocketException {
+  RocketException(
       {this.response = "",
       this.statusCode = 0,
       this.exception = "",

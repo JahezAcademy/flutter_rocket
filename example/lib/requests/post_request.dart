@@ -1,17 +1,16 @@
 import 'package:example/models/post_model.dart';
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 const String postsEndpoint = "posts";
 
 class GetPosts {
   static Future getPosts(Post postModel) =>
-      McController().get<McRequest>(mcRequestKey).getObjData(
+      RocketController().get<RocketRequest>(mcRequestKey).getObjData(
         // endpoint
         postsEndpoint,
         // your model
         postModel,
         inspect: (d) {
-          print(d);
           return d;
         },
         // if you received data as List multi will be true & if data as map you not should to define multi its false as default

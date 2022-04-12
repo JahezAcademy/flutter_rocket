@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mc/src/mc_model.dart';
+import 'mc_model.dart';
 import 'mc_exception.dart';
 
-class McRequest {
+class RocketRequest {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
@@ -18,7 +18,7 @@ class McRequest {
   /// هو الرابط الخاص بالخادم بدون نقطة النهاية كمثال
   ///
   ///
-  /// شطل صحيح
+  /// شكل صحيح
   ///
   /// www.test.com/api/
   ///
@@ -39,7 +39,7 @@ class McRequest {
   /// [debugging]
   ///
   /// console تفعيل او الغاء ظهور المشاكل في
-  McRequest(
+  RocketRequest(
       {required this.url,
       this.headers = const {},
       this.setCookies = false,
@@ -110,16 +110,16 @@ class McRequest {
   }
 
   @protected
-  dynamic _objData<T>(http.Response response, McModel<T> model,
+  dynamic _objData<T>(http.Response response, RocketModel<T> model,
       {bool? multi, Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       model.existData = true;
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
-          result = inspect(result ?? []);
+          result = inspect(result);
         }
-        model.setMulti(result);
+        model.setMulti(result ?? []);
 
         return model.multi;
       } else {
@@ -139,6 +139,7 @@ class McRequest {
 
   static _onError(Object e) => print(e);
 
+  //TODO: rename to maptoParams & inject into Map
   @protected
   String _mapToString(Map mp) {
     String result = "";
@@ -162,7 +163,7 @@ class McRequest {
   ///
   /// [List]=>(قاموس)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
   Future getJsonData(String endpoint,
       {Map<String, dynamic>? params,
       bool complex = false,
@@ -189,13 +190,12 @@ class McRequest {
   ///
   /// [List]=>(مصفوفة)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
-  Future getObjData<T>(String endpoint, McModel<T> model,
+  Future getObjData<T>(String endpoint, RocketModel<T> model,
       {Map<String, dynamic>? params,
       bool multi = false,
       Function(dynamic data)? inspect}) async {
-    model.load(true);
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     http.Response? response;
@@ -214,7 +214,7 @@ class McRequest {
         body = response.body;
         statusCode = response.statusCode;
       }
-      model.setException(McException(
+      model.setException(RocketException(
           response: body,
           statusCode: statusCode,
           exception: e.toString(),
@@ -227,9 +227,10 @@ class McRequest {
   ///
   /// [model]=>(النموذج)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
-  Future<McModel> putObjData<T>(int id, String endpoint, McModel<T> model,
+  Future<RocketModel> putObjData<T>(
+      int id, String endpoint, RocketModel<T> model,
       {bool multi = false, Function(dynamic data)? inspect}) async {
     model.load(true);
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
@@ -248,7 +249,7 @@ class McRequest {
         body = response.body;
         statusCode = response.statusCode;
       }
-      model.setException(McException(
+      model.setException(RocketException(
           response: body,
           statusCode: statusCode,
           exception: e.toString(),
@@ -262,7 +263,7 @@ class McRequest {
   ///
   /// [data]=>(قاموس)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {Function(dynamic data)? inspect,
@@ -281,10 +282,10 @@ class McRequest {
   ///
   /// [model]=>(النموذج)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
-  Future<McModel> postObjData<T>(String endPoint,
-      {McModel<T>? model,
+  Future<RocketModel> postObjData<T>(String endPoint,
+      {RocketModel<T>? model,
       bool multi = false,
       Function(dynamic data)? inspect,
       Map<String, dynamic>? data,
@@ -311,7 +312,7 @@ class McRequest {
         body = response.body;
         statusCode = response.statusCode;
       }
-      model.setException(McException(
+      model.setException(RocketException(
           response: body,
           statusCode: statusCode,
           exception: e.toString(),
@@ -325,7 +326,7 @@ class McRequest {
   ///
   /// Json=>(قاموس)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
   Future postJsonData(String endPoint,
       {Map<String, dynamic>? data,
@@ -350,7 +351,7 @@ class McRequest {
   ///
   /// [id]=>(ر.م)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
   ///
   Future delJsonData(int id, String endpoint,
       {Function(Object error) onError = _onError}) async {
@@ -363,6 +364,7 @@ class McRequest {
     }
   }
 
+  //TODO: use enum instead of string for check http method
   Future sendFile(
       String endpoint, Map<String, String>? fields, Map<String, String>? files,
       {String id = "", String method = "POST"}) async {

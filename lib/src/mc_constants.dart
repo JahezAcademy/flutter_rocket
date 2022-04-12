@@ -1,9 +1,9 @@
-// default key for McRequest object
-const String mcRequestKey = "mcRequest";
+// default key for RocketRequest object
+const String mcRequestKey = "rocketRequest";
 
-const String sizeScreen = "sizeScreen";
-const String sizeDesign = "sizeDesign";
+const String sizeScreenKey = "sizeScreen";
+const String sizeDesignKey = "sizeDesign";
 
-const String miniRebuild = "MiniRebuild";
-const String mergesRebuild = "MergesRebuild";
+const String miniRebuild = "miniRebuild";
+const String mergesRebuild = "mergesRebuild";
 const String rebuild = "rebuild";

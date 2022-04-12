@@ -1,8 +1,8 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'geo.dart';
+import 'geo_submodel.dart';
 
-class Address extends McModel<Address> {
+class Address extends RocketModel<Address> {
   List<Address>? multi;
   String? street;
   String? suite;

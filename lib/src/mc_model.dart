@@ -4,13 +4,13 @@ import 'mc_exception.dart';
 import 'mc_llistenable.dart';
 
 /// يجب ان ترث النماذج المستخدمة من هذا الكائن
-abstract class McModel<T> extends McListenable {
+abstract class RocketModel<T> extends RocketListenable {
   bool loading = false;
   bool _loadingChecker = false;
   List<T>? multi;
   bool failed = false;
   bool existData = false;
-  McException exception = McException();
+  RocketException exception = RocketException();
 
   /// تفعيل و الغاء جاري التحميل
   void load(bool t) {
@@ -19,7 +19,7 @@ abstract class McModel<T> extends McListenable {
   }
 
   /// التقاط الخطأ
-  void setException(McException _response) {
+  void setException(RocketException _response) {
     exception = _response;
     callListener(rebuild);
   }

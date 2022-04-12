@@ -2,10 +2,10 @@ import 'dart:collection';
 import 'dart:ui';
 import 'mc_extensions.dart';
 
-abstract class McListenable {
+abstract class RocketListenable {
   HashMap<String, LinkedList<MyLinkedListEntry<VoidCallback>>> _observers =
       HashMap();
-  List<McListenable> merges = [];
+  List<RocketListenable> merges = [];
   bool get isMerged {
     return merges.isNotEmpty;
   }

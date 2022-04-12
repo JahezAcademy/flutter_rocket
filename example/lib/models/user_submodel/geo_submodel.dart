@@ -1,6 +1,6 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-class Geo extends McModel<Geo> {
+class Geo extends RocketModel<Geo> {
   String? lat;
   String? lng;
 

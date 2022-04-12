@@ -2,8 +2,8 @@ import 'dart:collection';
 import 'mc_extensions.dart';
 
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
-class McController {
-  static final McController _controller = McController._internal();
+class RocketController {
+  static final RocketController _controller = RocketController._internal();
   HashMap<String, dynamic> _models = HashMap();
 
   /// اضافة تموذج جديد
@@ -42,9 +42,9 @@ class McController {
     _models.removeWhere(test);
   }
 
-  factory McController() {
+  factory RocketController() {
     return _controller;
   }
 
-  McController._internal();
+  RocketController._internal();
 }

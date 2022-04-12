@@ -1,6 +1,6 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-class Company extends McModel<Company> {
+class Company extends RocketModel<Company> {
   List<Company>? multi;
   String? name;
   String? catchPhrase;

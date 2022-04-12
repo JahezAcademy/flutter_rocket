@@ -1,9 +1,9 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'user/address.dart';
-import 'user/company.dart';
+import 'user_submodel/address_submodel.dart';
+import 'user_submodel/company_submodel.dart';
 
-class User extends McModel<User> {
+class User extends RocketModel<User> {
   List<User>? multi;
   int? id;
   String? name;
