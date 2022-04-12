@@ -1,6 +1,9 @@
 #  🚀 MVCRocket 🚀
 
+
 MVCRocket State management and request package, Model,View,Controller,Request MVCR.
+This package mark as discontinued you will found it with new name MVCRocket
+
 
 # Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
 
