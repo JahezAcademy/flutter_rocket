@@ -9,18 +9,7 @@ import 'mc_llistenable.dart';
 
 typedef OnError = Widget Function(RocketException error, Function() reload);
 
-enum CallType {
-  /// يتم استدعاء الدالة يشكل متكرر
-  callAsStream,
-
-  /// يتم استدعاء الدالة مرة واحدة
-  callAsFuture,
-
-  /// يتم استدعاء الدالة عندما يكون النموذج فارغ
-  callIfModelEmpty,
-}
-
-class RocketView extends StatefulWidget {
+class RocketView<T> extends StatefulWidget {
   /// [RocketView]
   ///
   /// انشاء البناء الخاص باعادة بناء المحتويات الخاصة به.
@@ -68,24 +57,25 @@ class RocketView extends StatefulWidget {
     this.loader,
     this.onError = _defaultOnError,
   }) {
-    model.load(true);
+    ///if (call == _myDefaultFunc) model.state =  RocketState.done;
 
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
-        Future.value(call()).whenComplete(() => model.load(false));
+        call();
         break;
       case CallType.callIfModelEmpty:
         if (!model.existData) {
-          Future.value(call()).whenComplete(() => model.load(false));
+          call();
         }
         break;
       case CallType.callAsStream:
-        Future.value(call()).whenComplete(() => model.load(false));
+        call();
         Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
-          model.loadingChecking(true);
+          model.loadingChecking = true;
           call();
-          if (!model.hasListener()) timer.cancel();
+          if (!model.hasListeners || model.state != RocketState.done)
+            timer.cancel();
         });
         break;
     }
@@ -128,7 +118,7 @@ class RocketView extends StatefulWidget {
   final Widget? loader;
 
   ///النموذج الذي يحتوي على البيانات المراد تجديدها
-  final RocketModel model;
+  final RocketModel<T> model;
 
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   final OnError onError;
@@ -148,11 +138,10 @@ class _ViewRocketState extends State<RocketView> {
   @override
   void initState() {
     reload = () {
-      widget.model.setFailed(false);
-      widget.model.load(true);
+      widget.model.state = RocketState.loading;
       widget.call.call();
     };
-    widget.model.registerListener(rebuild, _handleChange);
+    widget.model.registerListener(rocketRebuild, _handleChange);
     super.initState();
   }
 
@@ -160,33 +149,30 @@ class _ViewRocketState extends State<RocketView> {
   void didUpdateWidget(RocketView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(rebuild);
-      widget.model.registerListener(rebuild, _handleChange);
+      oldWidget.model.removeListener(rocketRebuild);      
+      widget.model.registerListener(rocketRebuild, _handleChange);
     }
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(rebuild);
+    widget.model.removeListener(rocketRebuild);
     super.dispose();
   }
 
   void _handleChange() {
-    setState(() {
-      // The listenable's state is our build state, and it changed already.
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.model.failed) {
-      return widget.onError != null
-          ? widget.onError!(widget.model.exception, reload)
-          : const SizedBox();
-    } else {
-      return widget.model.loading
-          ? Center(child: widget.loader ?? CircularProgressIndicator())
-          : widget.builder(context);
+    switch (widget.model.state) {
+      case RocketState.loading:
+        return Center(child: widget.loader ?? CircularProgressIndicator());
+      case RocketState.done:
+        return widget.builder(context);
+      case RocketState.failed:
+        return widget.onError(widget.model.exception, reload);
     }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
 class Photo extends RocketModel<Photo> {
-  List<Photo>? multi;
   int? albumId;
   int? id;
   String? title;
@@ -21,13 +20,13 @@ class Photo extends RocketModel<Photo> {
     this.thumbnailUrl,
   });
 
-  void fromJson(covariant Map<String, dynamic> json) {
+  void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     albumId = json['albumId'] ?? albumId;
     id = json['id'] ?? id;
     title = json['title'] ?? title;
     url = json['url'] ?? url;
     thumbnailUrl = json['thumbnailUrl'] ?? thumbnailUrl;
-    return super.fromJson(json);
+    return super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -44,9 +43,10 @@ class Photo extends RocketModel<Photo> {
   void setMulti(List data) {
     List<Photo> listOfphotos = data.map((e) {
       Photo photos = Photo();
-      photos.fromJson(e);
+      photos.fromJson(e, isSub: true);
       return photos;
     }).toList();
     multi = listOfphotos;
+    super.setMulti(data);
   }
 }
