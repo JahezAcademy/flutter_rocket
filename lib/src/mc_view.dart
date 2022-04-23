@@ -7,7 +7,7 @@ import 'mc_constants.dart';
 import 'mc_exception.dart';
 import 'mc_llistenable.dart';
 
-/// call طريقة استدعاء دالة
+typedef OnError = Widget Function(RocketException error, Function() reload);
 
 enum CallType {
   /// يتم استدعاء الدالة يشكل متكرر
@@ -66,7 +66,7 @@ class RocketView extends StatefulWidget {
     this.callType = CallType.callAsFuture,
     this.secondsOfStream = 1,
     this.loader,
-    this.onError,
+    this.onError = _defaultOnError,
   }) {
     model.load(true);
 
@@ -93,6 +93,24 @@ class RocketView extends StatefulWidget {
 
   static _myDefaultFunc() {}
 
+  static Widget _defaultOnError(
+      RocketException error, dynamic Function() reload) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(error.exception.toString()),
+          Text("StatusCode : ${error.statusCode.toString()}"),
+          Text(
+            error.response.toString(),
+            style: TextStyle(overflow: TextOverflow.fade),
+          ),
+          TextButton(onPressed: reload, child: Text("Retry"))
+        ],
+      ),
+    );
+  }
+
   ///البناء دالة ترجع المحتويات المراد اعادة بناءها لتغيير قيمتها
   final Widget Function(BuildContext) builder;
 
@@ -113,7 +131,7 @@ class RocketView extends StatefulWidget {
   final RocketModel model;
 
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
-  final Widget Function(RocketException error, Function() reload)? onError;
+  final OnError onError;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
