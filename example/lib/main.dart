@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
     // create request object
     RocketRequest request = RocketRequest(url: baseUrl);
     // save it, for use it from any screen
-    rocket.add(mcRequestKey, request);
+    rocket.add(rocketRequestKey, request);
     Timer.periodic(Duration(milliseconds: 5), (timer) {
       if (dx.value <=
           MediaQuery.of(cntx).size.width +

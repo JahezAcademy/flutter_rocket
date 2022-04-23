@@ -6,7 +6,7 @@ import 'package:mvc_rocket/mvc_rocket.dart';
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
-  // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
+  // [rocket] is instance of Mccontroller injected in Object by extension for use it easily anywhere
   final Post post =
       RocketController().add<Post>(postsEndpoint, Post(), readOnly: true);
 
@@ -39,6 +39,8 @@ class PostExample extends StatelessWidget {
                 call: () => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
+                // call call Voidcallback if model empty
+                callType: CallType.callIfModelEmpty,
                 // handle errors
                 onError: (RocketException exception, Function() reload) {
                   return Center(
@@ -52,8 +54,6 @@ class PostExample extends StatelessWidget {
                     ),
                   );
                 },
-                // call api if model is empty & you can choose another ways like default way asFuture(call once) & asStream (call every //[secondsOfStream] seconds)
-                callType: CallType.callIfModelEmpty,
                 // or
                 // callType: CallType.callAsStream,
                 // secondsOfStream: 1,
@@ -87,7 +87,7 @@ class PostExample extends StatelessWidget {
 
 class Details extends StatelessWidget {
   final int index;
-  //get your model by key
+  //  get your model by key
   final Post post = RocketController().get<Post>(postsEndpoint);
   Details(this.index);
   @override

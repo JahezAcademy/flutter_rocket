@@ -29,7 +29,7 @@ class CounterExample extends StatelessWidget {
               model: counter,
               // call & secondsOfStream & callType optional parameters you can use RocketView Widget without them
               call: add,
-              //callType: CallType.callAsStream,
+              callType: CallType.callAsStream,
               secondsOfStream: 1,
               builder: (context) {
                 return Text(
@@ -45,8 +45,7 @@ class CounterExample extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         //change your field by json structure
         onPressed: () {
-          counter.count -= 1;
-          counter.fromJson({"count": counter.count});
+          counter.fromJson({Counter.countKey: counter.count - 1});
         },
         tooltip: 'Increment',
         child: Icon(Icons.minimize),
@@ -55,8 +54,7 @@ class CounterExample extends StatelessWidget {
   }
 
   Future<void> add() async {
-    await Future.delayed(Duration(seconds: 2));
-    counter.count += 50;
-    print(50);
+    await Future.delayed(Duration(seconds: 1));
+    counter.fromJson({Counter.countKey: counter.count + 1});
   }
 }

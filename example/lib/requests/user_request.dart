@@ -5,6 +5,6 @@ const String usersEndpoint = "users";
 
 class GetUsers {
   static Future getUsers(User userModel) => RocketController()
-      .get<RocketRequest>(mcRequestKey)
+      .get<RocketRequest>(rocketRequestKey)
       .getObjData(usersEndpoint, userModel, multi: true);
 }

@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'mc_extensions.dart';
 
 abstract class RocketListenable {
-  HashMap<String, LinkedList<MyLinkedListEntry<VoidCallback>>> _observers =
+  HashMap<String, LinkedList<CustomLinkedListEntry<VoidCallback>>> _observers =
       HashMap();
   List<RocketListenable> merges = [];
   bool get isMerged {
@@ -12,14 +12,14 @@ abstract class RocketListenable {
 
   void registerListener(String key, VoidCallback listener) {
     if (_observers[key] == null)
-      _observers[key] = LinkedList<MyLinkedListEntry<VoidCallback>>();
-    _observers[key]!.add(MyLinkedListEntry(listener));
+      _observers[key] = LinkedList<CustomLinkedListEntry<VoidCallback>>();
+    _observers[key]!.add(CustomLinkedListEntry(listener));
   }
 
   void registerListeners(Map<String, List<VoidCallback>> listeners) {
     listeners.forEach((key, value) {
       value.forEach((element) {
-        _observers[key]!.add(MyLinkedListEntry(element));
+        _observers[key]!.add(CustomLinkedListEntry(element));
       });
     });
   }
@@ -56,7 +56,7 @@ abstract class RocketListenable {
 
   bool keyHasListeners(String key) {
     if (_observers[key] == null)
-      _observers[key] = LinkedList<MyLinkedListEntry<VoidCallback>>();
+      _observers[key] = LinkedList<CustomLinkedListEntry<VoidCallback>>();
     return _observers[key]!.isNotEmpty;
   }
 
@@ -69,10 +69,10 @@ abstract class RocketListenable {
   }
 }
 
-class MyLinkedListEntry<T>
-    extends LinkedListEntry<MyLinkedListEntry<VoidCallback>> {
+class CustomLinkedListEntry<T>
+    extends LinkedListEntry<CustomLinkedListEntry<VoidCallback>> {
   VoidCallback callBack;
-  MyLinkedListEntry(this.callBack);
+  CustomLinkedListEntry(this.callBack);
   @override
   String toString() => '${super.toString()}: $callBack';
 }
