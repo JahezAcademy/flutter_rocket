@@ -6,7 +6,9 @@ class Post extends RocketModel<Post> {
   int? id;
   String? title;
   String? body;
-
+  // disable logs debugging
+  @override
+  bool get enableDebug => false;
   String userIdVar = "userId";
   String idVar = "id";
   String titleVar = "title";

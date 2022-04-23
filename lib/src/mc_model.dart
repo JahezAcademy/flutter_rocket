@@ -10,6 +10,7 @@ abstract class RocketModel<T> extends RocketListenable {
   List<T>? multi;
   bool failed = false;
   bool existData = false;
+  bool get enableDebug => kDebugMode;
   RocketException exception = RocketException();
 
   /// تفعيل و الغاء جاري التحميل
