@@ -5,7 +5,6 @@ This package mark as discontinued you will found it with new name MVCRocket
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
 
-
 [![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mc)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 
