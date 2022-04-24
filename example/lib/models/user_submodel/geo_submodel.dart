@@ -10,10 +10,10 @@ class Geo extends RocketModel<Geo> {
     this.lat,
     this.lng,
   });
-  fromJson(covariant Map<String, dynamic> json) {
+  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     lat = json['lat'] ?? lat;
     lng = json['lng'] ?? lng;
-    return super.fromJson(json);
+    return super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {

@@ -4,7 +4,6 @@ import 'user_submodel/address_submodel.dart';
 import 'user_submodel/company_submodel.dart';
 
 class User extends RocketModel<User> {
-  List<User>? multi;
   int? id;
   String? name;
   String? username;
@@ -39,18 +38,17 @@ class User extends RocketModel<User> {
     company ??= Company();
   }
 
-  void fromJson(covariant Map<String, dynamic> json) {
+  void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     id = json['id'] ?? id;
     name = json['name'] ?? name;
     username = json['username'] ?? username;
     email = json['email'] ?? email;
-    address!.fromJson(json['address'] ?? address!.toJson());
+    address!.fromJson(json['address'] ?? address!.toJson(), isSub: isSub);
     phone = json['phone'] ?? phone;
     image = json['image'] ?? image;
-
     website = json['website'] ?? website;
-    company!.fromJson(json['company'] ?? company!.toJson());
-    return super.fromJson(json);
+    company!.fromJson(json['company'] ?? company!.toJson(), isSub: isSub);
+    return super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -71,9 +69,10 @@ class User extends RocketModel<User> {
   void setMulti(List data) {
     List<User> listOfuser = data.map((e) {
       User user = User();
-      user.fromJson(e);
+      user.fromJson(e, isSub: true);
       return user;
     }).toList();
     multi = listOfuser;
+    super.setMulti(data);
   }
 }

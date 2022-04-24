@@ -6,8 +6,11 @@ class Counter extends RocketModel<Counter> {
   Counter({
     this.count = 0,
   });
-  fromJson(covariant Map<String, dynamic> json) {
-    count = json['count'] ?? count;
+
+  static String countKey = "count";
+
+  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
+    count = json[countKey] ?? count;
     return super.fromJson(json);
   }
 

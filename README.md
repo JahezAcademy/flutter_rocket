@@ -1,12 +1,9 @@
 #  🚀 MVCRocket 🚀
 
-
-MVCRocket State management and request package, Model,View,Controller,Request MVCR.
+State management and request package, Model,View,Controller,Request MVCR.
 This package mark as discontinued you will found it with new name MVCRocket
 
-
-# Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
-
+# Author: [Jahez team](https://github.com/JahezAcademy)
 
 [![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mc)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
@@ -96,6 +93,13 @@ class Post extends RocketModel<Post> {
     title = json['title'] ?? title;
     body = json['body'] ?? body;
     return super.fromJson(json);
+  }
+  
+  // Handle models error
+  @override
+  void setException(RocketException? _response) {
+    //SendErrorToCrashlytics.sendError(_response!);
+    super.setException(_response);
   }
 
   Map<String, dynamic> toJson() {

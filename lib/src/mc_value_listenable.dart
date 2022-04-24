@@ -14,8 +14,8 @@ class RocketValue<T> extends RocketListenable {
   }
 
   void rebuildWidget() {
-    if (keyHasListeners(miniRebuild)) callListener(miniRebuild);
-    if (keyHasListeners(mergesRebuild)) callListener(mergesRebuild);
+    if (keyHasListeners(rocketMiniRebuild)) callListener(rocketMiniRebuild);
+    if (keyHasListeners(rocketMergesRebuild)) callListener(rocketMergesRebuild);
   }
 
   RocketValue.merge(List<RocketListenable> _merges) {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mvc_rocket/src/mc_constants.dart';
 import 'mc_model.dart';
 import 'mc_exception.dart';
 
@@ -113,7 +114,6 @@ class RocketRequest {
   dynamic _objData<T>(http.Response response, RocketModel<T> model,
       {bool? multi, Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
-      model.existData = true;
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
@@ -131,7 +131,7 @@ class RocketRequest {
         return model;
       }
     } else {
-      model.load(false);
+      model.state = RocketState.failed;
       _getDebugging(response, endpoint);
       throw Exception('Failed to load Data');
     }
@@ -139,7 +139,7 @@ class RocketRequest {
 
   static _onError(Object e) => print(e);
 
-  //TODO: rename to maptoParams & inject into Map
+  //DONE: rename to maptoParams & inject into Map
   @protected
   String _mapToString(Map mp) {
     String result = "";
@@ -198,13 +198,10 @@ class RocketRequest {
       Function(dynamic data)? inspect}) async {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
+    model.state = RocketState.loading;
     http.Response? response;
     try {
-      response = await http
-          .get(url, headers: headers)
-          .whenComplete(() => model.load(false));
-
-      model.setFailed(false);
+      response = await http.get(url, headers: headers);
       return _objData<T>(response, model,
           multi: multi, inspect: inspect, endpoint: endpoint);
     } catch (e, s) {
@@ -219,7 +216,6 @@ class RocketRequest {
           statusCode: statusCode,
           exception: e.toString(),
           stackTrace: s));
-      model.setFailed(true);
     }
   }
 
@@ -232,14 +228,12 @@ class RocketRequest {
   Future<RocketModel> putObjData<T>(
       int id, String endpoint, RocketModel<T> model,
       {bool multi = false, Function(dynamic data)? inspect}) async {
-    model.load(true);
+    model.state = RocketState.loading;
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     http.Response? response;
     try {
-      response = await http
-          .put(url, body: json.encode(model.toJson()), headers: headers)
-          .whenComplete(() => model.load(false));
-      model.setFailed(false);
+      response = await http.put(url,
+          body: json.encode(model.toJson()), headers: headers);
       return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (e, s) {
@@ -254,7 +248,6 @@ class RocketRequest {
           statusCode: statusCode,
           exception: e.toString(),
           stackTrace: s));
-      model.setFailed(true);
       return Future.value(model);
     }
   }
@@ -290,19 +283,16 @@ class RocketRequest {
       Function(dynamic data)? inspect,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
-    model!.load(true);
+    model!.state = RocketState.loading;
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
     http.Response? response;
     try {
-      response = await http
-          .post(url, headers: headers, body: json.encode(data))
-          .whenComplete(() => model.load(false));
-
+      response =
+          await http.post(url, headers: headers, body: json.encode(data));
       if (setCookies) {
         _updateCookie(response);
       }
-      model.setFailed(false);
       return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endPoint);
     } catch (e, s) {
@@ -317,7 +307,6 @@ class RocketRequest {
           statusCode: statusCode,
           exception: e.toString(),
           stackTrace: s));
-      model.setFailed(true);
       return Future.value(model);
     }
   }
@@ -364,14 +353,13 @@ class RocketRequest {
     }
   }
 
-  //TODO: use enum instead of string for check http method
+  //DONE: use enum instead of string for check http method
   Future sendFile(
       String endpoint, Map<String, String>? fields, Map<String, String>? files,
-      {String id = "", String method = "POST"}) async {
-    String end = method == "POST" ? '$id' : "$id/";
+      {String id = "", HttpMethods method = HttpMethods.post}) async {
+    String end = method == HttpMethods.post ? '$id' : "$id/";
     var request =
-        http.MultipartRequest(method, Uri.parse("$url/$endpoint/$end"));
-
+        http.MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
     files?.forEach((key, value) async {
       request.files.add(await http.MultipartFile.fromPath(key, value));
     });

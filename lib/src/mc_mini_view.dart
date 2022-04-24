@@ -21,10 +21,10 @@ class _MiniViewRocketState extends State<RocketMiniView> {
     super.initState();
     if (widget.mcValue.isMerged) {
       widget.mcValue.merges.forEach((mcValue) {
-        mcValue.registerListener(mergesRebuild, _rebuildWidget);
+        mcValue.registerListener(rocketMergesRebuild, _rebuildWidget);
       });
     } else {
-      widget.mcValue.registerListener(miniRebuild, _rebuildWidget);
+      widget.mcValue.registerListener(rocketMiniRebuild, _rebuildWidget);
     }
   }
 
@@ -34,16 +34,16 @@ class _MiniViewRocketState extends State<RocketMiniView> {
     if (widget.mcValue.isMerged) {
       if (widget.mcValue != oldWidget.mcValue) {
         oldWidget.mcValue.merges.forEach((mcValue) {
-          mcValue.removeListener(mergesRebuild, _rebuildWidget);
+          mcValue.removeListener(rocketMergesRebuild, _rebuildWidget);
         });
         widget.mcValue.merges.forEach((mcValue) {
-          mcValue.registerListener(mergesRebuild, _rebuildWidget);
+          mcValue.registerListener(rocketMergesRebuild, _rebuildWidget);
         });
       }
     } else {
       if (widget.mcValue != oldWidget.mcValue) {
-        oldWidget.mcValue.removeListener(miniRebuild, _rebuildWidget);
-        widget.mcValue.registerListener(miniRebuild, _rebuildWidget);
+        oldWidget.mcValue.removeListener(rocketMiniRebuild, _rebuildWidget);
+        widget.mcValue.registerListener(rocketMiniRebuild, _rebuildWidget);
       }
     }
   }
@@ -52,10 +52,10 @@ class _MiniViewRocketState extends State<RocketMiniView> {
   void dispose() {
     if (widget.mcValue.isMerged) {
       widget.mcValue.merges.forEach((mcValue) {
-        mcValue.removeListener(mergesRebuild, _rebuildWidget);
+        mcValue.removeListener(rocketMergesRebuild, _rebuildWidget);
       });
     } else {
-      widget.mcValue.removeListener(miniRebuild, _rebuildWidget);
+      widget.mcValue.removeListener(rocketMiniRebuild, _rebuildWidget);
     }
     super.dispose();
   }

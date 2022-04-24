@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
     // create request object
     RocketRequest request = RocketRequest(url: baseUrl);
     // save it, for use it from any screen
-    rocket.add(mcRequestKey, request);
+    rocket.add(rocketRequestKey, request);
     Timer.periodic(Duration(milliseconds: 5), (timer) {
       if (dx.value <=
           MediaQuery.of(cntx).size.width +
@@ -137,4 +137,9 @@ class Example extends StatelessWidget {
           onPressed: () => Navigator.pushNamed(context, "/$to")),
     );
   }
+}
+
+extension SizeDevice on BuildContext {
+  double get height => MediaQuery.of(this).size.height;
+  double get width => MediaQuery.of(this).size.width;
 }

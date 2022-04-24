@@ -12,9 +12,9 @@ extension RocketInObj on Object {
   RocketController get rocket => RocketController();
 }
 
-extension CustomLinkedList on LinkedList<MyLinkedListEntry<VoidCallback>> {
-  void removeWhere(bool test(MyLinkedListEntry<VoidCallback> element)) {
-    List<MyLinkedListEntry<VoidCallback>>? removeIt = [];
+extension CustomLinkedList on LinkedList<CustomLinkedListEntry<VoidCallback>> {
+  void removeWhere(bool test(CustomLinkedListEntry<VoidCallback> element)) {
+    List<CustomLinkedListEntry<VoidCallback>>? removeIt = [];
     forEach((entry) {
       if (test(entry)) {
         removeIt.add(entry);
@@ -39,21 +39,21 @@ extension HasKey on HashMap {
 
 extension ToScreenSize on num {
   double get h {
-    assert(RocketController().get(sizeScreenKey) != null,
+    assert(RocketController().get(rocketSizeScreenKey) != null,
         "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
-    assert(RocketController().get(sizeDesignKey) != null,
+    assert(RocketController().get(rocketSizeDesignKey) != null,
         "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
-    return (RocketController().get<Size>(sizeScreenKey).height * this) /
-        RocketController().get<Size>(sizeDesignKey).height;
+    return (RocketController().get<Size>(rocketSizeScreenKey).height * this) /
+        RocketController().get<Size>(rocketSizeDesignKey).height;
   }
 
   double get w {
-    assert(RocketController().get(sizeScreenKey) != null,
+    assert(RocketController().get(rocketSizeScreenKey) != null,
         "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
-    assert(RocketController().get(sizeDesignKey) != null,
+    assert(RocketController().get(rocketSizeDesignKey) != null,
         "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
-    return (RocketController().get<Size>(sizeScreenKey).width * this) /
-        RocketController().get<Size>(sizeDesignKey).width;
+    return (RocketController().get<Size>(rocketSizeScreenKey).width * this) /
+        RocketController().get<Size>(rocketSizeDesignKey).width;
   }
 }
 

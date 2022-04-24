@@ -1,7 +1,6 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
 class Company extends RocketModel<Company> {
-  List<Company>? multi;
   String? name;
   String? catchPhrase;
   String? bs;
@@ -16,11 +15,11 @@ class Company extends RocketModel<Company> {
   }) {
     multi = multi ?? [];
   }
-  fromJson(covariant Map<String, dynamic> json) {
+  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     name = json['name'] ?? name;
     catchPhrase = json['catchPhrase'] ?? catchPhrase;
     bs = json['bs'] ?? bs;
-    return super.fromJson(json);
+    return super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -30,14 +29,5 @@ class Company extends RocketModel<Company> {
     data['bs'] = this.bs;
 
     return data;
-  }
-
-  void setMulti(List data) {
-    List<Company> listOfcompany = data.map((e) {
-      Company company = Company();
-      company.fromJson(e);
-      return company;
-    }).toList();
-    multi = listOfcompany;
   }
 }
