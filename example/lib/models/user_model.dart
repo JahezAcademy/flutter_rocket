@@ -48,7 +48,7 @@ class User extends RocketModel<User> {
     image = json['image'] ?? image;
     website = json['website'] ?? website;
     company!.fromJson(json['company'] ?? company!.toJson(), isSub: isSub);
-    return super.fromJson(json, isSub: isSub);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -66,13 +66,6 @@ class User extends RocketModel<User> {
     return data;
   }
 
-  void setMulti(List data) {
-    List<User> listOfuser = data.map((e) {
-      User user = User();
-      user.fromJson(e, isSub: true);
-      return user;
-    }).toList();
-    multi = listOfuser;
-    super.setMulti(data);
-  }
+  @override
+  get instance => User();
 }

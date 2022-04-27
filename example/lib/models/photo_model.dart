@@ -26,7 +26,7 @@ class Photo extends RocketModel<Photo> {
     title = json['title'] ?? title;
     url = json['url'] ?? url;
     thumbnailUrl = json['thumbnailUrl'] ?? thumbnailUrl;
-    return super.fromJson(json, isSub: isSub);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -40,13 +40,6 @@ class Photo extends RocketModel<Photo> {
     return data;
   }
 
-  void setMulti(List data) {
-    List<Photo> listOfphotos = data.map((e) {
-      Photo photos = Photo();
-      photos.fromJson(e, isSub: true);
-      return photos;
-    }).toList();
-    multi = listOfphotos;
-    super.setMulti(data);
-  }
+  @override
+  get instance => Photo();
 }
