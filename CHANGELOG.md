@@ -70,8 +70,8 @@
 - use [LinkedList] instead of [List] & add extensions needed
 - add const keys for RocketController [rocketRequestKey], [sizeScreenKey] & [sizeDesignKey]
 
-
 ## [1.0.1]
 - Use [enums] insread of [string] for http methods in [sendFile] method on [RocketRequest].
 = Add [RocketState] enums for manage model states (done,loading,failed).
 - Add [enableDebug] on Models for get model state & duration of loading
+
