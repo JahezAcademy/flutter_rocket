@@ -72,6 +72,6 @@
 
 ## [1.0.1]
 - Use [enums] instead of [string] for http methods in [sendFile] method on [RocketRequest].
-= Add [RocketState] enums for manage model states (done,loading,failed).
+- Add [RocketState] enums for manage model states (done,loading,failed).
 - Add [enableDebug] on Models for log model state & duration of loading
 - Optmized performance by manage rebuild widgets with [RocketState]
