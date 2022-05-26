@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:mvc_rocket/src/mc_constants.dart';
 import 'mc_model.dart';
 import 'mc_exception.dart';
@@ -47,7 +48,7 @@ class RocketRequest {
       this.debugging = true});
 
   @protected
-  dynamic _jsonData(http.Response response,
+  dynamic _jsonData(Response response,
       {Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var data = json.decode(utf8.decode(response.bodyBytes));
@@ -65,7 +66,7 @@ class RocketRequest {
     }
   }
 
-  _getDebugging(http.Response response, String? endpoint) {
+  _getDebugging(Response response, String? endpoint) {
     if (debugging) {
       log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
       log("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
@@ -106,14 +107,15 @@ class RocketRequest {
       case 504:
         return "the server, while acting as a gateway or proxy, did not get a response in time from the upstream server that it needed in order to complete the API call.";
       default:
-        return "success";
+        return "unknown";
     }
   }
 
   @protected
-  dynamic _objData<T>(http.Response response, RocketModel<T> model,
+  dynamic _objData<T>(Response response, RocketModel<T> model,
       {bool? multi, Function(dynamic data)? inspect, String? endpoint}) {
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == HttpStatus.ok ||
+        response.statusCode == HttpStatus.created) {
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
@@ -172,7 +174,7 @@ class RocketRequest {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     try {
-      http.Response response = await http.get(url, headers: headers);
+      Response response = await get(url, headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError(e);
@@ -199,23 +201,13 @@ class RocketRequest {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     model.state = RocketState.loading;
-    http.Response? response;
+    Response? response;
     try {
-      response = await http.get(url, headers: headers);
+      response = await get(url, headers: headers);
       return _objData<T>(response, model,
           multi: multi, inspect: inspect, endpoint: endpoint);
-    } catch (e, s) {
-      String body = "";
-      int statusCode = 0;
-      if (response != null) {
-        body = response.body;
-        statusCode = response.statusCode;
-      }
-      model.setException(RocketException(
-          response: body,
-          statusCode: statusCode,
-          exception: e.toString(),
-          stackTrace: s));
+    } catch (error, stackTrace) {
+      return _catchError(error, stackTrace, model, response);
     }
   }
 
@@ -230,26 +222,31 @@ class RocketRequest {
       {bool multi = false, Function(dynamic data)? inspect}) async {
     model.state = RocketState.loading;
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    http.Response? response;
+    Response? response;
     try {
-      response = await http.put(url,
-          body: json.encode(model.toJson()), headers: headers);
+      response =
+          await put(url, body: json.encode(model.toJson()), headers: headers);
       return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endpoint);
-    } catch (e, s) {
-      String body = "";
-      int statusCode = 0;
-      if (response != null) {
-        body = response.body;
-        statusCode = response.statusCode;
-      }
-      model.setException(RocketException(
-          response: body,
-          statusCode: statusCode,
-          exception: e.toString(),
-          stackTrace: s));
-      return Future.value(model);
+    } catch (error, stackTrace) {
+      return _catchError(error, stackTrace, model, response);
     }
+  }
+
+  _catchError(
+      Object e, StackTrace stackTrace, RocketModel model, Response? response) {
+    String? body;
+    int? statusCode;
+    if (response != null) {
+      body = response.body;
+      statusCode = response.statusCode;
+    }
+    model.setException(RocketException(
+        response: body!,
+        statusCode: statusCode!,
+        exception: e.toString(),
+        stackTrace: stackTrace));
+    return Future.value(model);
   }
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
@@ -263,8 +260,8 @@ class RocketRequest {
       Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
-      http.Response response =
-          await http.put(url, body: json.encode(data), headers: headers);
+      Response response =
+          await put(url, body: json.encode(data), headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError(e);
@@ -286,28 +283,16 @@ class RocketRequest {
     model!.state = RocketState.loading;
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
-    http.Response? response;
+    Response? response;
     try {
-      response =
-          await http.post(url, headers: headers, body: json.encode(data));
+      response = await post(url, headers: headers, body: json.encode(data));
       if (setCookies) {
         _updateCookie(response);
       }
       return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endPoint);
-    } catch (e, s) {
-      String body = "";
-      int statusCode = 0;
-      if (response != null) {
-        body = response.body;
-        statusCode = response.statusCode;
-      }
-      model.setException(RocketException(
-          response: body,
-          statusCode: statusCode,
-          exception: e.toString(),
-          stackTrace: s));
-      return Future.value(model);
+    } catch (error, stackTrace) {
+      return _catchError(error, stackTrace, model, response);
     }
   }
 
@@ -325,8 +310,8 @@ class RocketRequest {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
     try {
-      http.Response response =
-          await http.post(url, body: json.encode(data), headers: headers);
+      Response response =
+          await post(url, body: json.encode(data), headers: headers);
       if (setCookies) {
         _updateCookie(response);
       }
@@ -346,7 +331,7 @@ class RocketRequest {
       {Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
-      http.Response response = await http.delete(url, headers: headers);
+      Response response = await delete(url, headers: headers);
       return response.body;
     } catch (e) {
       onError(e);
@@ -359,9 +344,9 @@ class RocketRequest {
       {String id = "", HttpMethods method = HttpMethods.post}) async {
     String end = method == HttpMethods.post ? '$id' : "$id/";
     var request =
-        http.MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
+        MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
     files?.forEach((key, value) async {
-      request.files.add(await http.MultipartFile.fromPath(key, value));
+      request.files.add(await MultipartFile.fromPath(key, value));
     });
 
     request.fields.addAll(fields!);
@@ -379,7 +364,7 @@ class RocketRequest {
     }
   }
 
-  void _updateCookie(http.Response response) {
+  void _updateCookie(Response response) {
     String rawCookie = response.headers['set-cookie']!;
     int index = rawCookie.indexOf(';');
     headers['cookie'] =
