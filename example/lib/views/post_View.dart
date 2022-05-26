@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:example/models/post_model.dart';
 import 'package:example/requests/post_request.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +43,12 @@ class PostExample extends StatelessWidget {
                 model: post,
                 // call call Voidcallback if model empty
                 callType: CallType.callIfModelEmpty,
+                // or
+                // callType: CallType.callAsStream,
+                // secondsOfStream: 1,
+                // customized your loading (default widget is CircularProgressIndicator)
+                // loader:CustomLoading(),
+                
                 // handle errors
                 onError: (RocketException exception, Function() reload) {
                   return Center(
@@ -48,17 +56,13 @@ class PostExample extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(exception.exception),
-                        Text(exception.response),
+                        if (exception.statusCode != HttpStatus.ok)
+                          ...[Text(exception.response),Text(rocket.get(rocketRequestKey).msgByStatusCode(exception.statusCode))],
                         TextButton(onPressed: reload, child: Text("retry"))
                       ],
                     ),
                   );
                 },
-                // or
-                // callType: CallType.callAsStream,
-                // secondsOfStream: 1,
-                // customized your loading (default widget is CircularProgressIndicator)
-                // loader:CustomLoading(),
                 builder: (context) {
                   return Container(
                     height: MediaQuery.of(context).size.height * 0.852,
