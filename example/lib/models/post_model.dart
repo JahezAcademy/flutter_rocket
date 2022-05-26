@@ -1,12 +1,13 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-class Post extends McModel<Post> {
-  List<Post>? multi;
+class Post extends RocketModel<Post> {
   int? userId;
   int? id;
   String? title;
   String? body;
-
+  // disable logs debugging
+  @override
+  bool get enableDebug => false;
   String userIdVar = "userId";
   String idVar = "id";
   String titleVar = "title";
@@ -18,12 +19,13 @@ class Post extends McModel<Post> {
     this.body,
   });
 
-  void fromJson(covariant Map<String, dynamic> json) {
+  @override
+  void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     userId = json['userId'] ?? userId;
     id = json['id'] ?? id;
     title = json['title'] ?? title;
     body = json['body'] ?? body;
-    return super.fromJson(json);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -36,12 +38,6 @@ class Post extends McModel<Post> {
     return data;
   }
 
-  void setMulti(List data) {
-    List<Post> listOfpost = data.map((e) {
-      Post post = Post();
-      post.fromJson(e);
-      return post;
-    }).toList();
-    multi = listOfpost;
-  }
+ @override
+  get instance => Post();
 }

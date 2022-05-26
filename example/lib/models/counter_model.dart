@@ -1,14 +1,17 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-class Counter extends McModel<Counter> {
+class Counter extends RocketModel<Counter> {
   int count;
 
   Counter({
     this.count = 0,
   });
-  fromJson(covariant Map<String, dynamic> json) {
-    count = json['count'] ?? count;
-    return super.fromJson(json);
+
+  static String countKey = "count";
+
+  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
+    count = json[countKey] ?? count;
+    super.fromJson(json);
   }
 
   Map<String, dynamic> toJson() {

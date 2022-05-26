@@ -2,27 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/src/mc_model.dart';
-
+import 'mc_model.dart';
 import 'mc_constants.dart';
 import 'mc_exception.dart';
 import 'mc_llistenable.dart';
 
-/// call طريقة استدعاء دالة
+typedef OnError = Widget Function(RocketException error, Function() reload);
 
-enum CallType {
-  /// يتم استدعاء الدالة يشكل متكرر
-  callAsStream,
-
-  /// يتم استدعاء الدالة مرة واحدة
-  callAsFuture,
-
-  /// يتم استدعاء الدالة عندما يكون النموذج فارغ
-  callIfModelEmpty,
-}
-
-class McView extends StatefulWidget {
-  /// [McView]
+class RocketView<T> extends StatefulWidget {
+  /// [RocketView]
   ///
   /// انشاء البناء الخاص باعادة بناء المحتويات الخاصة به.
   ///
@@ -59,7 +47,7 @@ class McView extends StatefulWidget {
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   ///
 
-  McView({
+  RocketView({
     Key? key,
     required this.model,
     required this.builder,
@@ -67,32 +55,51 @@ class McView extends StatefulWidget {
     this.callType = CallType.callAsFuture,
     this.secondsOfStream = 1,
     this.loader,
-    this.onError,
+    this.onError = _defaultOnError,
   }) {
-    model.load(true);
+    ///if (call == _myDefaultFunc) model.state =  RocketState.done;
 
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
       case CallType.callAsFuture:
-        Future.value(call()).whenComplete(() => model.load(false));
+        call();
         break;
       case CallType.callIfModelEmpty:
         if (!model.existData) {
-          Future.value(call()).whenComplete(() => model.load(false));
+          call();
         }
         break;
       case CallType.callAsStream:
-        Future.value(call()).whenComplete(() => model.load(false));
+        call();
         Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
-          model.loadingChecking(true);
-          Future.value(call()).whenComplete(() => model.load(false));
-          if (!model.hasListener()) timer.cancel();
+          model.loadingChecking = true;
+          call();
+          if (!model.hasListeners || model.state != RocketState.done)
+            timer.cancel();
         });
         break;
     }
   }
 
   static _myDefaultFunc() {}
+
+  static Widget _defaultOnError(
+      RocketException error, dynamic Function() reload) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(error.exception.toString()),
+          Text("StatusCode : ${error.statusCode.toString()}"),
+          Text(
+            error.response.toString(),
+            style: TextStyle(overflow: TextOverflow.fade),
+          ),
+          TextButton(onPressed: reload, child: Text("Retry"))
+        ],
+      ),
+    );
+  }
 
   ///البناء دالة ترجع المحتويات المراد اعادة بناءها لتغيير قيمتها
   final Widget Function(BuildContext) builder;
@@ -111,65 +118,61 @@ class McView extends StatefulWidget {
   final Widget? loader;
 
   ///النموذج الذي يحتوي على البيانات المراد تجديدها
-  final McModel model;
+  final RocketModel<T> model;
 
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
-  final Widget Function(McException error, Function() reload)? onError;
+  final OnError onError;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<McListenable>('McModel', model));
+    properties.add(DiagnosticsProperty<RocketListenable>('McModel', model));
   }
 
   @override
-  _McViewState createState() => _McViewState();
+  _ViewRocketState createState() => _ViewRocketState();
 }
 
-class _McViewState extends State<McView> {
+class _ViewRocketState extends State<RocketView> {
   late Function() reload;
   @override
   void initState() {
     reload = () {
-      widget.model.setFailed(false);
-      widget.model.load(true);
+      widget.model.state = RocketState.loading;
       widget.call.call();
     };
-    widget.model.registerListener(rebuild, _handleChange);
+    widget.model.registerListener(rocketRebuild, _handleChange);
     super.initState();
   }
 
   @override
-  void didUpdateWidget(McView oldWidget) {
+  void didUpdateWidget(RocketView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(rebuild);
-      widget.model.registerListener(rebuild, _handleChange);
+      oldWidget.model.removeListener(rocketRebuild);      
+      widget.model.registerListener(rocketRebuild, _handleChange);
     }
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(rebuild);
+    widget.model.removeListener(rocketRebuild);
     super.dispose();
   }
 
   void _handleChange() {
-    setState(() {
-      // The listenable's state is our build state, and it changed already.
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.model.failed) {
-      return widget.onError != null
-          ? widget.onError!(widget.model.exception, reload)
-          : const SizedBox();
-    } else {
-      return widget.model.loading
-          ? Center(child: widget.loader ?? CircularProgressIndicator())
-          : widget.builder(context);
+    switch (widget.model.state) {
+      case RocketState.loading:
+        return Center(child: widget.loader ?? CircularProgressIndicator());
+      case RocketState.done:
+        return widget.builder(context);
+      case RocketState.failed:
+        return widget.onError(widget.model.exception, reload);
     }
   }
 }

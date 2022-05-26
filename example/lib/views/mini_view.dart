@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class MiniView extends StatelessWidget {
   MiniView({required this.title});
   final String title;
-  final McValue<String> mcString = "Initial value".mini;
-  final McValue<int> mcNum = 5.mini;
-  final McValue<List> mcList = [].mini;
+  final RocketValue<String> mcString = "Initial value".mini;
+  final RocketValue<int> mcNum = 5.mini;
+  final RocketValue<List> mcList = [].mini;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,15 +18,15 @@ class MiniView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("use View for every value"),
-            McMV(mcString, () => Text(mcString.v)),
-            McMV(
+            RocketMiniView(mcString, () => Text(mcString.v)),
+            RocketMiniView(
               mcNum,
               () => Text(mcNum.v.toString() +
                   (mcNum.v.toString() == "11"
                       ? " click to remove listener"
                       : "")),
             ),
-            McMV(
+            RocketMiniView(
               mcList,
               () {
                 return Container(
@@ -43,8 +43,8 @@ class MiniView extends StatelessWidget {
               height: 60.0,
             ),
             Text("merge multiple values"),
-            McMV(
-              McValue.merge([mcString, mcNum, mcList]),
+            RocketMiniView(
+              RocketValue.merge([mcString, mcNum, mcList]),
               () => Wrap(
                 runAlignment: WrapAlignment.center,
                 children: [
@@ -67,14 +67,14 @@ class MiniView extends StatelessWidget {
           // dont use methods for add items or remove it use instead of it +/-
           mcList.v += [mcNum.v, mcString.v];
           if (mcNum.v == 6) {
-            mcNum.registerListener(miniRebuild, valChanged);
-            mcNum.registerListener(mergesRebuild, () {
+            mcNum.registerListener(rocketMiniRebuild, valChanged);
+            mcNum.registerListener(rocketMergesRebuild, () {
               print(
                   'this listener called when widget of merges values rebuild');
             });
           }
           if (mcNum.v == 12) {
-            mcNum.removeListener(miniRebuild, valChanged);
+            mcNum.removeListener(rocketMiniRebuild, valChanged);
             print("listener removed!!!");
           }
         },
@@ -97,18 +97,18 @@ class MiniView extends StatelessWidget {
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       body: Container(
-//         //use your value in McMV and if value changed will rebuild widget for show your new value
+//         //use your value in RocketMiniView and if value changed will rebuild widget for show your new value
 //         child: Column(
 //           mainAxisAlignment: MainAxisAlignment.center,
 //           children: [
 //             // use McValue for every widget
-//             McMV(myStringValue, () => Text(myStringValue.v)),
-//             McMV(myStringValue, () => Text(myIntValue.v.toString())),
+//             RocketMiniView(myStringValue, () => Text(myStringValue.v)),
+//             RocketMiniView(myStringValue, () => Text(myIntValue.v.toString())),
 //             const SizedBox(
 //               height: 25.0,
 //             ),
 //             // merge multi MCValue in one widget
-//             McMV(McValue.merge([myStringValue, myIntValue]), () {
+//             RocketMiniView(McValue.merge([myStringValue, myIntValue]), () {
 //               return Row(
 //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //                 children: [

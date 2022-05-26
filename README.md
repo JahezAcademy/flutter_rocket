@@ -1,47 +1,37 @@
-# mc
+#  🚀 MVCRocket 🚀
 
 State management and request package, Model,View,Controller,Request MVCR.
 
-# Author: [Mohammed CHAHBOUN](https://github.com/m97chahboun)
+# Author: [Jahez team](https://github.com/JahezAcademy)
 
-
-[![Pub](https://img.shields.io/pub/v/mc.svg)](https://pub.dartlang.org/packages/mc)
+[![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mc)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 
-# Getting Started
-
-In your flutter project, add the dependency to your `pubspec.yaml`
-
-```yaml
-dependencies:
-  ...
-  mc: ^0.0.2+1
-```
 # Usage
-## Simple case use McMV & McValue
+## Simple case use RocketMiniView & RocketValue
 its very simple
 
 ```dart
 class McMiniViewExample extends StatelessWidget {
-  // use mini for convert value to McValue
-  final McValue<String> myStringValue = "My Value".mini;
-  final McValue<int> myIntValue = 2021.mini;
+  // use mini for convert value to RocketValue
+  final RocketValue<String> myStringValue = "My Value".mini;
+  final RocketValue<int> myIntValue = 2021.mini;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        //use your value in McMV and if value changed will rebuild widget for show your new value
+        // use your value in RocketMiniView and if value changed will rebuild widget for show your new value
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // use value for every widget
-            McMV(myStringValue, () => Text(myStringValue.v)),
-            McMV(myStringValue, () => Text(myIntValue.v.toString())),
+            RocketMiniView(myStringValue, () => Text(myStringValue.v)),
+            RocketMiniView(myStringValue, () => Text(myIntValue.v.toString())),
             const SizedBox(
               height: 25.0,
             ),
             // merge multi values in one widget
-            McMV(McValue.merge([myStringValue, myIntValue]), () {
+            RocketMiniView(RocketValue.merge([myStringValue, myIntValue]), () {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -71,13 +61,13 @@ class McMiniViewExample extends StatelessWidget {
 
 ## Complex case (state management & request)
 
-firstly you need to create your McModel from your json data by this [Link](https://json2dart.web.app/)
+firstly you need to create your  cket from your json data by this [Link](https://json2dart.web.app/)
 you get something like this:
 
 ```dart
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-class Post extends McModel<Post> {
+class Post extends RocketModel<Post> {
   List<Post> multi;
   int userId;
   int id;
@@ -103,6 +93,13 @@ class Post extends McModel<Post> {
     body = json['body'] ?? body;
     return super.fromJson(json);
   }
+  
+  // Handle models error
+  @override
+  void setException(RocketException? _response) {
+    //SendErrorToCrashlytics.sendError(_response!);
+    super.setException(_response);
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -125,16 +122,16 @@ class Post extends McModel<Post> {
 }
 ```
 
-Now second step create your McRequest in constructor or initState of first widget and pass url & headers
+Now second step create your RocketRequest in constructor or initState of first widget and pass url & headers
 
 ```dart
 class MyApp extends StatelessWidget {
   MyApp() {
     const String baseUrl = 'https://jsonplaceholder.typicode.com';
     // create request object
-    McRequest request = McRequest(url: baseUrl);
+    RocketRequest request = RocketRequest(url: baseUrl);
     // save it, for use it from any screen by key
-    mc.add('request', request);    
+    rocket.add(rocketRequestKey, request);    
   }
 
   @override
@@ -146,10 +143,16 @@ class MyApp extends StatelessWidget {
 }...
 ```
 
-Next step its build [McView] Widget & pass your [McModel] in [model] & [McRequest] method in [call] parameter
+Next step its build [RocketView] Widget & pass your [RocketModel] in [model] & [RocketRequest] method in [call] parameter
 
 
 ```dart
+import 'dart:io';
+
+import 'package:example/models/post_model.dart';
+import 'package:example/requests/post_request.dart';
+import 'package:flutter/material.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
@@ -157,7 +160,7 @@ class PostExample extends StatelessWidget {
   // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
   final Post post = McController().add<Post>('posts', Post(), readOnly: true);
   // get request by key
-  final McRequest request = McController().get<McRequest>("request");
+  final RocketRequest request = McController().get<RocketRequest>("request");
   PostExample({this.title});
   final String title;
   @override
@@ -182,8 +185,9 @@ class PostExample extends StatelessWidget {
               onRefresh: () {
                 return refresh();
               },
-              child: McView(
+              child: RocketView(
                 // call api method
+                // i write post endpoint incorrect for produce an error & use onError builder
                 call: () => request.getObjData("posqts", post, multi: true),
                 // your model generated
                 model: post,
@@ -194,7 +198,8 @@ class PostExample extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(exception.exception),
-                        Text(exception.response),
+                        if (exception.statusCode != HttpStatus.ok) Text(exception.response),
+                        // reload is method for call api again (call parameter)
                         TextButton(onPressed: reload, child: Text("retry"))
                       ],
                     ),
@@ -233,7 +238,7 @@ class PostExample extends StatelessWidget {
   }
 
   Future<dynamic> refresh() {
-    // use http method you want (get,post,put) + ObjData if you used model in McView and you can use JsonData for get data directly from api
+    // use http method you want (get,post,put) + ObjData if you used model in RocketView and you can use JsonData for get data directly from api
     return request.getObjData(
     // endpoint
     "posts",
@@ -258,23 +263,23 @@ class PostExample extends StatelessWidget {
 McController().add("key",value,readOnly:true); // you can't edit it if readonly true
 // or
 // [add] return value
-mc.add<Type>("key",value);
+rocket.add<Type>("key",value);
 // [get] return value
-mc.get<Type>("key");
+rocket.get<Type>("key");
 // [remove]
-mc.remove("key");
+rocket.remove("key");
 // remove with condition
-mc.removeWhere((key,value)=>key.contains("ke"));
+rocket.removeWhere((key,value)=>key.contains("ke"));
 
 ```
 ## Graphic tutorial 
-![JPG](https://github.com/OurFlutterC/mc/blob/staging/mc_package.jpg)
+![JPG](https://github.com/JahezAcademy/mvc_rocket/blob/MVCRocket/mvcRocket_package.jpg)
 [explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
-## [More examples](https://github.com/ourflutter/mc/tree/main/example)
+## [More examples](https://github.com/JahezAcademy/mvc_rocket/tree/main/example)
 # License
     MIT License
     
-    Copyright (c) 2021 Mohammed CHAHBOUN
+    Copyright (c) 2022 Jahez team
     
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
