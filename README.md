@@ -1,7 +1,6 @@
 #  🚀 MVCRocket 🚀
 
 State management and request package, Model,View,Controller,Request MVCR.
-This package mark as discontinued you will found it with new name MVCRocket
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
 
@@ -21,7 +20,7 @@ class McMiniViewExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        //use your value in RocketMiniView and if value changed will rebuild widget for show your new value
+        // use your value in RocketMiniView and if value changed will rebuild widget for show your new value
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -132,7 +131,7 @@ class MyApp extends StatelessWidget {
     // create request object
     RocketRequest request = RocketRequest(url: baseUrl);
     // save it, for use it from any screen by key
-    rocket.add('request', request);    
+    rocket.add(rocketRequestKey, request);    
   }
 
   @override
@@ -148,6 +147,12 @@ Next step its build [RocketView] Widget & pass your [RocketModel] in [model] & [
 
 
 ```dart
+import 'dart:io';
+
+import 'package:example/models/post_model.dart';
+import 'package:example/requests/post_request.dart';
+import 'package:flutter/material.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
@@ -193,7 +198,7 @@ class PostExample extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(exception.exception),
-                        Text(exception.response),
+                        if (exception.statusCode != HttpStatus.ok) Text(exception.response),
                         // reload is method for call api again (call parameter)
                         TextButton(onPressed: reload, child: Text("retry"))
                       ],
