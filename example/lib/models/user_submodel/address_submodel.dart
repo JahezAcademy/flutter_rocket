@@ -24,13 +24,14 @@ class Address extends RocketModel<Address> {
     multi = multi ?? [];
     geo ??= Geo();
   }
+  
   fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     street = json['street'] ?? street;
     suite = json['suite'] ?? suite;
     city = json['city'] ?? city;
     zipcode = json['zipcode'] ?? zipcode;
     geo!.fromJson(json['geo'] ?? geo!.toJson(), isSub: isSub);
-    return super.fromJson(json, isSub: isSub);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -43,4 +44,5 @@ class Address extends RocketModel<Address> {
 
     return data;
   }
+
 }

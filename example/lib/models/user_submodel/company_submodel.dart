@@ -15,11 +15,12 @@ class Company extends RocketModel<Company> {
   }) {
     multi = multi ?? [];
   }
+
   fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     name = json['name'] ?? name;
     catchPhrase = json['catchPhrase'] ?? catchPhrase;
     bs = json['bs'] ?? bs;
-    return super.fromJson(json, isSub: isSub);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {

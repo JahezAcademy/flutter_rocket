@@ -25,7 +25,7 @@ class Post extends RocketModel<Post> {
     id = json['id'] ?? id;
     title = json['title'] ?? title;
     body = json['body'] ?? body;
-    return super.fromJson(json, isSub: isSub);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -38,16 +38,6 @@ class Post extends RocketModel<Post> {
     return data;
   }
 
-  @override
-  void setMulti(List data) {
-    List<Post> listOfpost = data.map((e) {
-      Post post = Post();
-      post.fromJson(e, isSub: true);
-      return post;
-    }).toList();
-    multi = listOfpost;
-    super.setMulti(data);
-  }
-
-
+ @override
+  get instance => Post();
 }
