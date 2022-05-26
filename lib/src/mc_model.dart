@@ -67,18 +67,18 @@ abstract class RocketModel<T> extends RocketListenable {
   /// json من النماذج الى بيانات
   Map<String, dynamic> toJson();
 
-  DateTime time = DateTime.now();
+  DateTime _time = DateTime.now();
 
   /// التحكم في اعادة البناء يدويا
   void rebuildWidget() {
     if (enableDebug) {
       if (state == RocketState.loading) {
-        time = DateTime.now();
+        _time = DateTime.now();
         log('${T.toString()} : ${state.name}');
       }
 
       if (state == RocketState.done || state == RocketState.failed) {
-        int dur = DateTime.now().difference(time).inMilliseconds;
+        int dur = DateTime.now().difference(_time).inMilliseconds;
         log('${T.toString()} : ${state.name} in $dur ms');
       }
     }
