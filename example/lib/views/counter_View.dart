@@ -1,10 +1,10 @@
-import 'package:example/models/counter_model.dart';
 import 'package:flutter/material.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
+import 'package:example/models/counter_model.dart';
 
 class CounterExample extends StatelessWidget {
   final String title;
-  CounterExample({required this.title});
+  CounterExample({Key? key, required this.title}) : super(key: key);
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class CounterExample extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'Number of once call parameter called & you can also click on add icon',
               textAlign: TextAlign.center,
             ),
@@ -48,13 +48,13 @@ class CounterExample extends StatelessWidget {
           counter.fromJson({Counter.countKey: counter.count - 1});
         },
         tooltip: 'Increment',
-        child: Icon(Icons.minimize),
+        child: const Icon(Icons.minimize),
       ),
     );
   }
 
   Future<void> add() async {
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     counter.fromJson({Counter.countKey: counter.count + 1});
   }
 }

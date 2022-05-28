@@ -23,9 +23,6 @@ jobs:
     
     # Setup the flutter environment.
     - uses: subosito/flutter-action@v1
-      with:
-        channel: 'beta' # 'dev', 'alpha', default to: 'stable'
-        # flutter-version: '1.12.x' # you can also specify exact version of flutter
     
     # Get flutter dependencies.
     - run: flutter pub get
@@ -38,8 +35,13 @@ jobs:
 
     - run: cd example
 
-    # Run widget tests for our flutter project.
-    - run: flutter test test/view_tests.dart  
+    - run: echo "Test view example"
+
+    - run: flutter test test/view_tests.dart 
+
+    - run: echo "Test model example"
+
+    - run: flutter test test/model_tests.dart  
     
     # Build apk.
     - run: flutter build apk

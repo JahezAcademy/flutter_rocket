@@ -9,14 +9,16 @@ class Counter extends RocketModel<Counter> {
 
   static String countKey = "count";
 
+  @override
   fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     count = json[countKey] ?? count;
     super.fromJson(json);
   }
 
+  @override
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['count'] = count;
 
     return data;
   }

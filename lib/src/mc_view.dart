@@ -56,7 +56,7 @@ class RocketView<T> extends StatefulWidget {
     this.secondsOfStream = 1,
     this.loader,
     this.onError = _defaultOnError,
-  }) {
+  }) : super(key: key) {
     ///if (call == _myDefaultFunc) model.state =  RocketState.done;
 
     /// call التحقق من طريقة الاستدعاء لدالة
@@ -74,8 +74,9 @@ class RocketView<T> extends StatefulWidget {
         Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
           model.loadingChecking = true;
           call();
-          if (!model.hasListeners || model.state != RocketState.done)
+          if (!model.hasListeners || model.state != RocketState.done) {
             timer.cancel();
+          }
         });
         break;
     }
@@ -93,9 +94,9 @@ class RocketView<T> extends StatefulWidget {
           Text("StatusCode : ${error.statusCode.toString()}"),
           Text(
             error.response.toString(),
-            style: TextStyle(overflow: TextOverflow.fade),
+            style: const TextStyle(overflow: TextOverflow.fade),
           ),
-          TextButton(onPressed: reload, child: Text("Retry"))
+          TextButton(onPressed: reload, child: const Text("Retry"))
         ],
       ),
     );
@@ -130,10 +131,10 @@ class RocketView<T> extends StatefulWidget {
   }
 
   @override
-  _ViewRocketState createState() => _ViewRocketState();
+  ViewRocketState createState() => ViewRocketState();
 }
 
-class _ViewRocketState extends State<RocketView> {
+class ViewRocketState extends State<RocketView> {
   late Function() reload;
   @override
   void initState() {
@@ -168,7 +169,8 @@ class _ViewRocketState extends State<RocketView> {
   Widget build(BuildContext context) {
     switch (widget.model.state) {
       case RocketState.loading:
-        return Center(child: widget.loader ?? CircularProgressIndicator());
+        return Center(
+            child: widget.loader ?? const CircularProgressIndicator());
       case RocketState.done:
         return widget.builder(context);
       case RocketState.failed:

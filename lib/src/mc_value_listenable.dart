@@ -18,8 +18,8 @@ class RocketValue<T> extends RocketListenable {
     if (keyHasListeners(rocketMergesRebuild)) callListener(rocketMergesRebuild);
   }
 
-  RocketValue.merge(List<RocketListenable> _merges) {
-    merges = _merges;
+  RocketValue.merge(List<RocketListenable> kMerges) {
+    merges = kMerges;
   }
 
   /// for add listener for rebuild widget you can use miniRebuild or mergesRebuild as key

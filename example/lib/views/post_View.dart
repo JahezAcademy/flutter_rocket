@@ -12,24 +12,24 @@ class PostExample extends StatelessWidget {
   final Post post =
       RocketController().add<Post>(postsEndpoint, Post(), readOnly: true);
 
-  PostExample({required this.title});
+  PostExample({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             "Refresh Posts with swip to down or from here =>",
             style: TextStyle(fontSize: 11.0),
           ),
           actions: [
             IconButton(
-                icon: Icon(Icons.data_usage),
+                icon: const Icon(Icons.data_usage),
                 // Refresh Data from Api
                 onPressed: () => GetPosts.getPosts(post))
           ],
         ),
-        body: Container(
+        body: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
@@ -62,13 +62,14 @@ class PostExample extends StatelessWidget {
                               .get(rocketRequestKey)
                               .msgByStatusCode(exception.statusCode))
                         ],
-                        TextButton(onPressed: reload, child: Text("retry"))
+                        TextButton(
+                            onPressed: reload, child: const Text("retry"))
                       ],
                     ),
                   );
                 },
                 builder: (context) {
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(
                       itemCount: post.multi!.length,
@@ -97,7 +98,7 @@ class Details extends StatelessWidget {
   final int index;
   //  get your model by key
   final Post post = RocketController().get<Post>(postsEndpoint);
-  Details(this.index);
+  Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
