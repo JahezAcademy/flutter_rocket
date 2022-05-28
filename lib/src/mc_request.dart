@@ -69,8 +69,8 @@ class RocketRequest {
   _getDebugging(Response response, String? endpoint) {
     if (debugging) {
       log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
-      log("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
-      log("\x1B[38;5;2m [Response] => " + response.body + " \x1B[0m");
+      log("\x1B[38;5;2m [Url] => ${"$url/${endpoint!}"} \x1B[0m");
+      log("\x1B[38;5;2m [Response] => ${response.body} \x1B[0m");
       log("\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
       log("\x1B[38;5;2m ################################ \x1B[0m");
     }
@@ -139,7 +139,7 @@ class RocketRequest {
     }
   }
 
-  static _onError(Object e) => print(e);
+  static _onError(Object e) => log(e.toString());
 
   //DONE: rename to maptoParams & inject into Map
   @protected
@@ -147,7 +147,7 @@ class RocketRequest {
     String result = "";
     mp.forEach((key, value) {
       String and = mp.keys.last != key ? "&" : "";
-      result = result + key + "=" + value.toString() + and;
+      result = "${result + key}=$value$and";
     });
     return result;
   }
@@ -172,7 +172,7 @@ class RocketRequest {
       Function(Object error) onError = _onError,
       Function(dynamic data)? inspect}) async {
     String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
+    Uri url = Uri.parse("${this.url}/$endpoint?$srch");
     try {
       Response response = await get(url, headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
@@ -199,7 +199,7 @@ class RocketRequest {
       bool multi = false,
       Function(dynamic data)? inspect}) async {
     String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
+    Uri url = Uri.parse("${this.url}/$endpoint?$srch");
     model.state = RocketState.loading;
     Response? response;
     try {
@@ -221,7 +221,7 @@ class RocketRequest {
       int id, String endpoint, RocketModel<T> model,
       {bool multi = false, Function(dynamic data)? inspect}) async {
     model.state = RocketState.loading;
-    Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
+    Uri url = Uri.parse("${this.url}/$endpoint/$id/");
     Response? response;
     try {
       response =
@@ -258,7 +258,7 @@ class RocketRequest {
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {Function(dynamic data)? inspect,
       Function(Object error) onError = _onError}) async {
-    Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
+    Uri url = Uri.parse("${this.url}/$endpoint/$id/");
     try {
       Response response =
           await put(url, body: json.encode(data), headers: headers);
@@ -282,7 +282,7 @@ class RocketRequest {
       Map<String, dynamic>? params}) async {
     model!.state = RocketState.loading;
     String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
+    Uri url = Uri.parse("${this.url}/$endPoint?$srch");
     Response? response;
     try {
       response = await post(url, headers: headers, body: json.encode(data));
@@ -308,7 +308,7 @@ class RocketRequest {
       Function(Object error) onError = _onError,
       Map<String, dynamic>? params}) async {
     String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
+    Uri url = Uri.parse("${this.url}/$endPoint?$srch");
     try {
       Response response =
           await post(url, body: json.encode(data), headers: headers);
@@ -329,7 +329,7 @@ class RocketRequest {
   ///
   Future delJsonData(int id, String endpoint,
       {Function(Object error) onError = _onError}) async {
-    Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
+    Uri url = Uri.parse("${this.url}/$endpoint/$id/");
     try {
       Response response = await delete(url, headers: headers);
       return response.body;
@@ -342,7 +342,7 @@ class RocketRequest {
   Future sendFile(
       String endpoint, Map<String, String>? fields, Map<String, String>? files,
       {String id = "", HttpMethods method = HttpMethods.post}) async {
-    String end = method == HttpMethods.post ? '$id' : "$id/";
+    String end = method == HttpMethods.post ? id : "$id/";
     var request =
         MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
     files?.forEach((key, value) async {
@@ -350,7 +350,7 @@ class RocketRequest {
     });
 
     request.fields.addAll(fields!);
-    request.headers.addAll(this.headers);
+    request.headers.addAll(headers);
 
     var response = await request.send();
     if (response.statusCode == 200 || response.statusCode == 201) {

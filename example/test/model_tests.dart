@@ -4,7 +4,7 @@ import 'package:example/models/user_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'dummyData.dart';
+import 'dummy_data.dart';
 
 void main() {
   test('Test Post model', () {

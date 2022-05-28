@@ -38,6 +38,7 @@ class User extends RocketModel<User> {
     company ??= Company();
   }
 
+  @override
   void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     id = json['id'] ?? id;
     name = json['name'] ?? name;
@@ -51,17 +52,18 @@ class User extends RocketModel<User> {
     super.fromJson(json, isSub: isSub);
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['username'] = this.username;
-    data['email'] = this.email;
-    data['address'] = this.address!.toJson();
-    data['phone'] = this.phone;
-    data['website'] = this.website;
-    data['company'] = this.company!.toJson();
-    data['image'] = this.image;
+    data['id'] = id;
+    data['name'] = name;
+    data['username'] = username;
+    data['email'] = email;
+    data['address'] = address!.toJson();
+    data['phone'] = phone;
+    data['website'] = website;
+    data['company'] = company!.toJson();
+    data['image'] = image;
 
     return data;
   }

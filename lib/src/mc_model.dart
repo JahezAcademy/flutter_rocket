@@ -7,7 +7,7 @@ import 'mc_llistenable.dart';
 
 /// يجب ان ترث النماذج المستخدمة من هذا الكائن
 abstract class RocketModel<T> extends RocketListenable {
-  var instance;
+  dynamic instance;
   bool _loadingChecker = false;
   bool existData = false;
   bool get enableDebug => kDebugMode;
@@ -28,8 +28,8 @@ abstract class RocketModel<T> extends RocketListenable {
   }
 
   /// التقاط الخطأ
-  void setException(RocketException _response) {
-    exception = _response;
+  void setException(RocketException response) {
+    exception = response;
     state = RocketState.failed;
   }
 

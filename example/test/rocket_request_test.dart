@@ -1,6 +1,6 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'dummyData.dart';
+import 'dummy_data.dart';
 
 class RocketRequestTest {
   final String url;
@@ -13,7 +13,7 @@ class RocketRequestTest {
     dynamic Function(dynamic)? inspect,
   }) async {
     model.state = RocketState.loading;
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     try {
       model.setMulti(postData);
       model.state = RocketState.done;

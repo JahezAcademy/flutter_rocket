@@ -12,17 +12,17 @@ class RocketMiniView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MiniViewRocketState createState() => _MiniViewRocketState();
+  MiniViewRocketState createState() => MiniViewRocketState();
 }
 
-class _MiniViewRocketState extends State<RocketMiniView> {
+class MiniViewRocketState extends State<RocketMiniView> {
   @override
   void initState() {
     super.initState();
     if (widget.mcValue.isMerged) {
-      widget.mcValue.merges.forEach((mcValue) {
+      for (var mcValue in widget.mcValue.merges) {
         mcValue.registerListener(rocketMergesRebuild, _rebuildWidget);
-      });
+      }
     } else {
       widget.mcValue.registerListener(rocketMiniRebuild, _rebuildWidget);
     }
@@ -33,12 +33,12 @@ class _MiniViewRocketState extends State<RocketMiniView> {
     super.didUpdateWidget(oldWidget);
     if (widget.mcValue.isMerged) {
       if (widget.mcValue != oldWidget.mcValue) {
-        oldWidget.mcValue.merges.forEach((mcValue) {
+        for (var mcValue in oldWidget.mcValue.merges) {
           mcValue.removeListener(rocketMergesRebuild, _rebuildWidget);
-        });
-        widget.mcValue.merges.forEach((mcValue) {
+        }
+        for (var mcValue in widget.mcValue.merges) {
           mcValue.registerListener(rocketMergesRebuild, _rebuildWidget);
-        });
+        }
       }
     } else {
       if (widget.mcValue != oldWidget.mcValue) {
@@ -51,9 +51,9 @@ class _MiniViewRocketState extends State<RocketMiniView> {
   @override
   void dispose() {
     if (widget.mcValue.isMerged) {
-      widget.mcValue.merges.forEach((mcValue) {
+      for (var mcValue in widget.mcValue.merges) {
         mcValue.removeListener(rocketMergesRebuild, _rebuildWidget);
-      });
+      }
     } else {
       widget.mcValue.removeListener(rocketMiniRebuild, _rebuildWidget);
     }

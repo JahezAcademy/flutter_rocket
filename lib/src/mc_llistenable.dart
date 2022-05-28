@@ -3,49 +3,59 @@ import 'dart:ui';
 import 'mc_extensions.dart';
 
 abstract class RocketListenable {
-  HashMap<String, LinkedList<CustomLinkedListEntry<VoidCallback>>> _observers =
-      HashMap();
+  final HashMap<String, LinkedList<CustomLinkedListEntry<VoidCallback>>>
+      _observers = HashMap();
   List<RocketListenable> merges = [];
   bool get isMerged {
     return merges.isNotEmpty;
   }
 
   void registerListener(String key, VoidCallback listener) {
-    if (_observers[key] == null)
+    if (_observers[key] == null) {
       _observers[key] = LinkedList<CustomLinkedListEntry<VoidCallback>>();
+    }
     _observers[key]!.add(CustomLinkedListEntry(listener));
   }
 
   void registerListeners(Map<String, List<VoidCallback>> listeners) {
     listeners.forEach((key, value) {
-      value.forEach((element) {
+      for (var element in value) {
         _observers[key]!.add(CustomLinkedListEntry(element));
-      });
+      }
     });
   }
 
   void callListener(String key) {
-    if (_observers.containsKey(key))
-      _observers[key]!.forEach((l) => l.callBack.call());
+    if (_observers.containsKey(key)) {
+      for (var l in _observers[key]!) {
+        l.callBack.call();
+      }
+    }
   }
 
   void callListeners(List<String> keys) {
     _observers.forEach((key, value) {
-      if (keys.contains(key)) value.forEach((l) => l.callBack.call());
+      if (keys.contains(key)) {
+        for (var l in value) {
+          l.callBack.call();
+        }
+      }
     });
   }
 
   void removeListener(String key, [VoidCallback? listener]) {
-    if (_observers.containsKey(key))
+    if (_observers.containsKey(key)) {
       listener == null
           ? _observers.remove(key)
           : _observers[key]!.removeWhere((l) => l.callBack == listener);
+    }
   }
 
   void removeListeners(List<String> keys, [List<VoidCallback>? listeners]) {
     listeners == null
         ? _observers.removeWhere((key, value) => keys.contains(key))
         : _observers.forEach((key, value) {
+            // ignore: iterable_contains_unrelated_type
             value.removeWhere((l) => listeners.contains(l));
           });
   }
@@ -55,8 +65,9 @@ abstract class RocketListenable {
   }
 
   bool keyHasListeners(String key) {
-    if (_observers[key] == null)
+    if (_observers[key] == null) {
       _observers[key] = LinkedList<CustomLinkedListEntry<VoidCallback>>();
+    }
     return _observers[key]!.isNotEmpty;
   }
 

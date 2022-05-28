@@ -13,25 +13,27 @@ extension RocketInObj on Object {
 }
 
 extension CustomLinkedList on LinkedList<CustomLinkedListEntry<VoidCallback>> {
-  void removeWhere(bool test(CustomLinkedListEntry<VoidCallback> element)) {
+  void removeWhere(
+      bool Function(CustomLinkedListEntry<VoidCallback> element) test) {
     List<CustomLinkedListEntry<VoidCallback>>? removeIt = [];
     forEach((entry) {
       if (test(entry)) {
         removeIt.add(entry);
       }
     });
-    if (removeIt.isNotEmpty)
-      removeIt.forEach((entry) {
+    if (removeIt.isNotEmpty) {
+      for (var entry in removeIt) {
         remove(entry);
-      });
+      }
+    }
   }
 }
 
 extension HasKey on HashMap {
   bool hasKey(String key) {
     bool checker = false;
-    this.forEach((_key, value) {
-      if (key == _key) checker = true;
+    forEach((key, value) {
+      if (key == key) checker = true;
     });
     return checker;
   }

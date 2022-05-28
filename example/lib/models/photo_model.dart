@@ -20,6 +20,7 @@ class Photo extends RocketModel<Photo> {
     this.thumbnailUrl,
   });
 
+  @override
   void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     albumId = json['albumId'] ?? albumId;
     id = json['id'] ?? id;
@@ -29,13 +30,14 @@ class Photo extends RocketModel<Photo> {
     super.fromJson(json, isSub: isSub);
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['albumId'] = this.albumId;
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['url'] = this.url;
-    data['thumbnailUrl'] = this.thumbnailUrl;
+    data['albumId'] = albumId;
+    data['id'] = id;
+    data['title'] = title;
+    data['url'] = url;
+    data['thumbnailUrl'] = thumbnailUrl;
 
     return data;
   }

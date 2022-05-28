@@ -16,6 +16,7 @@ class Company extends RocketModel<Company> {
     multi = multi ?? [];
   }
 
+  @override
   fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     name = json['name'] ?? name;
     catchPhrase = json['catchPhrase'] ?? catchPhrase;
@@ -23,11 +24,12 @@ class Company extends RocketModel<Company> {
     super.fromJson(json, isSub: isSub);
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['name'] = this.name;
-    data['catchPhrase'] = this.catchPhrase;
-    data['bs'] = this.bs;
+    data['name'] = name;
+    data['catchPhrase'] = catchPhrase;
+    data['bs'] = bs;
 
     return data;
   }

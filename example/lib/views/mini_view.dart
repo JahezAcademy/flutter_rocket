@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
 
 class MiniView extends StatelessWidget {
-  MiniView({required this.title});
+  MiniView({Key? key, required this.title}) : super(key: key);
   final String title;
   final RocketValue<String> mcString = "Initial value".mini;
   final RocketValue<int> mcNum = 5.mini;
@@ -17,7 +19,7 @@ class MiniView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("use View for every value"),
+            const Text("use View for every value"),
             RocketMiniView(mcString, () => Text(mcString.v)),
             RocketMiniView(
               mcNum,
@@ -29,7 +31,7 @@ class MiniView extends StatelessWidget {
             RocketMiniView(
               mcList,
               () {
-                return Container(
+                return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.4,
                     child: ListView.builder(
                       itemCount: mcList.v.length,
@@ -42,16 +44,16 @@ class MiniView extends StatelessWidget {
             const SizedBox(
               height: 60.0,
             ),
-            Text("merge multiple values"),
+            const Text("merge multiple values"),
             RocketMiniView(
               RocketValue.merge([mcString, mcNum, mcList]),
               () => Wrap(
                 runAlignment: WrapAlignment.center,
                 children: [
                   Text(mcString.v),
-                  Text("=>"),
+                  const Text("=>"),
                   Text(mcNum.v.toString()),
-                  Text("=>"),
+                  const Text("=>"),
                   Text(mcList.v.toString())
                 ],
               ),
@@ -69,23 +71,22 @@ class MiniView extends StatelessWidget {
           if (mcNum.v == 6) {
             mcNum.registerListener(rocketMiniRebuild, valChanged);
             mcNum.registerListener(rocketMergesRebuild, () {
-              print(
-                  'this listener called when widget of merges values rebuild');
+              log('this listener called when widget of merges values rebuild');
             });
           }
           if (mcNum.v == 12) {
             mcNum.removeListener(rocketMiniRebuild, valChanged);
-            print("listener removed!!!");
+            log("listener removed!!!");
           }
         },
         tooltip: 'change Value',
-        child: Icon(Icons.change_circle),
+        child: const Icon(Icons.change_circle),
       ),
     );
   }
 
   valChanged() {
-    print('this listener called when widget of mcNum rebuild');
+    log('this listener called when widget of mcNum rebuild');
   }
 }
 

@@ -8,7 +8,7 @@ import 'package:mvc_rocket/mvc_rocket.dart';
 
 class UserExample extends StatelessWidget {
   final User users = RocketController().add<User>(usersEndpoint, User());
-  UserExample({required this.title});
+  UserExample({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -23,12 +23,12 @@ class UserExample extends StatelessWidget {
           children: [
             TextButton(
               child: Wrap(
-                children: [Icon(Icons.get_app), Text("Get Data")],
+                children: const [Icon(Icons.get_app), Text("Get Data")],
               ),
               onPressed: () => GetUsers.getUsers(users),
             ),
             TextButton(
-                child: Text(
+                child: const Text(
                     "Click here to Change First User\nCompany & User name & image"),
                 onPressed: () {
                   Company newCompany = Company(
@@ -60,7 +60,7 @@ class UserExample extends StatelessWidget {
           ],
         ),
       ),
-      body: Container(
+      body: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RocketView(
@@ -93,56 +93,60 @@ class UserExample extends StatelessWidget {
                           backgroundImage: user.image == null
                               ? null
                               : NetworkImage(user.image!),
-                          child: user.image == null ? Icon(Icons.person) : null,
+                          child: user.image == null
+                              ? const Icon(Icons.person)
+                              : null,
                         ),
                       ),
-                      title: Text("User :" + user.name!),
+                      title: Text("User :${user.name!}"),
                       children: [
-                        SizedBox(height: 5.0),
+                        const SizedBox(height: 5.0),
                         Text(user.id.toString()),
                         Text(user.username!),
                         Text(user.email!),
                         Text(user.phone!),
                         Text(user.website!),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         ExpansionTile(
-                            tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
+                            tilePadding:
+                                const EdgeInsets.symmetric(horizontal: 40.0),
                             leading: CircleAvatar(
                               backgroundColor: Theme.of(context).primaryColor,
-                              child: Icon(Icons.home),
+                              child: const Icon(Icons.home),
                             ),
-                            title: Text("Company :" + company.name!),
+                            title: Text("Company :${company.name!}"),
                             children: [
-                              SizedBox(height: 5.0),
+                              const SizedBox(height: 5.0),
                               Text(company.bs!),
                               Text(company.catchPhrase!),
                             ]),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         ExpansionTile(
-                            tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
+                            tilePadding:
+                                const EdgeInsets.symmetric(horizontal: 40.0),
                             leading: CircleAvatar(
                               backgroundColor: Theme.of(context).primaryColor,
-                              child: Icon(Icons.place),
+                              child: const Icon(Icons.place),
                             ),
-                            title: Text("Address :" + address.city!),
+                            title: Text("Address :${address.city!}"),
                             children: [
-                              SizedBox(height: 5.0),
+                              const SizedBox(height: 5.0),
                               Text(address.street!),
                               Text(address.suite!),
                               Text(address.zipcode!),
                               Text(address.city!),
-                              SizedBox(height: 5.0),
+                              const SizedBox(height: 5.0),
                               ExpansionTile(
-                                  tilePadding:
-                                      EdgeInsets.symmetric(horizontal: 80.0),
+                                  tilePadding: const EdgeInsets.symmetric(
+                                      horizontal: 80.0),
                                   leading: CircleAvatar(
                                     backgroundColor:
                                         Theme.of(context).primaryColor,
-                                    child: Icon(Icons.map),
+                                    child: const Icon(Icons.map),
                                   ),
-                                  title: Text("geo adrdress"),
+                                  title: const Text("geo adrdress"),
                                   children: [
-                                    SizedBox(height: 5.0),
+                                    const SizedBox(height: 5.0),
                                     Text(geo.lat!),
                                     Text(geo.lng!),
                                   ]),
@@ -163,7 +167,7 @@ class OneUser extends StatelessWidget {
   late Company company;
   late Address address;
   late Geo geo;
-  OneUser(this.index) {
+  OneUser(this.index, {Key? key}) : super(key: key) {
     user = rocket.get<User>(usersEndpoint).multi![index];
     company = user.company!;
     address = user.address!;
@@ -179,53 +183,54 @@ class OneUser extends StatelessWidget {
               backgroundColor: Theme.of(context).primaryColor,
               backgroundImage:
                   user.image == null ? null : NetworkImage(user.image!),
-              child: user.image == null ? Icon(Icons.person) : null,
+              child: user.image == null ? const Icon(Icons.person) : null,
             ),
-            title: Text("User :" + user.name!),
+            title: Text("User :${user.name!}"),
             children: [
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Text(user.id.toString()),
               Text(user.username!),
               Text(user.email!),
               Text(user.phone!),
               Text(user.website!),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               ExpansionTile(
-                  tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 40.0),
                   leading: CircleAvatar(
                     backgroundColor: Theme.of(context).primaryColor,
-                    child: Icon(Icons.home),
+                    child: const Icon(Icons.home),
                   ),
-                  title: Text("Company :" + company.name!),
+                  title: Text("Company :${company.name!}"),
                   children: [
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Text(company.bs!),
                     Text(company.catchPhrase!),
                   ]),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               ExpansionTile(
-                  tilePadding: EdgeInsets.symmetric(horizontal: 40.0),
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 40.0),
                   leading: CircleAvatar(
                     backgroundColor: Theme.of(context).primaryColor,
-                    child: Icon(Icons.place),
+                    child: const Icon(Icons.place),
                   ),
-                  title: Text("Address :" + address.city!),
+                  title: Text("Address :${address.city!}"),
                   children: [
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Text(address.street!),
                     Text(address.suite!),
                     Text(address.zipcode!),
                     Text(address.city!),
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     ExpansionTile(
-                        tilePadding: EdgeInsets.symmetric(horizontal: 80.0),
+                        tilePadding:
+                            const EdgeInsets.symmetric(horizontal: 80.0),
                         leading: CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
-                          child: Icon(Icons.map),
+                          child: const Icon(Icons.map),
                         ),
-                        title: Text("geo adrdress"),
+                        title: const Text("geo adrdress"),
                         children: [
-                          SizedBox(height: 5.0),
+                          const SizedBox(height: 5.0),
                           Text(geo.lat!),
                           Text(geo.lng!),
                         ]),

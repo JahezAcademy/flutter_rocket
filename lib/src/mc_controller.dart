@@ -4,7 +4,7 @@ import 'mc_extensions.dart';
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class RocketController {
   static final RocketController _controller = RocketController._internal();
-  HashMap<String, dynamic> _models = HashMap();
+  final HashMap<String, dynamic> _models = HashMap();
 
   /// اضافة تموذج جديد
   T add<T>(String key, T model, {bool readOnly = false}) {

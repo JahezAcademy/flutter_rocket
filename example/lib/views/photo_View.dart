@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
 
 class PhotoExample extends StatelessWidget {
-  PhotoExample({required this.title});
+  PhotoExample({Key? key, required this.title}) : super(key: key);
   final String title;
   final Photo photo = RocketController().add<Photo>(photosEndpoint, Photo());
   @override
@@ -13,7 +13,7 @@ class PhotoExample extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Container(
+      body: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RocketView(
