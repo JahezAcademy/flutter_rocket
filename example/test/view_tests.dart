@@ -1,4 +1,4 @@
-import 'package:example/views/post_view_t.dart';
+import 'package:example/views/post_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
