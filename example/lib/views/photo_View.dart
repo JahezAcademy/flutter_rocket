@@ -1,12 +1,12 @@
 import 'package:example/models/photo_model.dart';
 import 'package:example/requests/photo_request.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class PhotoExample extends StatelessWidget {
   PhotoExample({required this.title});
   final String title;
-  final Photo photo = McController().add<Photo>(photosEndpoint, Photo());
+  final Photo photo = RocketController().add<Photo>(photosEndpoint, Photo());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +16,7 @@ class PhotoExample extends StatelessWidget {
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: McView(
+          child: RocketView(
             model: photo,
             // get 5000 items
             call: () => GetPhotos.getPhotos(photo),

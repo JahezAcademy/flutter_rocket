@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:mc/src/mc_model.dart';
+import 'package:http/http.dart';
+import 'package:mvc_rocket/src/mc_constants.dart';
+import 'mc_model.dart';
 import 'mc_exception.dart';
 
-class McRequest {
+class RocketRequest {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
@@ -18,7 +20,7 @@ class McRequest {
   /// هو الرابط الخاص بالخادم بدون نقطة النهاية كمثال
   ///
   ///
-  /// شطل صحيح
+  /// شكل صحيح
   ///
   /// www.test.com/api/
   ///
@@ -39,14 +41,14 @@ class McRequest {
   /// [debugging]
   ///
   /// console تفعيل او الغاء ظهور المشاكل في
-  McRequest(
+  RocketRequest(
       {required this.url,
       this.headers = const {},
       this.setCookies = false,
       this.debugging = true});
 
   @protected
-  dynamic _jsonData(http.Response response,
+  dynamic _jsonData(Response response,
       {Function(dynamic data)? inspect, String? endpoint}) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var data = json.decode(utf8.decode(response.bodyBytes));
@@ -64,7 +66,7 @@ class McRequest {
     }
   }
 
-  _getDebugging(http.Response response, String? endpoint) {
+  _getDebugging(Response response, String? endpoint) {
     if (debugging) {
       log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
       log("\x1B[38;5;2m [Url] => ${url + "/" + endpoint!} \x1B[0m");
@@ -105,21 +107,21 @@ class McRequest {
       case 504:
         return "the server, while acting as a gateway or proxy, did not get a response in time from the upstream server that it needed in order to complete the API call.";
       default:
-        return "success";
+        return "unknown";
     }
   }
 
   @protected
-  dynamic _objData<T>(http.Response response, McModel<T> model,
+  dynamic _objData<T>(Response response, RocketModel<T> model,
       {bool? multi, Function(dynamic data)? inspect, String? endpoint}) {
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      model.existData = true;
+    if (response.statusCode == HttpStatus.ok ||
+        response.statusCode == HttpStatus.created) {
       if (multi!) {
         var result = json.decode(utf8.decode(response.bodyBytes));
         if (inspect != null) {
-          result = inspect(result ?? []);
+          result = inspect(result);
         }
-        model.setMulti(result);
+        model.setMulti(result ?? []);
 
         return model.multi;
       } else {
@@ -131,7 +133,7 @@ class McRequest {
         return model;
       }
     } else {
-      model.load(false);
+      model.state = RocketState.failed;
       _getDebugging(response, endpoint);
       throw Exception('Failed to load Data');
     }
@@ -139,6 +141,7 @@ class McRequest {
 
   static _onError(Object e) => print(e);
 
+  //DONE: rename to maptoParams & inject into Map
   @protected
   String _mapToString(Map mp) {
     String result = "";
@@ -162,7 +165,7 @@ class McRequest {
   ///
   /// [List]=>(قاموس)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
   Future getJsonData(String endpoint,
       {Map<String, dynamic>? params,
       bool complex = false,
@@ -171,7 +174,7 @@ class McRequest {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
     try {
-      http.Response response = await http.get(url, headers: headers);
+      Response response = await get(url, headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError(e);
@@ -189,37 +192,22 @@ class McRequest {
   ///
   /// [List]=>(مصفوفة)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
-  Future getObjData<T>(String endpoint, McModel<T> model,
+  Future getObjData<T>(String endpoint, RocketModel<T> model,
       {Map<String, dynamic>? params,
       bool multi = false,
       Function(dynamic data)? inspect}) async {
-    model.load(true);
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endpoint + '?' + srch);
-    http.Response? response;
+    model.state = RocketState.loading;
+    Response? response;
     try {
-      response = await http
-          .get(url, headers: headers)
-          .whenComplete(() => model.load(false));
-
-      model.setFailed(false);
+      response = await get(url, headers: headers);
       return _objData<T>(response, model,
           multi: multi, inspect: inspect, endpoint: endpoint);
-    } catch (e, s) {
-      String body = "";
-      int statusCode = 0;
-      if (response != null) {
-        body = response.body;
-        statusCode = response.statusCode;
-      }
-      model.setException(McException(
-          response: body,
-          statusCode: statusCode,
-          exception: e.toString(),
-          stackTrace: s));
-      model.setFailed(true);
+    } catch (error, stackTrace) {
+      return _catchError(error, stackTrace, model, response);
     }
   }
 
@@ -227,50 +215,53 @@ class McRequest {
   ///
   /// [model]=>(النموذج)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
-  Future<McModel> putObjData<T>(int id, String endpoint, McModel<T> model,
+  Future<RocketModel> putObjData<T>(
+      int id, String endpoint, RocketModel<T> model,
       {bool multi = false, Function(dynamic data)? inspect}) async {
-    model.load(true);
+    model.state = RocketState.loading;
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
-    http.Response? response;
+    Response? response;
     try {
-      response = await http
-          .put(url, body: json.encode(model.toJson()), headers: headers)
-          .whenComplete(() => model.load(false));
-      model.setFailed(false);
+      response =
+          await put(url, body: json.encode(model.toJson()), headers: headers);
       return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endpoint);
-    } catch (e, s) {
-      String body = "";
-      int statusCode = 0;
-      if (response != null) {
-        body = response.body;
-        statusCode = response.statusCode;
-      }
-      model.setException(McException(
-          response: body,
-          statusCode: statusCode,
-          exception: e.toString(),
-          stackTrace: s));
-      model.setFailed(true);
-      return Future.value(model);
+    } catch (error, stackTrace) {
+      return _catchError(error, stackTrace, model, response);
     }
+  }
+
+  _catchError(
+      Object e, StackTrace stackTrace, RocketModel model, Response? response) {
+    String? body;
+    int? statusCode;
+    if (response != null) {
+      body = response.body;
+      statusCode = response.statusCode;
+    }
+    model.setException(RocketException(
+        response: body!,
+        statusCode: statusCode!,
+        exception: e.toString(),
+        stackTrace: stackTrace));
+    return Future.value(model);
   }
 
   /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
   ///
   /// [data]=>(قاموس)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
   Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
       {Function(dynamic data)? inspect,
       Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
-      http.Response response =
-          await http.put(url, body: json.encode(data), headers: headers);
+      Response response =
+          await put(url, body: json.encode(data), headers: headers);
       return _jsonData(response, inspect: inspect, endpoint: endpoint);
     } catch (e) {
       onError(e);
@@ -281,43 +272,27 @@ class McRequest {
   ///
   /// [model]=>(النموذج)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
-  Future<McModel> postObjData<T>(String endPoint,
-      {McModel<T>? model,
+  Future<RocketModel> postObjData<T>(String endPoint,
+      {RocketModel<T>? model,
       bool multi = false,
       Function(dynamic data)? inspect,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
-    model!.load(true);
+    model!.state = RocketState.loading;
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
-    http.Response? response;
+    Response? response;
     try {
-      response = await http
-          .post(url, headers: headers, body: json.encode(data))
-          .whenComplete(() => model.load(false));
-
+      response = await post(url, headers: headers, body: json.encode(data));
       if (setCookies) {
         _updateCookie(response);
       }
-      model.setFailed(false);
       return _objData<T>(response, model,
           inspect: inspect, multi: multi, endpoint: endPoint);
-    } catch (e, s) {
-      String body = "";
-      int statusCode = 0;
-      if (response != null) {
-        body = response.body;
-        statusCode = response.statusCode;
-      }
-      model.setException(McException(
-          response: body,
-          statusCode: statusCode,
-          exception: e.toString(),
-          stackTrace: s));
-      model.setFailed(true);
-      return Future.value(model);
+    } catch (error, stackTrace) {
+      return _catchError(error, stackTrace, model, response);
     }
   }
 
@@ -325,7 +300,7 @@ class McRequest {
   ///
   /// Json=>(قاموس)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
 
   Future postJsonData(String endPoint,
       {Map<String, dynamic>? data,
@@ -335,8 +310,8 @@ class McRequest {
     String srch = params != null ? _mapToString(params) : "";
     Uri url = Uri.parse(this.url + "/" + endPoint + "?" + srch);
     try {
-      http.Response response =
-          await http.post(url, body: json.encode(data), headers: headers);
+      Response response =
+          await post(url, body: json.encode(data), headers: headers);
       if (setCookies) {
         _updateCookie(response);
       }
@@ -350,28 +325,28 @@ class McRequest {
   ///
   /// [id]=>(ر.م)
   ///
-  /// [inspect] => List<Map>
+  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
   ///
   Future delJsonData(int id, String endpoint,
       {Function(Object error) onError = _onError}) async {
     Uri url = Uri.parse(this.url + "/" + endpoint + "/" + id.toString() + "/");
     try {
-      http.Response response = await http.delete(url, headers: headers);
+      Response response = await delete(url, headers: headers);
       return response.body;
     } catch (e) {
       onError(e);
     }
   }
 
+  //DONE: use enum instead of string for check http method
   Future sendFile(
       String endpoint, Map<String, String>? fields, Map<String, String>? files,
-      {String id = "", String method = "POST"}) async {
-    String end = method == "POST" ? '$id' : "$id/";
+      {String id = "", HttpMethods method = HttpMethods.post}) async {
+    String end = method == HttpMethods.post ? '$id' : "$id/";
     var request =
-        http.MultipartRequest(method, Uri.parse("$url/$endpoint/$end"));
-
+        MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
     files?.forEach((key, value) async {
-      request.files.add(await http.MultipartFile.fromPath(key, value));
+      request.files.add(await MultipartFile.fromPath(key, value));
     });
 
     request.fields.addAll(fields!);
@@ -389,7 +364,7 @@ class McRequest {
     }
   }
 
-  void _updateCookie(http.Response response) {
+  void _updateCookie(Response response) {
     String rawCookie = response.headers['set-cookie']!;
     int index = rawCookie.indexOf(';');
     headers['cookie'] =

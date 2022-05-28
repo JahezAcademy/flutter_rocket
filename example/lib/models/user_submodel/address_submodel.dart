@@ -1,9 +1,8 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'geo.dart';
+import 'geo_submodel.dart';
 
-class Address extends McModel<Address> {
-  List<Address>? multi;
+class Address extends RocketModel<Address> {
   String? street;
   String? suite;
   String? city;
@@ -25,13 +24,14 @@ class Address extends McModel<Address> {
     multi = multi ?? [];
     geo ??= Geo();
   }
-  fromJson(covariant Map<String, dynamic> json) {
+  
+  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     street = json['street'] ?? street;
     suite = json['suite'] ?? suite;
     city = json['city'] ?? city;
     zipcode = json['zipcode'] ?? zipcode;
-    geo!.fromJson(json['geo'] ?? geo!.toJson());
-    return super.fromJson(json);
+    geo!.fromJson(json['geo'] ?? geo!.toJson(), isSub: isSub);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {
@@ -45,12 +45,4 @@ class Address extends McModel<Address> {
     return data;
   }
 
-  void setMulti(List data) {
-    List<Address> listOfaddress = data.map((e) {
-      Address address = Address();
-      address.fromJson(e);
-      return address;
-    }).toList();
-    multi = listOfaddress;
-  }
 }

@@ -1,6 +1,6 @@
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-class Geo extends McModel<Geo> {
+class Geo extends RocketModel<Geo> {
   String? lat;
   String? lng;
 
@@ -10,10 +10,10 @@ class Geo extends McModel<Geo> {
     this.lat,
     this.lng,
   });
-  fromJson(covariant Map<String, dynamic> json) {
+  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     lat = json['lat'] ?? lat;
     lng = json['lng'] ?? lng;
-    return super.fromJson(json);
+    super.fromJson(json, isSub: isSub);
   }
 
   Map<String, dynamic> toJson() {

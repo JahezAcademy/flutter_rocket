@@ -1,13 +1,13 @@
-import 'package:example/models/user/address.dart';
-import 'package:example/models/user/company.dart';
-import 'package:example/models/user/geo.dart';
 import 'package:example/models/user_model.dart';
+import 'package:example/models/user_submodel/address_submodel.dart';
+import 'package:example/models/user_submodel/company_submodel.dart';
+import 'package:example/models/user_submodel/geo_submodel.dart';
 import 'package:example/requests/user_request.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class UserExample extends StatelessWidget {
-  final User users = McController().add<User>(usersEndpoint, User());
+  final User users = RocketController().add<User>(usersEndpoint, User());
   UserExample({required this.title});
   final String title;
   @override
@@ -63,8 +63,8 @@ class UserExample extends StatelessWidget {
       body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: McView(
-            // call api by McRequest saved in McController and make model on ready
+          child: RocketView(
+            // call api by RocketRequest saved in McController and make model on ready
             call: () => GetUsers.getUsers(users),
             // call api every 1 sec
             callType: CallType.callAsStream,
@@ -164,7 +164,7 @@ class OneUser extends StatelessWidget {
   late Address address;
   late Geo geo;
   OneUser(this.index) {
-    user = mc.get<User>(usersEndpoint).multi![index];
+    user = rocket.get<User>(usersEndpoint).multi![index];
     company = user.company!;
     address = user.address!;
     geo = address.geo!;

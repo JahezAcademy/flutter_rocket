@@ -1,14 +1,16 @@
+import 'dart:io';
+
 import 'package:example/models/post_model.dart';
 import 'package:example/requests/post_request.dart';
 import 'package:flutter/material.dart';
-import 'package:mc/mc.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
-  // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
+  // [rocket] is instance of Mccontroller injected in Object by extension for use it easily anywhere
   final Post post =
-      McController().add<Post>(postsEndpoint, Post(), readOnly: true);
+      RocketController().add<Post>(postsEndpoint, Post(), readOnly: true);
 
   PostExample({required this.title});
   final String title;
@@ -34,31 +36,33 @@ class PostExample extends StatelessWidget {
               onRefresh: () {
                 return GetPosts.getPosts(post);
               },
-              child: McView(
+              child: RocketView(
                 // call api method
                 call: () => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
-                // handle errors
-                onError: (McException exception, Function() reload) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(exception.exception),
-                        Text(exception.response),
-                        TextButton(onPressed: reload, child: Text("retry"))
-                      ],
-                    ),
-                  );
-                },
-                // call api if model is empty & you can choose another ways like default way asFuture(call once) & asStream (call every //[secondsOfStream] seconds)
+                // call call Voidcallback if model empty
                 callType: CallType.callIfModelEmpty,
                 // or
                 // callType: CallType.callAsStream,
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
                 // loader:CustomLoading(),
+                
+                // handle errors
+                onError: (RocketException exception, Function() reload) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(exception.exception),
+                        if (exception.statusCode != HttpStatus.ok)
+                          ...[Text(exception.response),Text(rocket.get(rocketRequestKey).msgByStatusCode(exception.statusCode))],
+                        TextButton(onPressed: reload, child: Text("retry"))
+                      ],
+                    ),
+                  );
+                },
                 builder: (context) {
                   return Container(
                     height: MediaQuery.of(context).size.height * 0.852,
@@ -87,8 +91,8 @@ class PostExample extends StatelessWidget {
 
 class Details extends StatelessWidget {
   final int index;
-  //get your model by key
-  final Post post = McController().get<Post>(postsEndpoint);
+  //  get your model by key
+  final Post post = RocketController().get<Post>(postsEndpoint);
   Details(this.index);
   @override
   Widget build(BuildContext context) {

@@ -1,14 +1,13 @@
-/// mc package for state management & request
+/// 🚀 MVCRocket🚀  package for state management & request
 /// based on MVCR
 /// Model
 /// View
 /// Controller
 /// Request
 /// Powerful & easy
-/// developed with ❤️ by Mohammed CHAHBOUN
+/// developed with ❤️ by Jahez team
 
 library mc;
-
 
 export 'src/mc_model.dart';
 export 'src/mc_view.dart';
