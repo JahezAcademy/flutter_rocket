@@ -14,10 +14,10 @@ void main() {
     expect(post.state, RocketState.done);
   });
   test('Test Photo model', () {
-    final post = Photo();
-    post.setMulti(photoData);
-    expect(post.multi![0].toJson(), photoData[0]);
-    expect(post.state, RocketState.done);
+    final photo = Photo();
+    photo.setMulti(photoData);
+    expect(photo.multi![0].toJson(), photoData[0]);
+    expect(photo.state, RocketState.done);
   });
   test('Test User model', () {
     final post = User();

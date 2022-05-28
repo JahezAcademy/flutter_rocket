@@ -1,11 +1,9 @@
 import 'package:example/views/post_view.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
-
 import 'dummy_data.dart';
-import 'rocket_request_test.dart';
+import 'rocket_request_mirror.dart';
 
 void main() {
   testWidgets('Test Post view', (tester) async {
