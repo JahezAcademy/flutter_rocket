@@ -48,7 +48,7 @@ class PostExample extends StatelessWidget {
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
                 // loader:CustomLoading(),
-                
+
                 // handle errors
                 onError: (RocketException exception, Function() reload) {
                   return Center(
@@ -56,8 +56,12 @@ class PostExample extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(exception.exception),
-                        if (exception.statusCode != HttpStatus.ok)
-                          ...[Text(exception.response),Text(rocket.get(rocketRequestKey).msgByStatusCode(exception.statusCode))],
+                        if (exception.statusCode != HttpStatus.ok) ...[
+                          Text(exception.response),
+                          Text(rocket
+                              .get(rocketRequestKey)
+                              .msgByStatusCode(exception.statusCode))
+                        ],
                         TextButton(onPressed: reload, child: Text("retry"))
                       ],
                     ),

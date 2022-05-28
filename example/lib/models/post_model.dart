@@ -38,6 +38,6 @@ class Post extends RocketModel<Post> {
     return data;
   }
 
- @override
+  @override
   get instance => Post();
 }

@@ -8,18 +8,12 @@ const String rocketMiniRebuild = "miniRebuild";
 const String rocketMergesRebuild = "mergesRebuild";
 const String rocketRebuild = "rebuild";
 
+enum HttpMethods { post, get, delete, put }
 
-enum HttpMethods{
-  post,
-  get,
-  delete,
-  put
-}
-
-enum RocketState{
+enum RocketState {
   loading,
   done,
-  failed,  
+  failed,
 }
 
 /// call طريقة استدعاء دالة

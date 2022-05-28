@@ -149,7 +149,7 @@ class _ViewRocketState extends State<RocketView> {
   void didUpdateWidget(RocketView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(rocketRebuild);      
+      oldWidget.model.removeListener(rocketRebuild);
       widget.model.registerListener(rocketRebuild, _handleChange);
     }
   }
