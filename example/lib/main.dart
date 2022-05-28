@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:example/views/counter_view.dart';
+import 'package:example/views/counter_view_t.dart';
 import 'package:example/views/mini_view.dart';
-import 'package:example/views/photo_view.dart';
-import 'package:example/views/post_view.dart';
-import 'package:example/views/user_view.dart';
+import 'package:example/views/photo_view_t.dart';
+import 'package:example/views/post_view_t.dart';
+import 'package:example/views/user_view_t.dart';
 import 'package:flutter/material.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
 
