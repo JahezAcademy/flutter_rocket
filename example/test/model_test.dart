@@ -20,9 +20,9 @@ void main() {
     expect(photo.state, RocketState.done);
   });
   test('Test User model', () {
-    final post = User();
-    post.setMulti(userData);
-    expect(post.multi![0].toJson(), userData[0]);
-    expect(post.state, RocketState.done);
+    final user = User();
+    user.setMulti(userData);
+    expect(user.multi![0].toJson(), userData[0]);
+    expect(user.state, RocketState.done);
   });
 }
