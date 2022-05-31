@@ -4,7 +4,7 @@ State management and request package, Model,View,Controller,Request MVCR.
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
 
-[![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mc)
+[![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mvc_rocket)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 
 # Usage
@@ -61,24 +61,24 @@ class McMiniViewExample extends StatelessWidget {
 
 ## Complex case (state management & request)
 
-firstly you need to create your  cket from your json data by this [Link](https://json2dart.web.app/)
+firstly you need to create your model by your json data from this [Link](https://json2dart.web.app/)
 you get something like this:
 
 ```dart
 import 'package:mvc_rocket/mvc_rocket.dart';
 
 class Post extends RocketModel<Post> {
-  List<Post> multi;
-  int userId;
-  int id;
-  String title;
-  String body;
-
-  final String userIdStr = 'userId';
-  final String idStr = 'id';
-  final String titleStr = 'title';
-  final String bodyStr = 'body';
-
+  int? userId;
+  int? id;
+  String? title;
+  String? body;
+  // disable logs debugging
+  @override
+  bool get enableDebug => false;
+  String userIdVar = "userId";
+  String idVar = "id";
+  String titleVar = "title";
+  String bodyVar = "body";
   Post({
     this.userId,
     this.id,
@@ -86,39 +86,28 @@ class Post extends RocketModel<Post> {
     this.body,
   });
 
-  fromJson(Map<String, dynamic> json) {
+  @override
+  void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
     userId = json['userId'] ?? userId;
     id = json['id'] ?? id;
     title = json['title'] ?? title;
     body = json['body'] ?? body;
-    return super.fromJson(json);
-  }
-  
-  // Handle models error
-  @override
-  void setException(RocketException? _response) {
-    //SendErrorToCrashlytics.sendError(_response!);
-    super.setException(_response);
+    super.fromJson(json, isSub: isSub);
   }
 
+  @override
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['userId'] = this.userId;
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['body'] = this.body;
+    final Map<String, dynamic> data = {};
+    data['userId'] = userId;
+    data['id'] = id;
+    data['title'] = title;
+    data['body'] = body;
 
     return data;
   }
 
-  void setMulti(List data) {
-    List listOfpost = data.map((e) {
-      Post post = Post();
-      post.fromJson(e);
-      return post;
-    }).toList();
-    multi = listOfpost;
-  }
+  @override
+  get instance => Post();
 }
 ```
 
@@ -143,8 +132,33 @@ class MyApp extends StatelessWidget {
 }...
 ```
 
-Next step its build [RocketView] Widget & pass your [RocketModel] in [model] & [RocketRequest] method in [call] parameter
+Now create request method for post
 
+```dart
+import 'package:example/models/post_model.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
+
+const String postsEndpoint = "posts";
+
+class GetPosts {
+  static Future getPosts(Post postModel) =>
+      RocketController().get(rocketRequestKey).getObjData(
+        // endpoint
+        postsEndpoint,
+        // your model
+        postModel,
+        // if you received data as List multi will be true & if data as map you not should to define multi its false as default
+        multi: true,
+        // parameters for send it with request
+        // params:{"key":"value"},
+        // inspect method for determine exact json use for generate your model in first step
+        // if your api send data directly without any supplement values you not should define it
+        // inspect:(data)=>data["response"]
+      );
+}
+```
+
+Next step its build [RocketView] Widget & pass your [RocketModel] in [model] & [RocketRequest] method in [call] parameter
 
 ```dart
 import 'dart:io';
@@ -157,72 +171,74 @@ import 'package:mvc_rocket/mvc_rocket.dart';
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
-  // [mc] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post = McController().add<Post>('posts', Post(), readOnly: true);
-  // get request by key
-  final RocketRequest request = McController().get<RocketRequest>("request");
-  PostExample({this.title});
+  // [rocket] is instance of Mccontroller injected in Object by extension for use it easily anywhere
+  final Post post =
+      RocketController().add<Post>(postsEndpoint, Post(), readOnly: true);
+
+  PostExample({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             "Refresh Posts with swip to down or from here =>",
             style: TextStyle(fontSize: 11.0),
           ),
           actions: [
             IconButton(
-                icon: Icon(Icons.data_usage),
+                icon: const Icon(Icons.data_usage),
                 // Refresh Data from Api
-                onPressed: () => refresh())
+                onPressed: () => GetPosts.getPosts(post))
           ],
         ),
-        body: Container(
+        body: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
-              onRefresh: () {
-                return refresh();
-              },
+              onRefresh: () => GetPosts.getPosts(post);
               child: RocketView(
                 // call api method
-                // i write post endpoint incorrect for produce an error & use onError builder
-                call: () => request.getObjData("posqts", post, multi: true),
+                call: () => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
-                // handle errors
-                onError: (McException exception,Function() reload) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(exception.exception),
-                        if (exception.statusCode != HttpStatus.ok) Text(exception.response),
-                        // reload is method for call api again (call parameter)
-                        TextButton(onPressed: reload, child: Text("retry"))
-                      ],
-                    ),
-                  );
-                },
-                // call api if model is empty & you can choose another ways like default way asFuture(call once) & asStream (call every //[secondsOfStream] seconds)
+                // call call Voidcallback if model empty
                 callType: CallType.callIfModelEmpty,
                 // or
                 // callType: CallType.callAsStream,
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
-                loader:CustomLoading(),
+                // loader:CustomLoading(),
+                // handle errors
+                onError: (RocketException exception, Function() reload) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(exception.exception),
+                        if (exception.statusCode != HttpStatus.ok) ...[
+                          Text(exception.response),
+                          Text(rocket
+                              .get(rocketRequestKey)
+                              .msgByStatusCode(exception.statusCode))
+                        ],
+                        TextButton(
+                            onPressed: reload, child: const Text("retry"))
+                      ],
+                    ),
+                  );
+                },
                 builder: (context) {
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(
-                      itemCount: post.multi.length,
+                      itemCount: post.multi!.length,
                       itemBuilder: (BuildContext context, int index) {
                         // your data saved in multi list as Post model
-                        Post currentPost = post.multi[index];
+                        Post currentPost = post.multi![index];
                         return ListTile(
-                            leading: Text(post.id.toString()),
-                            title: Text(post.title),
+                            leading: Text(currentPost.id.toString()),
+                            title: Text(currentPost.title!),
                             onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -236,26 +252,30 @@ class PostExample extends StatelessWidget {
               )),
         ));
   }
+}
 
-  Future<dynamic> refresh() {
-    // use http method you want (get,post,put) + ObjData if you used model in RocketView and you can use JsonData for get data directly from api
-    return request.getObjData(
-    // endpoint
-    "posts",
-    // your model
-    post, 
-    // if you received data as List multi will be true & if data as map you not should to define multi its false as default
-    multi: true,
-    // parameters for send it with request
-    params:{"key":"value"},
-    // inspect method for determine exact json use for generate your model in first step
-    // if your api send data directly without any supplement values you not should define it
-    inspect:(data)=>data["response"]
+class Details extends StatelessWidget {
+  final int index;
+  //  get your model by key
+  final Post post = RocketController().get<Post>(postsEndpoint);
+  Details(this.index, {Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    Post currentPost = post.multi![index];
+    return Scaffold(
+      appBar: AppBar(title: Text(currentPost.title!)),
+      body: Center(
+        child: ListTile(
+          leading: Text(currentPost.id.toString()),
+          title: Text(currentPost.title!),
+          subtitle: Text(currentPost.body!),
+        ),
+      ),
     );
   }
 }
-
 ```
+
 & last item its McController for save your model or any value and get it anywhere by key
 
 ```dart
