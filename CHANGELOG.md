@@ -75,3 +75,4 @@
 - Add [RocketState] enums for manage model states (done,loading,failed).
 - Add [enableDebug] on Models for log model state & duration of loading
 - Optmized performance by manage rebuild widgets with [RocketState]
+- Add log for exceptions

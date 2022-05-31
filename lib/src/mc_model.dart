@@ -28,9 +28,12 @@ abstract class RocketModel<T> extends RocketListenable {
   }
 
   /// التقاط الخطأ
-  void setException(RocketException response) {
-    exception = response;
+  void setException(RocketException exception) {
+    exception = exception;
     state = RocketState.failed;
+    if (enableDebug) {
+      log("Failed details :${exception.toString()}");
+    }
   }
 
   set loadingChecking(bool value) {
@@ -65,7 +68,7 @@ abstract class RocketModel<T> extends RocketListenable {
   }
 
   /// json من النماذج الى بيانات
-  Map<String, dynamic> toJson();
+  Map<String, dynamic> toJson() => {};
 
   DateTime _time = DateTime.now();
 

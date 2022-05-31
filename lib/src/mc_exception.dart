@@ -8,4 +8,13 @@ class RocketException {
   final int statusCode;
   final String exception;
   final StackTrace stackTrace;
+  @override
+  String toString() {
+    return {
+      "response": response,
+      "statusCode": statusCode,
+      "exception": exception,
+      "stackTrace": stackTrace.toString()
+    }.toString();
+  }
 }
