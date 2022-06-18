@@ -1,7 +1,7 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
 const String companyNameField = "name";
-const  String companyCatchPhraseField = "catchPhrase";
+const String companyCatchPhraseField = "catchPhrase";
 const String companyBsField = "bs";
 
 class Company extends RocketModel<Company> {

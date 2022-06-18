@@ -2,6 +2,7 @@ import 'package:mvc_rocket/mvc_rocket.dart';
 
 const String geoLatField = "lat";
 const String geoLngField = "lng";
+
 class Geo extends RocketModel<Geo> {
   String? lat;
   String? lng;
