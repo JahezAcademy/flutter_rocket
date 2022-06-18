@@ -17,58 +17,22 @@ class UserExample extends StatelessWidget {
         title: Text(title),
       ),
       floatingActionButton: Container(
-        color: Theme.of(context).primaryColor,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            TextButton(
-              child: Wrap(
-                children: const [Icon(Icons.get_app), Text("Get Data")],
-              ),
-              onPressed: () => GetUsers.getUsers(users),
+          color: Theme.of(context).primaryColor,
+          child: TextButton(
+            child: Wrap(
+              children: const [Icon(Icons.get_app), Text("Get Data")],
             ),
-            TextButton(
-                child: const Text(
-                    "Click here to Change First User\nCompany & User name & image"),
-                onPressed: () {
-                  Company newCompany = Company(
-                    bs: "change data...bs",
-                    catchPhrase: "change data...catch",
-                  );
-                  // [1]-change data with constractor:
-
-                  // User editUser = User(
-                  //     name: "Mohammed CHAHBOUN 💙",
-                  //     company: newCompany,
-                  //     image:
-                  //         "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4");
-
-                  // users.multi[0].fromJson(editUser.toJson());
-                  // users.rebuild();
-
-                  // [2]-change data with fromJson method directly:
-
-                  users.multi![0].fromJson({
-                    users.nameVar: "Mohammed CHAHBOUN 💙",
-                    users.companyVar: newCompany.toJson(),
-                    users.imageVar:
-                        "https://avatars.githubusercontent.com/u/69054810?s=400&u=89be3dbf1c40d543e1fe2f648068bd8e388325ff&v=4"
-                  });
-                  // Call rebuild method required if data multi
-                  users.rebuildWidget();
-                }),
-          ],
-        ),
-      ),
+            onPressed: () => GetUsers.getUsers(users),
+          )),
       body: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RocketView(
             // call api by RocketRequest saved in McController and make model on ready
             call: () => GetUsers.getUsers(users),
-            // call api every 1 sec
+            // call api every 10 sec
             callType: CallType.callAsStream,
-            // update data from server after 2 sec
+            // update data from server every 10 sec
             secondsOfStream: 2,
             // your model
             model: users,
@@ -99,6 +63,19 @@ class UserExample extends StatelessWidget {
                         ),
                       ),
                       title: Text("User :${user.name!}"),
+                      trailing: IconButton(
+                          icon: const Icon(Icons.update),
+                          onPressed: () {
+                            Company newCompany = Company(
+                              bs: "change data...bs",
+                              catchPhrase: "change data...catch",
+                            );
+                            // update user data by map
+                            user.updateFieldsByMap({
+                              userNameField: "Mohammed CHAHBOUN 💙",
+                              userCompanyField: newCompany.toJson(),
+                            });
+                          }),
                       children: [
                         const SizedBox(height: 5.0),
                         Text(user.id.toString()),

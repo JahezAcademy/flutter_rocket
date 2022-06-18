@@ -79,6 +79,17 @@ class PostExample extends StatelessWidget {
                         return ListTile(
                             leading: Text(currentPost.id.toString()),
                             title: Text(currentPost.title!),
+                            trailing: IconButton(
+                              color: Colors.brown,
+                              icon: const Icon(Icons.update),
+                              onPressed: () {
+                                // update post data
+                                currentPost.updateFields(
+                                  bodyField: "This Body changed",
+                                  titleField: "This Title changed"
+                                );
+                              },
+                            ),
                             onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -101,13 +112,14 @@ class Details extends StatelessWidget {
   Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    Post currentPost = post.multi![index];
     return Scaffold(
-      appBar: AppBar(title: Text(post.multi![index].title!)),
+      appBar: AppBar(title: Text(currentPost.title!)),
       body: Center(
         child: ListTile(
-          leading: Text(post.multi![index].id.toString()),
-          title: Text(post.multi![index].title!),
-          subtitle: Text(post.multi![index].body!),
+          leading: Text(currentPost.id.toString()),
+          title: Text(currentPost.title!),
+          subtitle: Text(currentPost.body!),
         ),
       ),
     );
