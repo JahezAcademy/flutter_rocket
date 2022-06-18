@@ -32,7 +32,7 @@ abstract class RocketModel<T> extends RocketListenable {
     exception = exception;
     state = RocketState.failed;
     if (enableDebug) {
-      log("Failed details :${exception.toString()}");
+      log("[MVCR]> Failed details :${exception.toString()}");
     }
   }
 
@@ -67,6 +67,15 @@ abstract class RocketModel<T> extends RocketListenable {
     }
   }
 
+  /// update fields based on fromJson method
+  void updateFieldsByMap(Map<String, dynamic>? json) {
+    try {
+      fromJson(json);
+    } catch (e) {
+      setException(RocketException(exception: e.toString()));
+    }
+  }
+
   /// json من النماذج الى بيانات
   Map<String, dynamic> toJson() => {};
 
@@ -77,12 +86,12 @@ abstract class RocketModel<T> extends RocketListenable {
     if (enableDebug) {
       if (state == RocketState.loading) {
         _time = DateTime.now();
-        log('${T.toString()} : ${state.name}');
+        log('[MVCR]> ${T.toString()} : ${state.name}');
       }
 
       if (state == RocketState.done || state == RocketState.failed) {
         int dur = DateTime.now().difference(_time).inMilliseconds;
-        log('${T.toString()} : ${state.name} in $dur ms');
+        log('[MVCR]> ${T.toString()} : ${state.name} in $dur ms');
       }
     }
 
