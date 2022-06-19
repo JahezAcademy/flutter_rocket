@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'mc_controller.dart';
 import 'mc_constants.dart';
 import 'mc_llistenable.dart';
+import 'mc_value_listenable.dart';
 
 /// Extensions helper
 
@@ -36,6 +37,12 @@ extension HasKey on HashMap {
       if (key == key) checker = true;
     });
     return checker;
+  }
+}
+
+extension Easy<T> on T {
+  RocketValue<T> get mini {
+    return RocketValue<T>(this);
   }
 }
 

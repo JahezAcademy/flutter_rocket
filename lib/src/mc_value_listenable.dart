@@ -28,9 +28,3 @@ class RocketValue<T> extends RocketListenable {
     super.registerListener(key, listener);
   }
 }
-
-extension Easy<T> on T {
-  RocketValue<T> get mini {
-    return RocketValue<T>(this);
-  }
-}

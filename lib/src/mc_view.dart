@@ -152,6 +152,16 @@ class ViewRocketState extends State<RocketView> {
     if (widget.model != oldWidget.model) {
       oldWidget.model.removeListener(rocketRebuild);
       widget.model.registerListener(rocketRebuild, _handleChange);
+      if (oldWidget.model.multi != null) {
+        for (var e in oldWidget.model.multi!) {
+          e.removeListener(rocketRebuild);
+        }
+      }
+      if (widget.model.multi != null) {
+        for (var e in widget.model.multi!) {
+          e.registerListener(rocketRebuild, _handleChange);
+        }
+      }
     }
   }
 
@@ -172,6 +182,13 @@ class ViewRocketState extends State<RocketView> {
         return Center(
             child: widget.loader ?? const CircularProgressIndicator());
       case RocketState.done:
+        if (widget.model.multi != null) {
+          for (var e in widget.model.multi!) {
+            if (!e.keyHasListeners(rocketRebuild)) {
+              e.registerListener(rocketRebuild, _handleChange);
+            }
+          }
+        }
         return widget.builder(context);
       case RocketState.failed:
         return widget.onError(widget.model.exception, reload);

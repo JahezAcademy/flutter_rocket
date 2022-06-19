@@ -1,5 +1,11 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
+const String photoAlbumIdField = "albumId";
+const String photoIdField = "id";
+const String photoTitleField = "title";
+const String photoUrlField = "url";
+const String photoThumbnailUrlField = "thumbnailUrl";
+
 class Photo extends RocketModel<Photo> {
   int? albumId;
   int? id;
@@ -7,11 +13,6 @@ class Photo extends RocketModel<Photo> {
   String? url;
   String? thumbnailUrl;
 
-  String albumIdVar = "albumId";
-  String idVar = "id";
-  String titleVar = "title";
-  String urlVar = "url";
-  String thumbnailUrlVar = "thumbnailUrl";
   Photo({
     this.albumId,
     this.id,
@@ -22,22 +23,37 @@ class Photo extends RocketModel<Photo> {
 
   @override
   void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
-    albumId = json['albumId'] ?? albumId;
-    id = json['id'] ?? id;
-    title = json['title'] ?? title;
-    url = json['url'] ?? url;
-    thumbnailUrl = json['thumbnailUrl'] ?? thumbnailUrl;
+    albumId = json[photoAlbumIdField] ?? albumId;
+    id = json[photoIdField] ?? id;
+    title = json[photoTitleField] ?? title;
+    url = json[photoUrlField] ?? url;
+    thumbnailUrl = json[photoThumbnailUrlField] ?? thumbnailUrl;
     super.fromJson(json, isSub: isSub);
+  }
+
+  void updateFields({
+    int? albumIdField,
+    int? idField,
+    String? titleField,
+    String? urlField,
+    String? thumbnailUrlField,
+  }) {
+    albumId = albumIdField ?? albumId;
+    id = idField ?? id;
+    title = titleField ?? title;
+    url = urlField ?? url;
+    thumbnailUrl = thumbnailUrlField ?? thumbnailUrl;
+    rebuildWidget();
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['albumId'] = albumId;
-    data['id'] = id;
-    data['title'] = title;
-    data['url'] = url;
-    data['thumbnailUrl'] = thumbnailUrl;
+    data[photoAlbumIdField] = albumId;
+    data[photoIdField] = id;
+    data[photoTitleField] = title;
+    data[photoUrlField] = url;
+    data[photoThumbnailUrlField] = thumbnailUrl;
 
     return data;
   }
