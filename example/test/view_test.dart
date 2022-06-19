@@ -66,8 +66,8 @@ void main() {
     await tester.pump();
     // Name changed
     expect(find.text("User :Mohammed CHAHBOUN 💙"), findsOneWidget);
-    // After 10 seconds data updated from API
-    await tester.pump(const Duration(seconds: 10));
+    // After 2 seconds data updated from API
+    await tester.pump(const Duration(seconds: 2));
     expect(find.text("User :${userData.first[userNameField]}"), findsOneWidget);
   });
 
