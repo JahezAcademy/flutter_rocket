@@ -67,6 +67,11 @@ you get something like this:
 ```dart
 import 'package:mvc_rocket/mvc_rocket.dart';
 
+String postUserIdField = "userId";
+String postIdField = "id";
+String postTitleField = "title";
+String postBodyField = "body";
+
 class Post extends RocketModel<Post> {
   int? userId;
   int? id;
@@ -74,11 +79,7 @@ class Post extends RocketModel<Post> {
   String? body;
   // disable logs debugging
   @override
-  bool get enableDebug => false;
-  String userIdVar = "userId";
-  String idVar = "id";
-  String titleVar = "title";
-  String bodyVar = "body";
+  bool get enableDebug => true;
   Post({
     this.userId,
     this.id,
@@ -88,20 +89,33 @@ class Post extends RocketModel<Post> {
 
   @override
   void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
-    userId = json['userId'] ?? userId;
-    id = json['id'] ?? id;
-    title = json['title'] ?? title;
-    body = json['body'] ?? body;
+    userId = json[postUserIdField] ?? userId;
+    id = json[postIdField] ?? id;
+    title = json[postTitleField] ?? title;
+    body = json[postBodyField] ?? body;
     super.fromJson(json, isSub: isSub);
+  }
+
+  void updateFields({
+    int? userIdField,
+    int? idField,
+    String? titleField,
+    String? bodyField,
+  }) {
+    userId = userIdField ?? userId;
+    id = idField ?? id;
+    title = titleField ?? title;
+    body = bodyField ?? body;
+    rebuildWidget();
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['userId'] = userId;
-    data['id'] = id;
-    data['title'] = title;
-    data['body'] = body;
+    data[postUserIdField] = userId;
+    data[postIdField] = id;
+    data[postTitleField] = title;
+    data[postBodyField] = body;
 
     return data;
   }
@@ -109,6 +123,7 @@ class Post extends RocketModel<Post> {
   @override
   get instance => Post();
 }
+
 ```
 
 Now second step create your RocketRequest in constructor or initState of first widget and pass url & headers
@@ -196,7 +211,7 @@ class PostExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
-              onRefresh: () => GetPosts.getPosts(post);
+              onRefresh: ()=> GetPosts.getPosts(post),
               child: RocketView(
                 // call api method
                 call: () => GetPosts.getPosts(post),
@@ -239,6 +254,17 @@ class PostExample extends StatelessWidget {
                         return ListTile(
                             leading: Text(currentPost.id.toString()),
                             title: Text(currentPost.title!),
+                            trailing: IconButton(
+                              color: Colors.brown,
+                              icon: const Icon(Icons.update),
+                              onPressed: () {
+                                // update post data
+                                currentPost.updateFields(
+                                  bodyField: "This Body changed",
+                                  titleField: "This Title changed"
+                                );
+                              },
+                            ),
                             onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) {

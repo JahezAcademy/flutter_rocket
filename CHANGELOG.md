@@ -76,3 +76,7 @@
 - Add [enableDebug] on Models for log model state & duration of loading
 - Optmized performance by manage rebuild widgets with [RocketState]
 - Add log for exceptions
+- Add [updateFields] method for update model by parameter
+- Add [updateFieldsByMap] method for update model by map
+- Support rebuild widget from models of multi
+- Add unit tests for examples

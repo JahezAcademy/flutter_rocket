@@ -1,10 +1,8 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'dummy_data.dart';
-
 class RocketRequestTest {
-  final String url;
-  RocketRequestTest(this.url);
+  List<Map<String, dynamic>> data;
+  RocketRequestTest(this.data);
   Future getObjData<T>(
     String endpoint,
     RocketModel<T> model, {
@@ -15,7 +13,7 @@ class RocketRequestTest {
     model.state = RocketState.loading;
     await Future.delayed(const Duration(seconds: 1));
     try {
-      model.setMulti(postData);
+      model.setMulti(data);
       model.state = RocketState.done;
     } catch (e) {
       model.setException(RocketException(exception: e.toString()));
