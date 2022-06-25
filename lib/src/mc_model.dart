@@ -60,7 +60,7 @@ abstract class RocketModel<T> extends RocketListenable {
   }
 
   /// من البيانات القادمة من الخادم الى نماذج
-  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
     if (!isSub) {
       existData = true;
       state = RocketState.done;
@@ -68,7 +68,7 @@ abstract class RocketModel<T> extends RocketListenable {
   }
 
   /// update fields based on fromJson method
-  void updateFieldsByMap(Map<String, dynamic>? json) {
+  void updateFieldsByMap(Map<String, dynamic> json) {
     try {
       fromJson(json);
     } catch (e) {
