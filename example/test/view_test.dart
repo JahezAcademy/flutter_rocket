@@ -1,6 +1,7 @@
 import 'package:example/models/photo_model.dart';
 import 'package:example/models/post_model.dart';
 import 'package:example/models/user_model.dart';
+import 'package:example/views/photo_view.dart';
 import 'package:example/views/post_view.dart';
 import 'package:example/views/user_view.dart';
 import 'package:flutter/material.dart';
@@ -71,24 +72,15 @@ void main() {
     expect(find.text("User :${userData.first[userNameField]}"), findsOneWidget);
   });
 
-  testWidgets('Test Photo view (setup,refresh)', (tester) async {
+  testWidgets('Test Photo view setup', (tester) async {
     // Create request object
     RocketRequestTest request = RocketRequestTest(photoData);
     RocketController().add(rocketRequestKey, request);
     // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(
-        home: PostExample(
+        home: PhotoExample(
       title: 'test',
     )));
-    await tester.pump();
-    // Check loading
-    expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
-    // After 1 second data loaded
-    await tester.pump(const Duration(seconds: 1));
-    expect(find.text(photoData.first[photoTitleField]), findsOneWidget);
-    // Click to refresh for reload data
-    await tester.tap(find.byIcon(Icons.data_usage));
-    await tester.pump();
     // Check loading
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 1 second data loaded

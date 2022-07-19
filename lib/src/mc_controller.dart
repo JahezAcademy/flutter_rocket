@@ -9,12 +9,7 @@ class RocketController {
   /// اضافة تموذج جديد
   T add<T>(String key, T model, {bool readOnly = false}) {
     if (readOnly) {
-      if (!_models.containsKey(key)) {
-        _models[key] = model;
-        return model;
-      } else {
-        return _models[key];
-      }
+      return _models.putIfAbsent(key, () => model);
     } else {
       _models[key] = model;
       return model;
