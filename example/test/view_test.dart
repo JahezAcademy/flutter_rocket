@@ -1,4 +1,4 @@
-// import 'package:example/models/photo_model.dart';
+import 'package:example/models/photo_model.dart';
 import 'package:example/models/post_model.dart';
 import 'package:example/models/user_model.dart';
 import 'package:example/views/photo_view.dart';
