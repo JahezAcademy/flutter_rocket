@@ -80,3 +80,5 @@
 - Add [updateFieldsByMap] method for update model by map
 - Support rebuild widget from models of multi
 - Add unit tests for examples
+- Make json (fromJson parameter) non nullable on [RocketModel].
+- Make json (updateFieldsByMap parameter) non nullable on [RocketModel].
