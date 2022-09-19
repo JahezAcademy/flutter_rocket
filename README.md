@@ -6,6 +6,7 @@ State management and request package, Model,View,Controller,Request MVCR.
 
 [![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mvc_rocket)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
+[![Flutter CI](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml)
 
 # Usage
 ## Simple case use RocketMiniView & RocketValue
