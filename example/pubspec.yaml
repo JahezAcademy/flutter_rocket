@@ -30,9 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.0
 
   mvc_rocket:
-    git: 
-      url: https://github.com/JahezAcademy/mvc_rocket
-      ref: staging
+    path: ../../mvc_rocket
 
     
 
