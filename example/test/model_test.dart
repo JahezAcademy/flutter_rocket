@@ -2,14 +2,11 @@ import 'package:example/models/photo_model.dart';
 import 'package:example/models/post_model.dart';
 import 'package:example/models/user_model.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mvc_rocket/mvc_rocket.dart';
 
 import 'dummy_data.dart';
 
 void main() {
-  group(
-      'Test Post model (multi, fromJson, toJson, updateFields, updateFieldsByMap, state)',
-      () {
+  group('Test Post model (multi, fromJson, toJson, updateFields, state)', () {
     final post = Post();
     const String newTitle = "New title";
     test("Test Post model (multi, fromJson, toJson)", () {
