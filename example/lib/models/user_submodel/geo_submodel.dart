@@ -12,10 +12,19 @@ class Geo extends RocketModel<Geo> {
     this.lng,
   });
   @override
-  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
-    lat = json[geoLatField] ?? lat;
-    lng = json[geoLngField] ?? lng;
+  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+    lat = json[geoLatField];
+    lng = json[geoLngField];
     super.fromJson(json, isSub: isSub);
+  }
+
+  void updateFields({
+    String? latField,
+    String? lngField,
+  }) {
+    lat = latField ?? lat;
+    lng = lngField ?? lng;
+    rebuildWidget();
   }
 
   @override

@@ -13,16 +13,25 @@ class Company extends RocketModel<Company> {
     this.name,
     this.catchPhrase,
     this.bs,
-  }) {
-    multi = multi ?? [];
-  }
+  });
 
   @override
-  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
-    name = json[companyNameField] ?? name;
-    catchPhrase = json[companyCatchPhraseField] ?? catchPhrase;
-    bs = json[companyBsField] ?? bs;
+  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+    name = json[companyNameField];
+    catchPhrase = json[companyCatchPhraseField];
+    bs = json[companyBsField];
     super.fromJson(json, isSub: isSub);
+  }
+
+  void updateFields({
+    String? nameField,
+    String? catchPhraseField,
+    String? bsField,
+  }) {
+    name = nameField ?? name;
+    catchPhrase = catchPhraseField ?? catchPhrase;
+    bs = bsField ?? bs;
+    rebuildWidget();
   }
 
   @override

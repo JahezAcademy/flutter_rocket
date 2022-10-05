@@ -1,9 +1,9 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
-String postUserIdField = "userId";
-String postIdField = "id";
-String postTitleField = "title";
-String postBodyField = "body";
+const String postUserIdField = "userId";
+const String postIdField = "id";
+const String postTitleField = "title";
+const String postBodyField = "body";
 
 class Post extends RocketModel<Post> {
   int? userId;
@@ -21,11 +21,11 @@ class Post extends RocketModel<Post> {
   });
 
   @override
-  void fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
-    userId = json[postUserIdField] ?? userId;
-    id = json[postIdField] ?? id;
-    title = json[postTitleField] ?? title;
-    body = json[postBodyField] ?? body;
+  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+    userId = json[postUserIdField];
+    id = json[postIdField];
+    title = json[postTitleField];
+    body = json[postBodyField];
     super.fromJson(json, isSub: isSub);
   }
 

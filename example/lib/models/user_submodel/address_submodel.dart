@@ -1,6 +1,5 @@
+import 'package:example/models/user_submodel/geo_submodel.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
-
-import 'geo_submodel.dart';
 
 const String addressStreetField = "street";
 const String addressSuiteField = "suite";
@@ -26,13 +25,28 @@ class Address extends RocketModel<Address> {
   }
 
   @override
-  fromJson(covariant Map<String, dynamic> json, {bool isSub = false}) {
-    street = json[addressStreetField] ?? street;
-    suite = json[addressSuiteField] ?? suite;
-    city = json[addressCityField] ?? city;
-    zipcode = json[addressZipcodeField] ?? zipcode;
-    geo!.fromJson(json[addressGeoField] ?? geo!.toJson(), isSub: isSub);
+  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+    street = json[addressStreetField];
+    suite = json[addressSuiteField];
+    city = json[addressCityField];
+    zipcode = json[addressZipcodeField];
+    geo!.fromJson(json[addressGeoField]);
     super.fromJson(json, isSub: isSub);
+  }
+
+  void updateFields({
+    String? streetField,
+    String? suiteField,
+    String? cityField,
+    String? zipcodeField,
+    Geo? geoField,
+  }) {
+    street = streetField ?? street;
+    suite = suiteField ?? suite;
+    city = cityField ?? city;
+    zipcode = zipcodeField ?? zipcode;
+    geo = geoField ?? geo;
+    rebuildWidget();
   }
 
   @override
