@@ -67,15 +67,6 @@ abstract class RocketModel<T> extends RocketListenable {
     }
   }
 
-  /// update fields based on fromJson method
-  void updateFieldsByMap(Map<String, dynamic> json) {
-    try {
-      fromJson(json);
-    } catch (e) {
-      setException(RocketException(exception: e.toString()));
-    }
-  }
-
   /// json من النماذج الى بيانات
   Map<String, dynamic> toJson() => {};
 

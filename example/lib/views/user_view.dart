@@ -67,14 +67,14 @@ class UserExample extends StatelessWidget {
                           icon: const Icon(Icons.update),
                           onPressed: () {
                             Company newCompany = Company(
-                              bs: "change data...bs",
-                              catchPhrase: "change data...catch",
+                                bs: "change data...bs",
+                                name: "Name changed",
+                                catchPhrase: "change data...catch");
+                            // update user model
+                            user.updateFields(
+                              nameField: "Mohammed CHAHBOUN 💙",
+                              companyField: newCompany,
                             );
-                            // update user data by map
-                            user.updateFieldsByMap({
-                              userNameField: "Mohammed CHAHBOUN 💙",
-                              userCompanyField: newCompany.toJson(),
-                            });
                           }),
                       children: [
                         const SizedBox(height: 5.0),

@@ -85,7 +85,6 @@ class PostExample extends StatelessWidget {
                               onPressed: () {
                                 // update post data
                                 currentPost.updateFields(
-                                    bodyField: "This Body changed",
                                     titleField: "This Title changed");
                               },
                             ),
