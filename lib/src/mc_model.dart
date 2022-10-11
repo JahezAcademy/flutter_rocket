@@ -86,6 +86,7 @@ abstract class RocketModel<T> extends RocketListenable {
         if (state == RocketState.done || state == RocketState.failed) {
           int dur = DateTime.now().difference(_time).inMilliseconds;
           log('[MVCR]> ${T.toString()} : ${state.name} in $dur ms');
+          _time = DateTime.now();
         }
       }
     }
