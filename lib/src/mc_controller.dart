@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'mc_extensions.dart';
+
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class RocketController {
   final HashMap<String, dynamic> models = HashMap();

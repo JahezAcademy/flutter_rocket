@@ -1,8 +1,7 @@
 import 'mc_controller.dart';
 
-
 /// Save your data with specific key
- /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
+/// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class Rocket {
   Rocket._();
 
