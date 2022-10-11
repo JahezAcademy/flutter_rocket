@@ -1,39 +1,46 @@
-import 'mc_controller.dart';
+import 'dart:collection';
+
+import 'package:mvc_rocket/src/mc_extensions.dart';
 
 /// Save your data with specific key
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class Rocket {
   Rocket._();
 
-  static RocketController? _rocketDelegate;
+  static HashMap<String, dynamic>? _rocketDelegate;
 
-  static RocketController get _instance {
-    return _rocketDelegate ??= RocketController.instance;
+  static HashMap<String, dynamic> get _models {
+    return _rocketDelegate ??= HashMap<String, dynamic>();
   }
 
   /// اضافة تموذج جديد
   static T add<T>(String key, T model, {bool readOnly = false}) {
-    return _instance.add(key, model, readOnly: readOnly);
+    if (readOnly) {
+      return _models.putIfAbsent(key, () => model);
+    } else {
+      _models[key] = model;
+      return model;
+    }
   }
 
   /// الوصول لنموذج
   static T get<T>(String key) {
-    return _instance.models[key];
+    return _models[key];
   }
 
   /// حذف النموذح
   static void remove(String key) {
-    _instance.remove(key);
+    _models.remove(key);
   }
 
   static bool hasKey(String key) {
-    return _instance.hasKey(key);
+    return _models.hasKey(key);
   }
 
-  static List<String> get keys => _instance.keys.toList();
+  static List<String> get keys => _models.keys.toList();
 
   // حذف نموذج بشرط معين
   static void removeWhere(bool Function(String, dynamic) test) {
-    _instance.removeWhere(test);
+    _models.removeWhere(test);
   }
 }
