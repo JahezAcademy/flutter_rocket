@@ -5,10 +5,10 @@ import 'mc_controller.dart';
 class Rocket {
   Rocket._();
 
-  static RocketController? _ghReporterDelegate;
+  static RocketController? _rocketDelegate;
 
   static RocketController get _instance {
-    return _ghReporterDelegate ??= RocketController.instance;
+    return _rocketDelegate ??= RocketController.instance;
   }
 
   /// اضافة تموذج جديد
