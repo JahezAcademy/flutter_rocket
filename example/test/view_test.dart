@@ -14,7 +14,7 @@ void main() {
   testWidgets('Test Post view (setup,refresh,update)', (tester) async {
     // Create request object
     RocketRequestTest request = RocketRequestTest(postData);
-    RocketController().add(rocketRequestKey, request);
+    Rocket.add(rocketRequestKey, request);
     // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(
         home: PostExample(
@@ -43,7 +43,7 @@ void main() {
   testWidgets('Test user view (setup,refresh,update)', (tester) async {
     // Create request object
     RocketRequestTest request = RocketRequestTest(userData);
-    RocketController().add(rocketRequestKey, request);
+    Rocket.add(rocketRequestKey, request);
     // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(
         home: UserExample(
@@ -75,7 +75,7 @@ void main() {
   testWidgets('Test Photo view setup', (tester) async {
     // Create request object
     RocketRequestTest request = RocketRequestTest(photoData);
-    RocketController().add(rocketRequestKey, request);
+    Rocket.add(rocketRequestKey, request);
     // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(
         home: PhotoExample(

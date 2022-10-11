@@ -1,18 +1,13 @@
 import 'dart:collection';
+
 import 'package:flutter/material.dart';
-import 'mc_controller.dart';
+
 import 'mc_constants.dart';
 import 'mc_llistenable.dart';
+import 'mc_rocket.dart';
 import 'mc_value_listenable.dart';
 
 /// Extensions helper
-
-/// لتسهيل الوصول ل [RocketController]
-
-extension RocketInObj on Object {
-  RocketController get rocket => RocketController();
-}
-
 extension CustomLinkedList on LinkedList<CustomLinkedListEntry<VoidCallback>> {
   void removeWhere(
       bool Function(CustomLinkedListEntry<VoidCallback> element) test) {
@@ -48,21 +43,21 @@ extension Easy<T> on T {
 
 extension ToScreenSize on num {
   double get h {
-    assert(RocketController().get(rocketSizeScreenKey) != null,
+    assert(Rocket.get(rocketSizeScreenKey) != null,
         "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
-    assert(RocketController().get(rocketSizeDesignKey) != null,
+    assert(Rocket.get(rocketSizeDesignKey) != null,
         "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
-    return (RocketController().get<Size>(rocketSizeScreenKey).height * this) /
-        RocketController().get<Size>(rocketSizeDesignKey).height;
+    return (Rocket.get<Size>(rocketSizeScreenKey).height * this) /
+        Rocket.get<Size>(rocketSizeDesignKey).height;
   }
 
   double get w {
-    assert(RocketController().get(rocketSizeScreenKey) != null,
+    assert(Rocket.get(rocketSizeScreenKey) != null,
         "you should define sizeScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(context.width,context.height));");
-    assert(RocketController().get(rocketSizeDesignKey) != null,
+    assert(Rocket.get(rocketSizeDesignKey) != null,
         "you should define designScreen put this line in init of first widget\nmc.add<Size>(sizeDesign, Size(width of your design, height of your design));");
-    return (RocketController().get<Size>(rocketSizeScreenKey).width * this) /
-        RocketController().get<Size>(rocketSizeDesignKey).width;
+    return (Rocket.get<Size>(rocketSizeScreenKey).width * this) /
+        Rocket.get<Size>(rocketSizeDesignKey).width;
   }
 }
 

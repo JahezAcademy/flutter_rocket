@@ -6,7 +6,7 @@ import 'package:mvc_rocket/mvc_rocket.dart';
 class PhotoExample extends StatelessWidget {
   PhotoExample({Key? key, required this.title}) : super(key: key);
   final String title;
-  final Photo photo = RocketController().add<Photo>(photosEndpoint, Photo());
+  final Photo photo = Rocket.add<Photo>(photosEndpoint, Photo());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,6 +1,6 @@
+import 'package:example/models/counter_model.dart';
 import 'package:flutter/material.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
-import 'package:example/models/counter_model.dart';
 
 class CounterExample extends StatelessWidget {
   final String title;
@@ -8,8 +8,8 @@ class CounterExample extends StatelessWidget {
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
-    // rocket.add(sizeDesign, Size(100, 200));
-    // rocket.add(sizeScreen, Size(context.width, context.height));
+    // Rocket.add(sizeDesign, Size(100, 200));
+    // Rocket.add(sizeScreen, Size(context.width, context.height));
     return Scaffold(
       appBar: AppBar(
         title: Text(title),

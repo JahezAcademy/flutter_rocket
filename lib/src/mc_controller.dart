@@ -1,45 +1,41 @@
 import 'dart:collection';
-import 'mc_extensions.dart';
 
+import 'mc_extensions.dart';
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
 class RocketController {
-  static final RocketController _controller = RocketController._internal();
-  final HashMap<String, dynamic> _models = HashMap();
+  final HashMap<String, dynamic> models = HashMap();
+  static RocketController get instance {
+    return RocketController();
+  }
 
   /// اضافة تموذج جديد
   T add<T>(String key, T model, {bool readOnly = false}) {
     if (readOnly) {
-      return _models.putIfAbsent(key, () => model);
+      return models.putIfAbsent(key, () => model);
     } else {
-      _models[key] = model;
+      models[key] = model;
       return model;
     }
   }
 
   /// الوصول لنموذج
   T get<T>(String key) {
-    return _models[key];
+    return models[key];
   }
 
   /// حذف النموذح
   void remove(String key) {
-    _models.remove(key);
+    models.remove(key);
   }
 
   bool hasKey(String key) {
-    return _models.hasKey(key);
+    return models.hasKey(key);
   }
 
-  List<String> get keys => _models.keys.toList();
+  List<String> get keys => models.keys.toList();
 
   // حذف نموذج بشرط معين
   void removeWhere(bool Function(String, dynamic) test) {
-    _models.removeWhere(test);
+    models.removeWhere(test);
   }
-
-  factory RocketController() {
-    return _controller;
-  }
-
-  RocketController._internal();
 }

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
 
 class UserExample extends StatelessWidget {
-  final User users = RocketController().add<User>(usersEndpoint, User());
+  final User users = Rocket.add<User>(usersEndpoint, User());
   UserExample({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
@@ -145,7 +145,7 @@ class OneUser extends StatelessWidget {
   late Address address;
   late Geo geo;
   OneUser(this.index, {Key? key}) : super(key: key) {
-    user = rocket.get<User>(usersEndpoint).multi![index];
+    user = Rocket.get<User>(usersEndpoint).multi![index];
     company = user.company!;
     address = user.address!;
     geo = address.geo!;

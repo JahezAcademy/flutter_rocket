@@ -4,7 +4,6 @@ import 'package:mvc_rocket/mvc_rocket.dart';
 const String photosEndpoint = "photos";
 
 class GetPhotos {
-  static Future getPhotos(Photo photoModel) => RocketController()
-      .get(rocketRequestKey)
+  static Future getPhotos(Photo photoModel) => Rocket.get(rocketRequestKey)
       .getObjData(photosEndpoint, photoModel, multi: true);
 }

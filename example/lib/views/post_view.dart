@@ -9,8 +9,7 @@ class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
   // [rocket] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post =
-      RocketController().add<Post>(postsEndpoint, Post(), readOnly: true);
+  final Post post = Rocket.add<Post>(postsEndpoint, Post(), readOnly: true);
 
   PostExample({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -58,8 +57,7 @@ class PostExample extends StatelessWidget {
                         Text(exception.exception),
                         if (exception.statusCode != HttpStatus.ok) ...[
                           Text(exception.response),
-                          Text(rocket
-                              .get(rocketRequestKey)
+                          Text(Rocket.get(rocketRequestKey)
                               .msgByStatusCode(exception.statusCode))
                         ],
                         TextButton(
@@ -106,7 +104,7 @@ class PostExample extends StatelessWidget {
 class Details extends StatelessWidget {
   final int index;
   //  get your model by key
-  final Post post = RocketController().get<Post>(postsEndpoint);
+  final Post post = Rocket.get<Post>(postsEndpoint);
   Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {

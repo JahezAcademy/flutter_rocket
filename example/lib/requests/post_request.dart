@@ -5,7 +5,7 @@ const String postsEndpoint = "posts";
 
 class GetPosts {
   static Future getPosts(Post postModel) =>
-      RocketController().get(rocketRequestKey).getObjData(
+      Rocket.get(rocketRequestKey).getObjData(
         // endpoint
         postsEndpoint,
         // your model
