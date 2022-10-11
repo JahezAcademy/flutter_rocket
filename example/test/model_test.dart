@@ -20,9 +20,7 @@ void main() {
       expect(post.multi!.first.toJson()[postTitleField], newTitle);
     });
   });
-  group(
-      'Test Photo model (multi, fromJson, toJson, updateFields, updateFieldsByMap)',
-      () {
+  group('Test Photo model (multi, fromJson, toJson, updateFields)', () {
     final photo = Photo();
     const String newTitle = "New title";
     test("Test Photo model (multi, fromJson, toJson)", () {
@@ -37,9 +35,7 @@ void main() {
     });
   });
 
-  group(
-      'Test User model (multi, fromJson, toJson, updateFields, updateFieldsByMap)',
-      () {
+  group('Test User model (multi, fromJson, toJson, updateFields)', () {
     final user = User();
     const String newTitle = "New username";
     test('Test User model (multi, fromJson, toJson)', () {
