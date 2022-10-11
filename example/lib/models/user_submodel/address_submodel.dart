@@ -46,7 +46,7 @@ class Address extends RocketModel<Address> {
     city = cityField ?? city;
     zipcode = zipcodeField ?? zipcode;
     geo = geoField ?? geo;
-    rebuildWidget();
+    rebuildWidget(fromUpdate: true);
   }
 
   @override

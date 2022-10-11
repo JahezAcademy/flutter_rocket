@@ -72,7 +72,7 @@ class User extends RocketModel<User> {
     image = imageField ?? image;
     website = websiteField ?? website;
     company = companyField ?? company;
-    rebuildWidget();
+    rebuildWidget(fromUpdate: true);
   }
 
   @override

@@ -39,7 +39,7 @@ class Post extends RocketModel<Post> {
     id = idField ?? id;
     title = titleField ?? title;
     body = bodyField ?? body;
-    rebuildWidget();
+    rebuildWidget(fromUpdate: true);
   }
 
   @override

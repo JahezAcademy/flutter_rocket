@@ -31,7 +31,7 @@ class Company extends RocketModel<Company> {
     name = nameField ?? name;
     catchPhrase = catchPhraseField ?? catchPhrase;
     bs = bsField ?? bs;
-    rebuildWidget();
+    rebuildWidget(fromUpdate: true);
   }
 
   @override

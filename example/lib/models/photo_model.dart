@@ -43,7 +43,7 @@ class Photo extends RocketModel<Photo> {
     title = titleField ?? title;
     url = urlField ?? url;
     thumbnailUrl = thumbnailUrlField ?? thumbnailUrl;
-    rebuildWidget();
+    rebuildWidget(fromUpdate: true);
   }
 
   @override

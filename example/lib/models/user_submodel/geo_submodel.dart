@@ -24,7 +24,7 @@ class Geo extends RocketModel<Geo> {
   }) {
     lat = latField ?? lat;
     lng = lngField ?? lng;
-    rebuildWidget();
+    rebuildWidget(fromUpdate: true);
   }
 
   @override
