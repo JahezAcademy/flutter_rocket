@@ -7,10 +7,10 @@ import 'package:mvc_rocket/src/mc_extensions.dart';
 class Rocket {
   Rocket._();
 
-  static HashMap<String, dynamic>? _rocketDelegate;
+  static HashMap<String, dynamic>? _modelsDelegate;
 
   static HashMap<String, dynamic> get _models {
-    return _rocketDelegate ??= HashMap<String, dynamic>();
+    return _modelsDelegate ??= HashMap<String, dynamic>();
   }
 
   /// اضافة تموذج جديد
