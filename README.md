@@ -136,7 +136,7 @@ class MyApp extends StatelessWidget {
     // create request object
     RocketRequest request = RocketRequest(url: baseUrl);
     // save it, for use it from any screen by key
-    rocket.add(rocketRequestKey, request);    
+    Rocket.add(rocketRequestKey, request);    
   }
 
   @override
@@ -158,7 +158,7 @@ const String postsEndpoint = "posts";
 
 class GetPosts {
   static Future getPosts(Post postModel) =>
-      RocketController().get(rocketRequestKey).getObjData(
+      Rocket.get(rocketRequestKey).getObjData(
         // endpoint
         postsEndpoint,
         // your model
@@ -189,7 +189,7 @@ class PostExample extends StatelessWidget {
   // readOnly means if you close and open this screen you will use same data without update it from Api
   // [rocket] is instance of Mccontroller injected in Object by extension for use it easily anywhere
   final Post post =
-      RocketController().add<Post>(postsEndpoint, Post(), readOnly: true);
+      Rocket.add<Post>(postsEndpoint, Post(), readOnly: true);
 
   PostExample({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -284,7 +284,7 @@ class PostExample extends StatelessWidget {
 class Details extends StatelessWidget {
   final int index;
   //  get your model by key
-  final Post post = RocketController().get<Post>(postsEndpoint);
+  final Post post = Rocket.get<Post>(postsEndpoint);
   Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -310,13 +310,13 @@ class Details extends StatelessWidget {
 McController().add("key",value,readOnly:true); // you can't edit it if readonly true
 // or
 // [add] return value
-rocket.add<Type>("key",value);
+Rocket.add<Type>("key",value);
 // [get] return value
-rocket.get<Type>("key");
+Rocket.get<Type>("key");
 // [remove]
-rocket.remove("key");
+Rocket.remove("key");
 // remove with condition
-rocket.removeWhere((key,value)=>key.contains("ke"));
+Rocket.removeWhere((key,value)=>key.contains("ke"));
 
 ```
 ## Graphic tutorial 
