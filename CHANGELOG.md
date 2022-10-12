@@ -80,3 +80,4 @@
 - Support rebuild widget from models of multi
 - Add unit tests for examples
 - Use `Rocket` instead of `RocketController` for save objects easily
+- Make json (fromJson parameter) non nullable on `RocketModel`.

@@ -51,7 +51,7 @@ class PhotoExample extends StatelessWidget {
 
 class ApiImage extends StatelessWidget {
   final String url;
-  const ApiImage(this.url);
+  const ApiImage(this.url, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
