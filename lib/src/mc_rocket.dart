@@ -32,7 +32,8 @@ class Rocket {
   static void remove(String key) {
     _models.remove(key);
   }
-  /// التأكد من وجود المفتاح 
+
+  /// التأكد من وجود المفتاح
   static bool hasKey(String key) {
     return _models.hasKey(key);
   }
