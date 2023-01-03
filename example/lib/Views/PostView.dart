@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mc/mc.dart';
+
 import '../Models/PostModel.dart';
 
 class PostExample extends StatelessWidget {
@@ -30,11 +31,22 @@ class PostExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: McView(
-            call: () => rq.getObjData("posts", post, multi: true),
+            onError: (error, reload) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(error.response),
+                    Text(error.exception),
+                    TextButton(onPressed: reload, child: Text("Reload")),
+                  ],
+                ),
+              );
+            },
+            call: () => rq.getObjData("posdts", post, multi: true),
             model: post,
             // call api if model is empty
             callType: CallType.callIfModelEmpty,
-            showExceptionDetails: true,
             builder: (BuildContext __, snp) {
               return RefreshIndicator(
                 onRefresh: () => rq.getObjData("posts", post, multi: true),

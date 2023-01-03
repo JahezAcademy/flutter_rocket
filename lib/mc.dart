@@ -11,6 +11,7 @@ library mc;
 
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -549,9 +550,8 @@ class McView extends AnimatedWidget {
       this.secondsOfStream = 1,
       this.child,
       this.loader,
-      this.retryText = "Failed, retry",
-      this.styleButton,
-      this.showExceptionDetails = false})
+      this.onError = _defaultOnError,
+      this.styleButton})
       : super(key: key, listenable: model) {
     /// call التحقق من طريقة الاستدعاء لدالة
     switch (callType) {
@@ -575,59 +575,30 @@ class McView extends AnimatedWidget {
   }
 
   static _myDefaultFunc() {}
+  static Widget _defaultOnError(McResponse error, VoidCallback reload) {
+    return SizedBox.shrink();
+  }
+
+  void reload() {
+    model.setFailed(false);
+    model.load(true);
+    call();
+  }
+
   final TransitionBuilder builder;
-  final dynamic Function() call;
+  VoidCallback call;
   final CallType callType;
   final int secondsOfStream;
   final Widget? child;
   final Widget? loader;
   final McModel model;
-  final String retryText;
+  final Widget Function(McResponse error, VoidCallback reload) onError;
   final ButtonStyle? styleButton;
-  final bool showExceptionDetails;
 
   @override
   Widget build(BuildContext context) {
     if (model.failed) {
-      return Center(
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.5,
-          height: MediaQuery.of(context).size.height * 0.2,
-          padding: EdgeInsets.symmetric(horizontal: 15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                  child: Text(retryText),
-                  style: styleButton,
-                  onPressed: () {
-                    model.setFailed(false);
-                    model.load(true);
-                    call();
-                  }),
-              showExceptionDetails
-                  ? ElevatedButton(
-                      child: Text("show Details"),
-                      onPressed: () {
-                        model.response ??= McResponse();
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(
-                                    model.response!.exception.split(":")[0]),
-                                content: Text(
-                                    model.response!.statusCode.toString() +
-                                        '\n' +
-                                        model.response!.response),
-                              );
-                            });
-                      })
-                  : const SizedBox(),
-            ],
-          ),
-        ),
-      );
+      return onError(model.response!, reload);
     } else {
       return model.loading
           ? Center(child: loader ?? CircularProgressIndicator())
