@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mvc_rocket/src/mc_constants.dart';
-import 'mc_model.dart';
+
 import 'mc_exception.dart';
+import 'mc_model.dart';
 
 class RocketRequest {
   final String url;
@@ -47,30 +48,11 @@ class RocketRequest {
       this.setCookies = false,
       this.debugging = true});
 
-  @protected
-  dynamic _jsonData(Response response,
-      {Function(dynamic data)? inspect, String? endpoint}) {
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var data = json.decode(utf8.decode(response.bodyBytes));
-      if (inspect != null) {
-        data = inspect(data);
-      }
-      return data;
-    } else {
-      _getDebugging(response, endpoint);
-      try {
-        return json.decode(utf8.decode(response.bodyBytes));
-      } catch (e) {
-        return response.body;
-      }
-    }
-  }
-
-  _getDebugging(Response response, String? endpoint) {
+  _getDebugging(StreamedResponse response, String? endpoint) {
     if (debugging) {
       log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
       log("\x1B[38;5;2m [Url] => ${"$url/${endpoint!}"} \x1B[0m");
-      log("\x1B[38;5;2m [Response] => ${response.body} \x1B[0m");
+      log("\x1B[38;5;2m [Response] => ${response.toString()} \x1B[0m");
       log("\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
       log("\x1B[38;5;2m ################################ \x1B[0m");
     }
@@ -112,28 +94,29 @@ class RocketRequest {
   }
 
   @protected
-  dynamic _objData<T>(Response response, RocketModel<T> model,
-      {bool? multi, Function(dynamic data)? inspect, String? endpoint}) {
-    if (response.statusCode == HttpStatus.ok ||
-        response.statusCode == HttpStatus.created) {
-      if (multi!) {
-        var result = json.decode(utf8.decode(response.bodyBytes));
-        if (inspect != null) {
-          result = inspect(result);
+  dynamic _processData<T>(StreamedResponse response,
+      {RocketModel<T>? model,
+      bool? multi,
+      Function(dynamic data)? inspect,
+      String? endpoint}) async {
+    if (response.statusCode < 300 && response.statusCode >= 200) {
+      var result = json.decode(utf8.decode(await response.stream.toBytes()));
+      if (inspect != null) {
+        result = inspect(result);
+      }
+      if (model != null) {
+        if (multi!) {
+          model.setMulti(result ?? []);
+          return model.multi;
+        } else {
+          model.fromJson(result);
+          return model;
         }
-        model.setMulti(result ?? []);
-
-        return model.multi;
       } else {
-        var result = json.decode(utf8.decode(response.bodyBytes));
-        if (inspect != null) {
-          result = inspect(result);
-        }
-        model.fromJson(result);
-        return model;
+        return result;
       }
     } else {
-      model.state = RocketState.failed;
+      model!.state = RocketState.failed;
       _getDebugging(response, endpoint);
       throw Exception('Failed to load Data');
     }
@@ -166,179 +149,57 @@ class RocketRequest {
   /// [List]=>(قاموس)
   ///
   /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
-  Future getJsonData(String endpoint,
-      {Map<String, dynamic>? params,
-      bool complex = false,
-      Function(Object error) onError = _onError,
-      Function(dynamic data)? inspect}) async {
-    String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse("${this.url}/$endpoint?$srch");
-    try {
-      Response response = await get(url, headers: headers);
-      return _jsonData(response, inspect: inspect, endpoint: endpoint);
-    } catch (e) {
-      onError(e);
-    }
-  }
 
-  /// دالة خاصة لجلب البيانات على شكل النموذج الذي تم تمريره مع الدالة
-  ///
-  /// [model]=>(النموذج)
-  ///
-  ///  عندما يكون (متعدد) صحيح هذا يعني أنك ستجد بيناتك في (مصفوفة) داخل (النموذج) الخاص بك على شكل نفس النموذج يمكنك الوصول لهذه البيانات عن طريق المتغير
-  ///
-  ///
-  /// [multi]=>(متعدد)
-  ///
-  /// [List]=>(مصفوفة)
-  ///
-  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
-
-  Future getObjData<T>(String endpoint, RocketModel<T> model,
-      {Map<String, dynamic>? params,
-      bool multi = false,
-      Function(dynamic data)? inspect}) async {
-    String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse("${this.url}/$endpoint?$srch");
-    model.state = RocketState.loading;
-    Response? response;
-    try {
-      response = await get(url, headers: headers);
-      return _objData<T>(response, model,
-          multi: multi, inspect: inspect, endpoint: endpoint);
-    } catch (error, stackTrace) {
-      return _catchError(error, stackTrace, model, response);
-    }
-  }
-
-  /// دالة خاصة بتعديل البيانات على شكل بالنموذج الذي تم تمريره مع الدالة
-  ///
-  /// [model]=>(النموذج)
-  ///
-  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
-
-  Future<RocketModel> putObjData<T>(
-      int id, String endpoint, RocketModel<T> model,
-      {bool multi = false, Function(dynamic data)? inspect}) async {
-    model.state = RocketState.loading;
-    Uri url = Uri.parse("${this.url}/$endpoint/$id/");
-    Response? response;
-    try {
-      response =
-          await put(url, body: json.encode(model.toJson()), headers: headers);
-      return _objData<T>(response, model,
-          inspect: inspect, multi: multi, endpoint: endpoint);
-    } catch (error, stackTrace) {
-      return _catchError(error, stackTrace, model, response);
-    }
-  }
-
-  _catchError(
-      Object e, StackTrace stackTrace, RocketModel model, Response? response) {
-    String? body;
-    int? statusCode;
-    if (response != null) {
-      body = response.body;
-      statusCode = response.statusCode;
-    }
-    model.setException(RocketException(
-        response: body!,
-        statusCode: statusCode!,
-        exception: e.toString(),
-        stackTrace: stackTrace));
-    return Future.value(model);
-  }
-
-  /// دالة خاصة لتعديل البيانات بالقاموس الذي تم تمريره مع الدالة
-  ///
-  /// [data]=>(قاموس)
-  ///
-  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
-
-  Future putJsonData(int id, String endpoint, Map<String, dynamic> data,
-      {Function(dynamic data)? inspect,
-      Function(Object error) onError = _onError}) async {
-    Uri url = Uri.parse("${this.url}/$endpoint/$id/");
-    try {
-      Response response =
-          await put(url, body: json.encode(data), headers: headers);
-      return _jsonData(response, inspect: inspect, endpoint: endpoint);
-    } catch (e) {
-      onError(e);
-    }
-  }
-
-  /// دالة خاصة بارسال البيانات على شكل النموذج الذي تم تمريره مع الدالة
-  ///
-  /// [model]=>(النموذج)
-  ///
-  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
-
-  Future<RocketModel> postObjData<T>(String endPoint,
+  Future request<T>(String endpoint,
       {RocketModel<T>? model,
+      HttpMethods method = HttpMethods.get,
       bool multi = false,
       Function(dynamic data)? inspect,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
-    model!.state = RocketState.loading;
-    String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse("${this.url}/$endPoint?$srch");
-    Response? response;
+    if (model != null) {
+      model.state = RocketState.loading;
+    }
+    StreamedResponse? response;
+    String mapToParams = params != null ? _mapToString(params) : "";
+    Uri url = Uri.parse("${this.url}/$endpoint?$mapToParams");
+    Request request = Request(method.name, url);
+    request.body = json.encode(data);
+    request.headers.addAll(headers);
     try {
-      response = await post(url, headers: headers, body: json.encode(data));
+      response = await request.send();
       if (setCookies) {
         _updateCookie(response);
       }
-      return _objData<T>(response, model,
-          inspect: inspect, multi: multi, endpoint: endPoint);
+      return _processData<T>(response,
+          model: model, inspect: inspect, multi: multi, endpoint: endpoint);
     } catch (error, stackTrace) {
-      return _catchError(error, stackTrace, model, response);
+      return _catchError(error, stackTrace, response, model: model);
     }
   }
 
-  /// دالة خاصة بارسال البيانات على شكل قاموس الذي تم تمريره مع الدالة
-  ///
-  /// Json=>(قاموس)
-  ///
-  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
-
-  Future postJsonData(String endPoint,
-      {Map<String, dynamic>? data,
-      Function(dynamic data)? inspect,
-      Function(Object error) onError = _onError,
-      Map<String, dynamic>? params}) async {
-    String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse("${this.url}/$endPoint?$srch");
-    try {
-      Response response =
-          await post(url, body: json.encode(data), headers: headers);
-      if (setCookies) {
-        _updateCookie(response);
-      }
-      return _jsonData(response, inspect: inspect, endpoint: endPoint);
-    } catch (e) {
-      onError(e);
+  _catchError(Object e, StackTrace stackTrace, StreamedResponse? response,
+      {RocketModel? model}) async {
+    String? body;
+    int? statusCode;
+    if (response != null) {
+      var decodeResponse = json.decode(await response.stream.bytesToString());
+      body = decodeResponse;
+      statusCode = response.statusCode;
+    }
+    if (model == null) {
+      _onError(e);
+      return Future.value(e);
+    } else {
+      model.setException(RocketException(
+          response: body!,
+          statusCode: statusCode!,
+          exception: e.toString(),
+          stackTrace: stackTrace));
+      return Future.value(model);
     }
   }
 
-  /// دالة خاصة بحذف البيانات عن طريق ر.م الخاص بهم
-  ///
-  /// [id]=>(ر.م)
-  ///
-  /// [inspect] => (،ارجاع القيمة المراد استخدامها ,json التنقيب داخل )
-  ///
-  Future delJsonData(int id, String endpoint,
-      {Function(Object error) onError = _onError}) async {
-    Uri url = Uri.parse("${this.url}/$endpoint/$id/");
-    try {
-      Response response = await delete(url, headers: headers);
-      return response.body;
-    } catch (e) {
-      onError(e);
-    }
-  }
-
-  //DONE: use enum instead of string for check http method
   Future sendFile(
       String endpoint, Map<String, String>? fields, Map<String, String>? files,
       {String id = "", HttpMethods method = HttpMethods.post}) async {
@@ -364,7 +225,7 @@ class RocketRequest {
     }
   }
 
-  void _updateCookie(Response response) {
+  void _updateCookie(StreamedResponse response) {
     String rawCookie = response.headers['set-cookie']!;
     int index = rawCookie.indexOf(';');
     headers['cookie'] =

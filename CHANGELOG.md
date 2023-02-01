@@ -82,3 +82,4 @@
 - Use `Rocket` instead of `RocketController` for save objects easily
 - Make json (fromJson parameter) non nullable on `RocketModel`.
 - Fix subListener issue on `RocketView`
+- Enhanced RocketRequest object (used 1 method for all request methods)
