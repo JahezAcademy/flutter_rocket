@@ -13,8 +13,6 @@ class GetPosts {
       inspect: (d) {
         return d;
       },
-      // if you received data as List multi will be true & if data as map you not should to define multi its false as default
-      multi: true,
       // parameters for send it with request
       // params:{"key":"value"},
       // inspect method for determine exact json use for generate your model in first step
