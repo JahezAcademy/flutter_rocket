@@ -96,7 +96,6 @@ class RocketRequest {
   @protected
   dynamic _processData<T>(StreamedResponse response,
       {RocketModel<T>? model,
-      bool? multi,
       Function(dynamic data)? inspect,
       String? endpoint}) async {
     if (response.statusCode < 300 && response.statusCode >= 200) {
@@ -105,7 +104,7 @@ class RocketRequest {
         result = inspect(result);
       }
       if (model != null) {
-        if (multi!) {
+        if (result is List?) {
           model.setMulti(result ?? []);
           return model.multi;
         } else {
@@ -153,7 +152,6 @@ class RocketRequest {
   Future request<T>(String endpoint,
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
-      bool multi = false,
       Function(dynamic data)? inspect,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
@@ -172,7 +170,7 @@ class RocketRequest {
         _updateCookie(response);
       }
       return _processData<T>(response,
-          model: model, inspect: inspect, multi: multi, endpoint: endpoint);
+          model: model, inspect: inspect, endpoint: endpoint);
     } catch (error, stackTrace) {
       return _catchError(error, stackTrace, response, model: model);
     }
