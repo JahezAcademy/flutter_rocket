@@ -161,8 +161,8 @@ class RocketRequest {
       model.state = RocketState.loading;
     }
     StreamedResponse? response;
-    String srch = params != null ? _mapToString(params) : "";
-    Uri url = Uri.parse("${this.url}/$endpoint?$srch");
+    String mapToParams = params != null ? _mapToString(params) : "";
+    Uri url = Uri.parse("${this.url}/$endpoint?$mapToParams");
     Request request = Request(method.name, url);
     request.body = json.encode(data);
     request.headers.addAll(headers);
