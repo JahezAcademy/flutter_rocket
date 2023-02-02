@@ -84,3 +84,4 @@
 - Fix subListener issue on `RocketView`
 - Enhanced RocketRequest object (used 1 method for all request methods)
 - Removed `multi` parameter from RocketRequest method
+- Added end2end test on example
