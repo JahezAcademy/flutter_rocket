@@ -62,7 +62,7 @@ class UserExample extends StatelessWidget {
                               : null,
                         ),
                       ),
-                      title: Text("User :${user.name!}"),
+                      title: Text(user.name!),
                       trailing: IconButton(
                           icon: const Icon(Icons.update),
                           onPressed: () {

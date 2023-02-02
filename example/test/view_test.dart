@@ -34,7 +34,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text(postData.first[postTitleField]), findsOneWidget);
     // Change first post title
-    await tester.tap(find.byIcon(Icons.update));
+    await tester.tap(find.byIcon(Icons.update).first);
     await tester.pump();
     // Title changed
     expect(find.text("This Title changed"), findsOneWidget);
@@ -53,7 +53,7 @@ void main() {
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 2 second data loaded
     await tester.pump(const Duration(seconds: 1));
-    expect(find.text("User :${userData.first[userNameField]}"), findsOneWidget);
+    expect(find.text("${userData.first[userNameField]}"), findsOneWidget);
     // Click to refresh for reload data
     await tester.tap(find.byIcon(Icons.get_app));
     await tester.pump();
@@ -61,15 +61,15 @@ void main() {
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 1 second data loaded
     await tester.pump(const Duration(seconds: 1));
-    expect(find.text("User :${userData.first[userNameField]}"), findsOneWidget);
+    expect(find.text("${userData.first[userNameField]}"), findsOneWidget);
     // Change first username
     await tester.tap(find.byIcon(Icons.update));
     await tester.pump();
     // Name changed
-    expect(find.text("User :Mohammed CHAHBOUN 💙"), findsOneWidget);
+    expect(find.text("Mohammed CHAHBOUN 💙"), findsOneWidget);
     // After 2 seconds data updated from API
     await tester.pump(const Duration(seconds: 2));
-    expect(find.text("User :${userData.first[userNameField]}"), findsOneWidget);
+    expect(find.text("${userData.first[userNameField]}"), findsOneWidget);
   });
 
   testWidgets('Test Photo view setup', (tester) async {
