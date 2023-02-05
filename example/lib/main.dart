@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:example/views/counter_view.dart';
 import 'package:example/views/mini_view.dart';
 import 'package:example/views/photo_view.dart';
@@ -129,6 +130,7 @@ class Example extends StatelessWidget {
       width: context.width * 0.6,
       height: context.height * 0.1,
       child: TextButton(
+          key: Key(to),
           child: Text(
             title,
             style: const TextStyle(
