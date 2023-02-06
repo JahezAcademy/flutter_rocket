@@ -8,6 +8,10 @@ State management and request package, Model,View,Controller,Request MVCR.
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 [![Flutter CI](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml)
 
+## Graphic tutorial 
+![JPG](https://github.com/JahezAcademy/mvc_rocket/blob/MVCRocket/mvcRocket_package.jpg)
+[explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
+
 # Usage
 ## Simple case use RocketMiniView & RocketValue
 its very simple
@@ -317,9 +321,7 @@ Rocket.remove("key");
 Rocket.removeWhere((key,value)=>key.contains("ke"));
 
 ```
-## Graphic tutorial 
-![JPG](https://github.com/JahezAcademy/mvc_rocket/blob/MVCRocket/mvcRocket_package.jpg)
-[explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
+
 ## [More examples](https://github.com/JahezAcademy/mvc_rocket/tree/main/example)
 # License
     MIT License
