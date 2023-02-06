@@ -1,8 +1,11 @@
 import 'package:mvc_rocket/mvc_rocket.dart';
 
-class RocketRequestTest {
+class RocketRequestTest extends RocketRequest {
   List<Map<String, dynamic>> dummyData;
-  RocketRequestTest(this.dummyData);
+  RocketRequestTest(
+    this.dummyData,
+  ) : super(url: '');
+  @override
   Future request<T>(String endpoint,
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
