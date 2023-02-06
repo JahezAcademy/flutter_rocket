@@ -5,5 +5,5 @@ const String photosEndpoint = "photos";
 
 class GetPhotos {
   static Future getPhotos(Photo photoModel) =>
-      Rocket.get(rocketRequestKey).request(photosEndpoint, model: photoModel);
+      Rocket.get<RocketRequest>(rocketRequestKey).request(photosEndpoint, model: photoModel);
 }
