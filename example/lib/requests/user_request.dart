@@ -5,5 +5,5 @@ const String usersEndpoint = "users";
 
 class GetUsers {
   static Future getUsers(User userModel) =>
-      Rocket.get(rocketRequestKey).request(usersEndpoint, model: userModel);
+      Rocket.get<RocketRequest>(rocketRequestKey).request(usersEndpoint, model: userModel);
 }
