@@ -1,11 +1,12 @@
 import 'package:example/models/post_model.dart';
-import 'package:mvc_rocket/mvc_rocket.dart';
+
+import 'request.dart';
 
 const String postsEndpoint = "posts";
 
 class GetPosts {
   static Future getPosts(Post postModel) {
-    return Rocket.get<RocketRequest>(rocketRequestKey).request(
+    return baseRequest.request(
       // endpoint
       postsEndpoint,
       // your model
