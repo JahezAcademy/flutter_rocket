@@ -74,24 +74,29 @@ class PostExample extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         // your data saved in multi list as Post model
                         Post currentPost = post.multi![index];
-                        return ListTile(
-                            leading: Text(currentPost.id.toString()),
-                            title: Text(currentPost.title!),
-                            trailing: IconButton(
-                              color: Colors.brown,
-                              icon: const Icon(Icons.update),
-                              onPressed: () {
-                                // update post data
-                                currentPost.updateFields(
-                                    titleField: "This Title changed");
-                              },
-                            ),
-                            onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                    return Details(index);
-                                  }),
-                                ));
+                        // When sub model changed will rebuild just his widget
+                        return RocketView(
+                            model: currentPost,
+                            builder: (context) {
+                              return ListTile(
+                                  leading: Text(currentPost.id.toString()),
+                                  title: Text(currentPost.title!),
+                                  trailing: IconButton(
+                                    color: Colors.brown,
+                                    icon: const Icon(Icons.update),
+                                    onPressed: () {
+                                      // update post data
+                                      currentPost.updateFields(
+                                          titleField: "This Title changed");
+                                    },
+                                  ),
+                                  onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) {
+                                          return Details(index);
+                                        }),
+                                      ));
+                            });
                       },
                     ),
                   );
