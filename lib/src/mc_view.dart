@@ -48,16 +48,17 @@ class RocketView<T> extends StatefulWidget {
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   ///
 
-  RocketView({
-    Key? key,
-    required this.model,
-    required this.builder,
-    this.call = _myDefaultFunc,
-    this.callType = CallType.callAsFuture,
-    this.secondsOfStream = 1,
-    this.loader,
-    this.onError = _defaultOnError,
-  }) : super(key: key) {
+  RocketView(
+      {Key? key,
+      required this.model,
+      required this.builder,
+      this.call = _myDefaultFunc,
+      this.callType = CallType.callAsFuture,
+      this.secondsOfStream = 1,
+      this.loader,
+      this.onError = _defaultOnError,
+      this.rebuildFromSubModel = false})
+      : super(key: key) {
     ///if (call == _myDefaultFunc) model.state =  RocketState.done;
 
     /// call التحقق من طريقة الاستدعاء لدالة
@@ -125,6 +126,8 @@ class RocketView<T> extends StatefulWidget {
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   final OnError onError;
 
+  final bool rebuildFromSubModel;
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -153,14 +156,16 @@ class ViewRocketState extends State<RocketView> {
     if (widget.model != oldWidget.model) {
       oldWidget.model.removeListener(rocketRebuild);
       widget.model.registerListener(rocketRebuild, _handleChange);
-      if (oldWidget.model.multi != null) {
-        for (var e in oldWidget.model.multi!) {
-          e.removeListener(rocketRebuild);
+      if (widget.rebuildFromSubModel) {
+        if (oldWidget.model.multi != null) {
+          for (var e in oldWidget.model.multi!) {
+            e.removeListener(rocketRebuild);
+          }
         }
-      }
-      if (widget.model.multi != null) {
-        for (var e in widget.model.multi!) {
-          e.registerListener(rocketRebuild, _handleChange);
+        if (widget.model.multi != null) {
+          for (var e in widget.model.multi!) {
+            e.registerListener(rocketRebuild, _handleChange);
+          }
         }
       }
     }
@@ -169,9 +174,11 @@ class ViewRocketState extends State<RocketView> {
   @override
   void dispose() {
     widget.model.removeListener(rocketRebuild);
-    if (widget.model.multi != null) {
-      for (var e in widget.model.multi!) {
-        e.removeListener(rocketRebuild);
+    if (widget.rebuildFromSubModel) {
+      if (widget.model.multi != null) {
+        for (var e in widget.model.multi!) {
+          e.removeListener(rocketRebuild);
+        }
       }
     }
     super.dispose();
@@ -188,10 +195,12 @@ class ViewRocketState extends State<RocketView> {
         return Center(
             child: widget.loader ?? const CircularProgressIndicator());
       case RocketState.done:
-        if (widget.model.multi != null) {
-          for (var e in widget.model.multi!) {
-            if (!e.keyHasListeners(rocketRebuild)) {
-              e.registerListener(rocketRebuild, _handleChange);
+        if (widget.rebuildFromSubModel) {
+          if (widget.model.multi != null) {
+            for (var e in widget.model.multi!) {
+              if (!e.keyHasListeners(rocketRebuild)) {
+                e.registerListener(rocketRebuild, _handleChange);
+              }
             }
           }
         }
