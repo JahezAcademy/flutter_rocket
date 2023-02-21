@@ -22,9 +22,9 @@ class PhotoExample extends StatelessWidget {
             call: () => GetPhotos.getPhotos(photo),
             builder: (context) {
               return ListView.builder(
-                  itemCount: photo.multi!.length,
+                  itemCount: photo.all!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Photo currentphoto = photo.multi![index];
+                    Photo currentphoto = photo.all![index];
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
