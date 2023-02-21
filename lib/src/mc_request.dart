@@ -106,7 +106,7 @@ class RocketRequest {
       if (model != null) {
         if (result is List?) {
           model.setMulti(result ?? []);
-          return model.multi;
+          return model.all;
         } else {
           model.fromJson(result);
           return model;
