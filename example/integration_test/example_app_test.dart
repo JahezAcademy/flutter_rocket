@@ -1,6 +1,7 @@
 import 'package:example/main.dart' as app;
 import 'package:example/models/photo_model.dart';
 import 'package:example/models/post_model.dart';
+import 'package:example/models/todo.dart';
 import 'package:example/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -74,6 +75,28 @@ void main() {
       await tester.tap(photoButton);
       await tester.pumpAndSettle();
       expect(find.text(photoData.first[photoTitleField]), findsOneWidget);
+    });
+    testWidgets('Todo testing (setup,refresh,update)', (tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+      expect(find.text('200 Todos'), findsOneWidget);
+      final Finder todosButton = find.byKey(const Key('todo'));
+
+      // open photos screen
+      await tester.tap(todosButton);
+      await tester.pumpAndSettle();
+      // Check todo title
+      expect(find.text(todosData.first[todoTitleField]), findsOneWidget);
+      Finder checkBox = find.byType(Checkbox).first;
+      Checkbox todoCheckBox = tester.firstWidget(checkBox);
+      // check inital todo status
+      expect(todoCheckBox.value, todosData.first[todoCompletedField]);
+      await tester.tap(checkBox);
+      await tester.pump();
+      checkBox = find.byType(Checkbox).first;
+      todoCheckBox = tester.firstWidget(checkBox);
+      // check if todo status changed
+      expect(todoCheckBox.value, !todosData.first[todoCompletedField]);
     });
   });
 }
