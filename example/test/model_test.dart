@@ -1,5 +1,6 @@
 import 'package:example/models/photo_model.dart';
 import 'package:example/models/post_model.dart';
+import 'package:example/models/todos.dart';
 import 'package:example/models/user_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -47,6 +48,20 @@ void main() {
       // Test updateFields
       user.all!.first.updateFields(usernameField: newTitle);
       expect(user.all!.first.toJson()[userUsernameField], newTitle);
+    });
+  });
+
+  group('Test Todo model (multi, fromJson, toJson, updateFields, state)', () {
+    final todos = Todos();
+    test("Test Todo model (multi, fromJson, toJson)", () {
+      // Test setMulti, fromJson & toJson
+      todos.setMulti(todosData);
+      expect(todos.all!.first.toJson(), todosData.first);
+    });
+    test("Test Todo model UpdateFields", () {
+      // Test updateFields
+      todos.all!.first.updateFields(completedField: true);
+      expect(todos.all!.first.toJson()[todosCompletedField], true);
     });
   });
 }
