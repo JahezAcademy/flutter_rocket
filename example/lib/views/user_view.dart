@@ -39,9 +39,9 @@ class UserExample extends StatelessWidget {
             // your widget for show data from model
             builder: (context) {
               return ListView.builder(
-                itemCount: users.multi!.length,
+                itemCount: users.all!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  User user = users.multi![index];
+                  User user = users.all![index];
                   Company company = user.company!;
                   Address address = user.address!;
                   Geo geo = address.geo!;
@@ -145,7 +145,7 @@ class OneUser extends StatelessWidget {
   late Address address;
   late Geo geo;
   OneUser(this.index, {Key? key}) : super(key: key) {
-    user = Rocket.get<User>(usersEndpoint).multi![index];
+    user = Rocket.get<User>(usersEndpoint).all![index];
     company = user.company!;
     address = user.address!;
     geo = address.geo!;

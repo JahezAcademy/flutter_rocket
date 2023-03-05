@@ -153,13 +153,13 @@ class ViewRocketState extends State<RocketView> {
     if (widget.model != oldWidget.model) {
       oldWidget.model.removeListener(rocketRebuild);
       widget.model.registerListener(rocketRebuild, _handleChange);
-      if (oldWidget.model.multi != null) {
-        for (var e in oldWidget.model.multi!) {
+      if (oldWidget.model.all != null) {
+        for (var e in oldWidget.model.all!) {
           e.removeListener(rocketRebuild);
         }
       }
-      if (widget.model.multi != null) {
-        for (var e in widget.model.multi!) {
+      if (widget.model.all != null) {
+        for (var e in widget.model.all!) {
           e.registerListener(rocketRebuild, _handleChange);
         }
       }
@@ -169,8 +169,8 @@ class ViewRocketState extends State<RocketView> {
   @override
   void dispose() {
     widget.model.removeListener(rocketRebuild);
-    if (widget.model.multi != null) {
-      for (var e in widget.model.multi!) {
+    if (widget.model.all != null) {
+      for (var e in widget.model.all!) {
         e.removeListener(rocketRebuild);
       }
     }
@@ -188,8 +188,8 @@ class ViewRocketState extends State<RocketView> {
         return Center(
             child: widget.loader ?? const CircularProgressIndicator());
       case RocketState.done:
-        if (widget.model.multi != null) {
-          for (var e in widget.model.multi!) {
+        if (widget.model.all != null) {
+          for (var e in widget.model.all!) {
             if (!e.keyHasListeners(rocketRebuild)) {
               e.registerListener(rocketRebuild, _handleChange);
             }
