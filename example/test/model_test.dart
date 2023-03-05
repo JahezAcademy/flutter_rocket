@@ -12,12 +12,12 @@ void main() {
     test("Test Post model (multi, fromJson, toJson)", () {
       // Test setMulti, fromJson & toJson
       post.setMulti(postData);
-      expect(post.multi!.first.toJson(), postData.first);
+      expect(post.all!.first.toJson(), postData.first);
     });
     test("Test Post model UpdateFields", () {
       // Test updateFields
-      post.multi!.first.updateFields(titleField: newTitle);
-      expect(post.multi!.first.toJson()[postTitleField], newTitle);
+      post.all!.first.updateFields(titleField: newTitle);
+      expect(post.all!.first.toJson()[postTitleField], newTitle);
     });
   });
   group('Test Photo model (multi, fromJson, toJson, updateFields)', () {
@@ -26,12 +26,12 @@ void main() {
     test("Test Photo model (multi, fromJson, toJson)", () {
       // Test setMulti, fromJson & toJson
       photo.setMulti(photoData);
-      expect(photo.multi!.first.toJson(), photoData.first);
+      expect(photo.all!.first.toJson(), photoData.first);
     });
     test("Test Photo model updateFields", () {
       // Test updateFields
-      photo.multi!.first.updateFields(titleField: newTitle);
-      expect(photo.multi!.first.toJson()[photoTitleField], newTitle);
+      photo.all!.first.updateFields(titleField: newTitle);
+      expect(photo.all!.first.toJson()[photoTitleField], newTitle);
     });
   });
 
@@ -41,12 +41,12 @@ void main() {
     test('Test User model (multi, fromJson, toJson)', () {
       // Test setMulti, fromJson & toJson
       user.setMulti(userData);
-      expect(user.multi!.first.toJson(), userData.first);
+      expect(user.all!.first.toJson(), userData.first);
     });
     test('Test User model updateFields', () {
       // Test updateFields
-      user.multi!.first.updateFields(usernameField: newTitle);
-      expect(user.multi!.first.toJson()[userUsernameField], newTitle);
+      user.all!.first.updateFields(usernameField: newTitle);
+      expect(user.all!.first.toJson()[userUsernameField], newTitle);
     });
   });
 }
