@@ -126,6 +126,7 @@ class RocketView<T> extends StatefulWidget {
   ///لبناء الواجهة الخاصة باظهار اي خطأ ويتم تمرير كائن يحمل الاخطأ التي حدثت
   final OnError onError;
 
+  /// Control rebuild widget from sub-model
   final bool rebuildFromSubModel;
 
   @override
