@@ -35,7 +35,7 @@ class App extends StatelessWidget {
           '/photo': (BuildContext context) => PhotoExample(
                 title: "5000 Photos",
               ),
-          '/todo': (BuildContext context) => TodosExample(
+          '/todo': (BuildContext context) => TodosView(
                 title: "200 Todos",
               ),
         },
@@ -93,7 +93,7 @@ class MyApp extends StatelessWidget {
       ),
       body: Center(
         child: SizedBox(
-          height: context.height * 0.7,
+          height: context.height * 0.8,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
