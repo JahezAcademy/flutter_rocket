@@ -16,7 +16,6 @@ class RocketRequestTest extends RocketRequest {
     await Future.delayed(const Duration(seconds: 1));
     try {
       model.setMulti(dummyData);
-      model.state = RocketState.done;
     } catch (e) {
       model.setException(RocketException(exception: e.toString()));
     }
