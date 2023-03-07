@@ -6,7 +6,7 @@ const String postsEndpoint = "posts";
 
 class GetPosts {
   static Future getPosts(Post postModel) {
-    return baseRequest.request(
+    return baseRequest.request<Post>(
       // endpoint
       postsEndpoint,
       // your model

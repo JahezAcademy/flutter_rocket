@@ -6,5 +6,5 @@ const String photosEndpoint = "photos";
 
 class GetPhotos {
   static Future getPhotos(Photo photoModel) =>
-      baseRequest.request(photosEndpoint, model: photoModel);
+      baseRequest.request<Photo>(photosEndpoint, model: photoModel);
 }

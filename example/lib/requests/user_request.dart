@@ -6,5 +6,5 @@ const String usersEndpoint = "users";
 
 class GetUsers {
   static Future getUsers(User userModel) =>
-      baseRequest.request(usersEndpoint, model: userModel);
+      baseRequest.request<User>(usersEndpoint, model: userModel);
 }

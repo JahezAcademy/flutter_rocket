@@ -6,5 +6,5 @@ const String todosEndpoint = "todos";
 
 class GetTodos {
   static Future getTodos(Todos todosModel) =>
-      baseRequest.request(todosEndpoint, model: todosModel);
+      baseRequest.request<Todos>(todosEndpoint, model: todosModel);
 }
