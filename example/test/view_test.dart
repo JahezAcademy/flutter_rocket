@@ -1,12 +1,15 @@
 import 'package:example/models/photo_model.dart';
 import 'package:example/models/post_model.dart';
+import 'package:example/models/todo.dart';
 import 'package:example/models/user_model.dart';
 import 'package:example/views/photo_view.dart';
 import 'package:example/views/post_view.dart';
+import 'package:example/views/todos_view.dart';
 import 'package:example/views/user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
+
 import 'dummy_data.dart';
 import 'fake_rocket_request.dart';
 
@@ -86,5 +89,31 @@ void main() {
     // After 1 second data loaded
     await tester.pump(const Duration(seconds: 1));
     expect(find.text(photoData.first[photoTitleField]), findsOneWidget);
+  });
+
+  testWidgets('Test Todo view (setup,refresh,update)', (tester) async {
+    // Create request object
+    RocketRequestTest request = RocketRequestTest(todosData);
+    Rocket.add(rocketRequestKey, request);
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MaterialApp(
+        home: TodosView(
+      title: 'test',
+    )));
+    // Check loading
+    expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
+    // After 1 second data loaded
+    await tester.pump(const Duration(seconds: 1));
+    // Check todo title
+    expect(find.text(todosData.first[todoTitleField]), findsOneWidget);
+    final Finder checkBox = find.byType(Checkbox);
+    Checkbox todoCheckBox = tester.firstWidget(checkBox);
+    // check inital todo status
+    expect(todoCheckBox.value, todosData.first[todoCompletedField]);
+    await tester.tap(checkBox);
+    await tester.pump();
+    todoCheckBox = tester.firstWidget(checkBox);
+    // check if todo status changed
+    expect(todoCheckBox.value, !todosData.first[todoCompletedField]);
   });
 }

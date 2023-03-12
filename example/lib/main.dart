@@ -4,6 +4,7 @@ import 'package:example/views/counter_view.dart';
 import 'package:example/views/mini_view.dart';
 import 'package:example/views/photo_view.dart';
 import 'package:example/views/post_view.dart';
+import 'package:example/views/todos_view.dart';
 import 'package:example/views/user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:mvc_rocket/mvc_rocket.dart';
@@ -33,6 +34,9 @@ class App extends StatelessWidget {
               ),
           '/photo': (BuildContext context) => PhotoExample(
                 title: "5000 Photos",
+              ),
+          '/todo': (BuildContext context) => TodosView(
+                title: "200 Todos",
               ),
         },
         title: '🚀 MVCRocket 🚀 Package',
@@ -89,7 +93,7 @@ class MyApp extends StatelessWidget {
       ),
       body: Center(
         child: SizedBox(
-          height: context.height * 0.6,
+          height: context.height * 0.8,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -103,7 +107,7 @@ class MyApp extends StatelessWidget {
                         exps[index],
                         style: Theme.of(context)
                             .textTheme
-                            .headline5!
+                            .headlineSmall!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                     );
@@ -113,6 +117,7 @@ class MyApp extends StatelessWidget {
               const Example("10 Users", "user"),
               const Example("100 Posts", "post"),
               const Example("5000 Photos", "photo"),
+              const Example("200 Todos", "todo"),
             ],
           ),
         ),
