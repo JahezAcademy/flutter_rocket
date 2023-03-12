@@ -1,10 +1,11 @@
 import 'package:example/models/photo_model.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'request.dart';
 
 const String photosEndpoint = "photos";
 
 class GetPhotos {
   static Future getPhotos(Photo photoModel) =>
-      baseRequest.request<Photo>(photosEndpoint, model: photoModel);
+      Rocket.get<RocketRequest>(rocketRequestKey)
+          .request(photosEndpoint, model: photoModel);
 }

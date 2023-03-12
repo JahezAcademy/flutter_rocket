@@ -1,10 +1,10 @@
 import 'package:example/models/todo.dart';
-
-import 'request.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 const String todosEndpoint = "todos";
 
 class GetTodos {
   static Future getTodos(Todos todosModel) =>
-      baseRequest.request<Todos>(todosEndpoint, model: todosModel);
+      Rocket.get<RocketRequest>(rocketRequestKey)
+          .request(todosEndpoint, model: todosModel);
 }
