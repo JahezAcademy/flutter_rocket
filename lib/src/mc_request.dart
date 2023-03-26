@@ -115,9 +115,11 @@ class RocketRequest {
         return result;
       }
     } else {
-      model!.state = RocketState.failed;
+      model!.setException(RocketException(
+        response: utf8.decode(await response.stream.toBytes()),
+        statusCode: response.statusCode,
+      ));
       _getDebugging(response, endpoint);
-      throw Exception('Failed to load Data');
     }
   }
 
