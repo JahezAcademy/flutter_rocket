@@ -125,23 +125,12 @@ class RocketRequest {
 
   static _onError(Object e) => log(e.toString());
 
-  //DONE: rename to maptoParams & inject into Map
-  @protected
-  String _mapToString(Map mp) {
-    String result = "";
-    mp.forEach((key, value) {
-      String and = mp.keys.last != key ? "&" : "";
-      result = "${result + key}=$value$and";
-    });
-    return result;
-  }
-
-  /// دالة خاصة لجلب البيانات على شكل (قاموس)
+    /// دالة خاصة لجلب البيانات على شكل (قاموس)
   ///
   /// Json=>(قاموس)
   ///
   ///
-  /// عندما يكون (متعدد) صحيح هذا يعني أنك ستجلب بيانات على شكل (قاموس) داخل (مصفوفة)]
+    /// عندما يكون (متعدد) صحيح هذا يعني أنك ستجلب بيانات على شكل (قاموس) داخل (مصفوفة)]
   ///
   ///
   /// [multi]=> (متعدد)
@@ -161,7 +150,7 @@ class RocketRequest {
       model.state = RocketState.loading;
     }
     StreamedResponse? response;
-    String mapToParams = params != null ? _mapToString(params) : "";
+    String mapToParams = Uri(queryParameters: params ?? {}).query;
     Uri url = Uri.parse("${this.url}/$endpoint?$mapToParams");
     Request request = Request(method.name, url);
     request.body = json.encode(data);
