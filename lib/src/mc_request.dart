@@ -189,12 +189,11 @@ class RocketRequest {
     }
   }
 
-  _getTarget(Map map, List list) {
-    if (list.length == 1) {
-      return map[list.first];
-    } else {
-      return _getTarget(map[list.first], list.sublist(1));
+  _getTarget(Map data, List target) {
+    for (var key in target) {
+      data = data[key];
     }
+    return data;
   }
 
   _catchError(Object e, StackTrace stackTrace, StreamedResponse? response,
