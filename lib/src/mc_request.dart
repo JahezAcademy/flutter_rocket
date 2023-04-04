@@ -107,7 +107,7 @@ class RocketRequest {
         try {
           result = _getTarget(result, targetData);
         } catch (e) {
-          log("Error in Target : $e");
+          log("Error in Target : $e, Try to use inspect instead");
         }
       }
       if (model != null) {
