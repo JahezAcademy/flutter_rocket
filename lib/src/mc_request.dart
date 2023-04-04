@@ -103,6 +103,12 @@ class RocketRequest {
       var result = json.decode(utf8.decode(await response.stream.toBytes()));
       if (inspect != null) {
         result = inspect(result);
+      } else if (targetData != null) {
+        try {
+          result = _getTarget(result, targetData);
+        } catch (e) {
+          log("Error in Target : $e");
+        }
       }
       if (model != null) {
         if (result is List?) {
