@@ -162,7 +162,7 @@ class RocketRequest {
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       Function(dynamic data)? inspect,
-      List<String>? targetDats,
+      List<String>? targetData,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     if (model != null) {
@@ -183,7 +183,7 @@ class RocketRequest {
           model: model,
           inspect: inspect,
           endpoint: endpoint,
-          targetData: targetDats);
+          targetData: targetData);
     } catch (error, stackTrace) {
       return _catchError(error, stackTrace, response, model: model);
     }
