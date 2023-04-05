@@ -7,7 +7,9 @@ List<Map<String, dynamic>> photoData = [
     "thumbnailUrl": "https://via.placeholder.com/150/92c952"
   },
 ];
-
+List<Map<String, dynamic>> todosData = [
+  {"userId": 1, "id": 1, "title": "delectus aut autem", "completed": false}
+];
 List<Map<String, dynamic>> postData = [
   {
     "userId": 1,

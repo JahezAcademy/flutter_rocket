@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 
 import 'mc_constants.dart';
@@ -12,7 +13,7 @@ abstract class RocketModel<T> extends RocketListenable {
   bool existData = false;
   bool get enableDebug => kDebugMode;
   RocketException exception = RocketException();
-  List<T>? multi;
+  List<T>? all;
   RocketState _state = RocketState.done;
   RocketState get state => _state;
   set state(currentState) {
@@ -42,8 +43,13 @@ abstract class RocketModel<T> extends RocketListenable {
 
   /// حذف النموذج من قائمة النماذج
   void delItem(int index) {
-    multi!.removeAt(index);
-    rebuildWidget();
+    all!.removeAt(index);
+    rebuildWidget(fromUpdate: true);
+  }
+
+  void addItem(T newModel) {
+    all!.add(newModel);
+    rebuildWidget(fromUpdate: true);
   }
 
   T _mapToInstance(e) {
@@ -54,7 +60,7 @@ abstract class RocketModel<T> extends RocketListenable {
 
   /// ملئ النماذج من البيانات القادمة م ن الخادم
   void setMulti(List data) {
-    multi = data.map<T>(_mapToInstance).toList();
+    all = data.map<T>(_mapToInstance).toList();
     existData = true;
     state = RocketState.done;
   }

@@ -201,7 +201,6 @@ class ViewRocketState extends State<RocketView> {
             for (var e in widget.model.multi!) {
               if (!e.keyHasListeners(rocketRebuild)) {
                 e.registerListener(rocketRebuild, _handleChange);
-              }
             }
           }
         }

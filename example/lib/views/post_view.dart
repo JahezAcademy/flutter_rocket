@@ -70,7 +70,7 @@ class PostExample extends StatelessWidget {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(
-                      itemCount: post.multi!.length,
+                      itemCount: post.all!.length,
                       itemBuilder: (BuildContext context, int index) {
                         // your data saved in multi list as Post model
                         Post currentPost = post.multi![index];
@@ -113,7 +113,7 @@ class Details extends StatelessWidget {
   Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Post currentPost = post.multi![index];
+    Post currentPost = post.all![index];
     return Scaffold(
       appBar: AppBar(title: Text(currentPost.title!)),
       body: Center(
