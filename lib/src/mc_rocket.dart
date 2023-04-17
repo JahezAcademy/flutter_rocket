@@ -53,6 +53,7 @@ class InheritedRocket extends InheritedWidget {
       : super(key: key, child: child);
 
   @override
+  // ignore: overridden_fields
   final Widget child;
 
   final RocketModel model;
