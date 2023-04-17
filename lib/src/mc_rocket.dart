@@ -1,6 +1,7 @@
 import 'dart:collection';
 
-import 'package:mvc_rocket/src/mc_extensions.dart';
+import 'package:flutter/material.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
 /// Save your data with specific key
 /// حاص بتخزين النماذج المستحدمة و الحفاظ على البياتات
@@ -44,5 +45,24 @@ class Rocket {
   // حذف نموذج بشرط معين
   static void removeWhere(bool Function(String, dynamic) test) {
     _models.removeWhere(test);
+  }
+}
+
+class InheritedRocket extends InheritedWidget {
+  const InheritedRocket({Key? key, required this.child, required this.model})
+      : super(key: key, child: child);
+
+  @override
+  final Widget child;
+
+  final RocketModel model;
+
+  static InheritedRocket of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<InheritedRocket>()!;
+  }
+
+  @override
+  bool updateShouldNotify(InheritedRocket oldWidget) {
+    return model != oldWidget.model;
   }
 }
