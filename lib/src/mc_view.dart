@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mvc_rocket/mvc_rocket.dart';
 
-import 'mc_constants.dart';
-import 'mc_exception.dart';
 import 'mc_llistenable.dart';
-import 'mc_model.dart';
 
 typedef OnError = Widget Function(RocketException error, Function() reload);
 
@@ -181,8 +179,7 @@ class ViewRocketState extends State<RocketView> {
     setState(() {});
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget get _build {
     switch (widget.model.state) {
       case RocketState.loading:
         return Center(
@@ -199,5 +196,10 @@ class ViewRocketState extends State<RocketView> {
       case RocketState.failed:
         return widget.onError(widget.model.exception, reload);
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InheritedRocket(model: widget.model, child: _build);
   }
 }
