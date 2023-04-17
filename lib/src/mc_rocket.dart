@@ -64,6 +64,6 @@ class InheritedRocket extends InheritedWidget {
 
   @override
   bool updateShouldNotify(InheritedRocket oldWidget) {
-    return model != oldWidget.model;
+    return true;
   }
 }
