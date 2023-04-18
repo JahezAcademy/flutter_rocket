@@ -64,7 +64,7 @@ class McMiniViewExample extends StatelessWidget {
 
 ```
 
-## Complex case (state management & request)
+## API case (state management & request)
 
 firstly you need to create your model by your json data from this [Link](https://json2dart.web.app/)
 you get something like this:
@@ -152,7 +152,7 @@ class MyApp extends StatelessWidget {
 }...
 ```
 
-Now create request method for post
+Create request method for posts 
 
 ```dart
 import 'package:example/models/post_model.dart';
@@ -161,19 +161,22 @@ import 'package:mvc_rocket/mvc_rocket.dart';
 const String postsEndpoint = "posts";
 
 class GetPosts {
-  static Future getPosts(Post postModel) =>
-      Rocket.get(rocketRequestKey).getObjData(
-        // endpoint
-        postsEndpoint,
-        // your model
-        postModel,
-        // parameters for send it with request
-        // params:{"key":"value"},
-        // inspect method for determine exact json use for generate your model in first step
-        // if your api send data directly without any supplement values you not should define it
-        // inspect:(data)=>data["response"]
-      );
-}
+  static Future getPosts(Post postModel) {
+    return Rocket.get<RocketRequest>(rocketRequestKey).request(
+      // endpoint
+      postsEndpoint,
+      // your model
+      model: postModel,
+      inspect: (d) {
+        return d;
+      },
+      // parameters for send it with request
+      // params:{"key":"value"},
+      // inspect method for determine exact json use for generate your model in first step
+      // if your api send data directly without any supplement values you not should define it
+      // inspect:(data)=>data["response"]
+    );
+  }
 ```
 
 Next step its build [RocketView] Widget & pass your [RocketModel] in [model] & [RocketRequest] method in [call] parameter
@@ -190,8 +193,7 @@ class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
   // [rocket] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post =
-      Rocket.add<Post>(postsEndpoint, Post(), readOnly: true);
+  final Post post = Rocket.add<Post>(postsEndpoint, Post(), readOnly: true);
 
   PostExample({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -214,7 +216,9 @@ class PostExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
-              onRefresh: ()=> GetPosts.getPosts(post),
+              onRefresh: () {
+                return GetPosts.getPosts(post);
+              },
               child: RocketView(
                 // call api method
                 call: () => GetPosts.getPosts(post),
@@ -227,6 +231,7 @@ class PostExample extends StatelessWidget {
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
                 // loader:CustomLoading(),
+
                 // handle errors
                 onError: (RocketException exception, Function() reload) {
                   return Center(
@@ -236,8 +241,7 @@ class PostExample extends StatelessWidget {
                         Text(exception.exception),
                         if (exception.statusCode != HttpStatus.ok) ...[
                           Text(exception.response),
-                          Text(rocket
-                              .get(rocketRequestKey)
+                          Text(Rocket.get(rocketRequestKey)
                               .msgByStatusCode(exception.statusCode))
                         ],
                         TextButton(
@@ -247,50 +251,58 @@ class PostExample extends StatelessWidget {
                   );
                 },
                 builder: (context) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.852,
-                    child: ListView.builder(
-                      itemCount: post.multi!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        // your data saved in multi list as Post model
-                        Post currentPost = post.multi![index];
-                        return ListTile(
-                            leading: Text(currentPost.id.toString()),
-                            title: Text(currentPost.title!),
-                            trailing: IconButton(
-                              color: Colors.brown,
-                              icon: const Icon(Icons.update),
-                              onPressed: () {
-                                // update post data
-                                currentPost.updateFields(
-                                  bodyField: "This Body changed",
-                                  titleField: "This Title changed"
-                                );
-                              },
-                            ),
-                            onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                    return Details(index);
-                                  }),
-                                ));
-                      },
-                    ),
-                  );
+                  // Not Pass post model we will use it from inherited widget
+                  return const Posts();
                 },
               )),
         ));
   }
 }
 
+class Posts extends StatelessWidget {
+  const Posts({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Get Post model from inherited widget
+    final post = InheritedRocket.of(context).model;
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.852,
+      child: ListView.builder(
+        itemCount: post.all!.length,
+        itemBuilder: (BuildContext context, int index) {
+          // your data saved in multi list as Post model
+          Post currentPost = post.all![index];
+          return ListTile(
+              leading: Text(currentPost.id.toString()),
+              title: Text(currentPost.title!),
+              trailing: IconButton(
+                color: Colors.brown,
+                icon: const Icon(Icons.update),
+                onPressed: () {
+                  // update post data
+                  currentPost.updateFields(titleField: "This Title changed");
+                },
+              ),
+              onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return Details(index);
+                    }),
+                  ));
+        },
+      ),
+    );
+  }
+}
+
 class Details extends StatelessWidget {
   final int index;
-  //  get your model by key
+  //  get your model by key from Rocket
   final Post post = Rocket.get<Post>(postsEndpoint);
   Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Post currentPost = post.multi![index];
+    Post currentPost = post.all![index];
     return Scaffold(
       appBar: AppBar(title: Text(currentPost.title!)),
       body: Center(
@@ -303,13 +315,14 @@ class Details extends StatelessWidget {
     );
   }
 }
+
 ```
 
 & last item its McController for save your model or any value and get it anywhere by key
 
 ```dart
-// inside of object use mc extension 
-McController().add("key",value,readOnly:true); // you can't edit it if readonly true
+// inside of object use rocket extension 
+Rocket.add("key",value,readOnly:true); // you can't edit it if readonly true
 // or
 // [add] return value
 Rocket.add<Type>("key",value);
