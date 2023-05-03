@@ -28,6 +28,10 @@ class Rocket {
     return _models[key];
   }
 
+  static void forEach(void Function(String, dynamic) action) {
+    _models.forEach(action);
+  }
+
   /// حذف النموذح
   static void remove(String key) {
     _models.remove(key);
