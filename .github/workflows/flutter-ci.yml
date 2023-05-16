@@ -34,10 +34,10 @@ jobs:
       working-directory: ./example
     
     - name: Check for any formatting issues in the code.
-      run: flutter format --set-exit-if-changed .
+      run: dart format --set-exit-if-changed .
     
     - name: Statically analyze the Dart code for any errors.
-      run: flutter analyze .
+      run: dart analyze .
 
     - name: Test model & view example
       run: flutter test
