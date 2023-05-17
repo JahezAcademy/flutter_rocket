@@ -48,12 +48,12 @@ class RocketRequest {
       this.setCookies = false,
       this.debugging = true});
 
-  _getDebugging(StreamedResponse response, String? endpoint) {
+  _getDebugging(String response, int statusCode, String? endpoint) {
     if (debugging) {
       log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
       log("\x1B[38;5;2m [Url] => ${"$url/${endpoint!}"} \x1B[0m");
       log("\x1B[38;5;2m [Response] => ${response.toString()} \x1B[0m");
-      log("\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
+      log("\x1B[38;5;2m [$statusCode] => ${msgByStatusCode(statusCode)} \x1B[0m");
       log("\x1B[38;5;2m ################################ \x1B[0m");
     }
   }
@@ -99,8 +99,9 @@ class RocketRequest {
       Function(dynamic data)? inspect,
       List<String>? targetData,
       String? endpoint}) async {
+    // TODO(M97chahboun) : Refactor conditions
+    var result = json.decode(utf8.decode(await response.stream.toBytes()));
     if (response.statusCode < 300 && response.statusCode >= 200) {
-      var result = json.decode(utf8.decode(await response.stream.toBytes()));
       if (inspect != null) {
         result = inspect(result);
       } else if (targetData != null) {
@@ -118,15 +119,21 @@ class RocketRequest {
           model.fromJson(result);
           return model;
         }
-      } else {
-        return result;
       }
+      return result;
     } else {
-      model!.setException(RocketException(
-        response: utf8.decode(await response.stream.toBytes()),
+      if (model != null) {
+        model.setException(RocketException(
+          response: result.toString(),
+          statusCode: response.statusCode,
+        ));
+      }
+      _onError(RocketException(
+        response: result.toString(),
         statusCode: response.statusCode,
       ));
-      _getDebugging(response, endpoint);
+      _getDebugging(result.toString(), response.statusCode, endpoint);
+      return result;
     }
   }
 
