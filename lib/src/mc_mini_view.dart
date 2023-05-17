@@ -3,13 +3,10 @@ import 'mc_constants.dart';
 import 'mc_llistenable.dart';
 
 class RocketMiniView extends StatefulWidget {
-  final RocketListenable mcValue;
+  final RocketListenable value;
   final Widget Function() builder;
-  const RocketMiniView(
-    this.mcValue,
-    this.builder, {
-    Key? key,
-  }) : super(key: key);
+  const RocketMiniView({Key? key, required this.value, required this.builder})
+      : super(key: key);
 
   @override
   MiniViewRocketState createState() => MiniViewRocketState();
@@ -19,43 +16,43 @@ class MiniViewRocketState extends State<RocketMiniView> {
   @override
   void initState() {
     super.initState();
-    if (widget.mcValue.isMerged) {
-      for (var mcValue in widget.mcValue.merges) {
+    if (widget.value.isMerged) {
+      for (var mcValue in widget.value.merges) {
         mcValue.registerListener(rocketMergesRebuild, _rebuildWidget);
       }
     } else {
-      widget.mcValue.registerListener(rocketMiniRebuild, _rebuildWidget);
+      widget.value.registerListener(rocketMiniRebuild, _rebuildWidget);
     }
   }
 
   @override
   void didUpdateWidget(RocketMiniView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.mcValue.isMerged) {
-      if (widget.mcValue != oldWidget.mcValue) {
-        for (var mcValue in oldWidget.mcValue.merges) {
+    if (widget.value.isMerged) {
+      if (widget.value != oldWidget.value) {
+        for (var mcValue in oldWidget.value.merges) {
           mcValue.removeListener(rocketMergesRebuild, _rebuildWidget);
         }
-        for (var mcValue in widget.mcValue.merges) {
+        for (var mcValue in widget.value.merges) {
           mcValue.registerListener(rocketMergesRebuild, _rebuildWidget);
         }
       }
     } else {
-      if (widget.mcValue != oldWidget.mcValue) {
-        oldWidget.mcValue.removeListener(rocketMiniRebuild, _rebuildWidget);
-        widget.mcValue.registerListener(rocketMiniRebuild, _rebuildWidget);
+      if (widget.value != oldWidget.value) {
+        oldWidget.value.removeListener(rocketMiniRebuild, _rebuildWidget);
+        widget.value.registerListener(rocketMiniRebuild, _rebuildWidget);
       }
     }
   }
 
   @override
   void dispose() {
-    if (widget.mcValue.isMerged) {
-      for (var mcValue in widget.mcValue.merges) {
+    if (widget.value.isMerged) {
+      for (var mcValue in widget.value.merges) {
         mcValue.removeListener(rocketMergesRebuild, _rebuildWidget);
       }
     } else {
-      widget.mcValue.removeListener(rocketMiniRebuild, _rebuildWidget);
+      widget.value.removeListener(rocketMiniRebuild, _rebuildWidget);
     }
     super.dispose();
   }
