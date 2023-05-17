@@ -87,3 +87,4 @@
 - Added end2end test on example
 - Renamed `multi` `RocketModel` field to `all`
 - Added `targetData` parameter on `request` method of `RocketRequest`
+- Added `forEach` method to `Rocket`
