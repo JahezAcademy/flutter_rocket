@@ -97,11 +97,18 @@ class RocketRequest {
   dynamic _processData<T>(StreamedResponse response,
       {RocketModel<T>? model,
       Function(dynamic data)? inspect,
+      List<String>? targetData,
       String? endpoint}) async {
     if (response.statusCode < 300 && response.statusCode >= 200) {
       var result = json.decode(utf8.decode(await response.stream.toBytes()));
       if (inspect != null) {
         result = inspect(result);
+      } else if (targetData != null) {
+        try {
+          result = _getTarget(result, targetData);
+        } catch (e) {
+          log("Error in Target : $e, Try to use inspect instead");
+        }
       }
       if (model != null) {
         if (result is List?) {
@@ -144,6 +151,7 @@ class RocketRequest {
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       Function(dynamic data)? inspect,
+      List<String>? targetData,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     if (model != null) {
@@ -161,10 +169,20 @@ class RocketRequest {
         _updateCookie(response);
       }
       return _processData<T>(response,
-          model: model, inspect: inspect, endpoint: endpoint);
+          model: model,
+          inspect: inspect,
+          endpoint: endpoint,
+          targetData: targetData);
     } catch (error, stackTrace) {
       return _catchError(error, stackTrace, response, model: model);
     }
+  }
+
+  _getTarget(Map data, List target) {
+    for (var key in target) {
+      data = data[key];
+    }
+    return data;
   }
 
   _catchError(Object e, StackTrace stackTrace, StreamedResponse? response,
