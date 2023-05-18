@@ -228,14 +228,15 @@ class RocketRequest {
     request.headers.addAll(headers);
 
     var response = await request.send();
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var responseData = await response.stream.toBytes();
-      var result = json.decode(utf8.decode(responseData));
-      return result;
-    } else {
-      var responseData = await response.stream.toBytes();
-      var responseString = String.fromCharCodes(responseData);
-      return responseString;
+    switch (response.statusCode) {
+      case < 300 && >= 200:
+        var responseData = await response.stream.toBytes();
+        var result = json.decode(utf8.decode(responseData));
+        return result;
+      default:
+        var responseData = await response.stream.toBytes();
+        var responseString = String.fromCharCodes(responseData);
+        return responseString;
     }
   }
 
