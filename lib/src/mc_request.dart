@@ -227,5 +227,3 @@ class RocketRequest {
         (index == -1) ? rawCookie : rawCookie.substring(0, index);
   }
 }
-
-class RocketModelReq extends RocketModel {}
