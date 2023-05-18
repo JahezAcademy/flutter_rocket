@@ -20,17 +20,17 @@ class MiniView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("use View for every value"),
-            RocketMiniView(mcString, () => Text(mcString.v)),
+            RocketMiniView(value: mcString, builder: () => Text(mcString.v)),
             RocketMiniView(
-              mcNum,
-              () => Text(mcNum.v.toString() +
+              value: mcNum,
+              builder: () => Text(mcNum.v.toString() +
                   (mcNum.v.toString() == "11"
                       ? " click to remove listener"
                       : "")),
             ),
             RocketMiniView(
-              mcList,
-              () {
+              value: mcList,
+              builder: () {
                 return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.4,
                     child: ListView.builder(
@@ -46,8 +46,8 @@ class MiniView extends StatelessWidget {
             ),
             const Text("merge multiple values"),
             RocketMiniView(
-              RocketValue.merge([mcString, mcNum, mcList]),
-              () => Wrap(
+              value: RocketValue.merge([mcString, mcNum, mcList]),
+              builder: () => Wrap(
                 runAlignment: WrapAlignment.center,
                 children: [
                   Text(mcString.v),
@@ -89,48 +89,3 @@ class MiniView extends StatelessWidget {
     log('this listener called when widget of mcNum rebuild');
   }
 }
-
-// class McMiniViewExample extends StatelessWidget {
-//   // use mini for convert value to McValue
-//   final McValue<String> myStringValue = "My Value".mini;
-//   final McValue<int> myIntValue = 2021.mini;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Container(
-//         //use your value in RocketMiniView and if value changed will rebuild widget for show your new value
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             // use McValue for every widget
-//             RocketMiniView(myStringValue, () => Text(myStringValue.v)),
-//             RocketMiniView(myStringValue, () => Text(myIntValue.v.toString())),
-//             const SizedBox(
-//               height: 25.0,
-//             ),
-//             // merge multi MCValue in one widget
-//             RocketMiniView(McValue.merge([myStringValue, myIntValue]), () {
-//               return Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: [
-//                   Text(myStringValue.v),
-//                   Text(myIntValue.v.toString())
-//                 ],
-//               );
-//             })
-//           ],
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         backgroundColor: Theme.of(context).primaryColor,
-//         onPressed: () {
-//           // change value
-//           myStringValue.v = "Value Changed";
-//           myIntValue.v = 2022;
-//         },
-//         tooltip: 'change Value',
-//         child: Icon(Icons.change_circle),
-//       ),
-//     );
-//   }
-// }

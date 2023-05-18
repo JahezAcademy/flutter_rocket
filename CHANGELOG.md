@@ -87,3 +87,5 @@
 - Added end2end test on example
 - Added `rebuildFromSubModel` parameter on `RocketView` for control rebuild widget from sub-models
 - Renamed `multi` `RocketModel` field to `all`
+- Added `targetData` parameter on `request` method of `RocketRequest`
+- Added `forEach` method to `Rocket`

@@ -48,12 +48,12 @@ class RocketRequest {
       this.setCookies = false,
       this.debugging = true});
 
-  _getDebugging(StreamedResponse response, String? endpoint) {
+  _getDebugging(String response, int statusCode, String? endpoint) {
     if (debugging) {
       log("\x1B[38;5;2m ########## mc package ########## \x1B[0m");
       log("\x1B[38;5;2m [Url] => ${"$url/${endpoint!}"} \x1B[0m");
       log("\x1B[38;5;2m [Response] => ${response.toString()} \x1B[0m");
-      log("\x1B[38;5;2m [${response.statusCode}] => ${msgByStatusCode(response.statusCode)} \x1B[0m");
+      log("\x1B[38;5;2m [$statusCode] => ${msgByStatusCode(statusCode)} \x1B[0m");
       log("\x1B[38;5;2m ################################ \x1B[0m");
     }
   }
@@ -97,11 +97,19 @@ class RocketRequest {
   dynamic _processData<T>(StreamedResponse response,
       {RocketModel<T>? model,
       Function(dynamic data)? inspect,
+      List<String>? targetData,
       String? endpoint}) async {
+    // TODO(M97chahboun) : Refactor conditions
+    var result = json.decode(utf8.decode(await response.stream.toBytes()));
     if (response.statusCode < 300 && response.statusCode >= 200) {
-      var result = json.decode(utf8.decode(await response.stream.toBytes()));
       if (inspect != null) {
         result = inspect(result);
+      } else if (targetData != null) {
+        try {
+          result = _getTarget(result, targetData);
+        } catch (e) {
+          log("Error in Target : $e, Try to use inspect instead");
+        }
       }
       if (model != null) {
         if (result is List?) {
@@ -111,30 +119,25 @@ class RocketRequest {
           model.fromJson(result);
           return model;
         }
-      } else {
-        return result;
       }
+      return result;
     } else {
-      model!.setException(RocketException(
-        response: utf8.decode(await response.stream.toBytes()),
+      if (model != null) {
+        model.setException(RocketException(
+          response: result.toString(),
+          statusCode: response.statusCode,
+        ));
+      }
+      _onError(RocketException(
+        response: result.toString(),
         statusCode: response.statusCode,
       ));
-      _getDebugging(response, endpoint);
+      _getDebugging(result.toString(), response.statusCode, endpoint);
+      return result;
     }
   }
 
   static _onError(Object e) => log(e.toString());
-
-  //DONE: rename to maptoParams & inject into Map
-  @protected
-  String _mapToString(Map mp) {
-    String result = "";
-    mp.forEach((key, value) {
-      String and = mp.keys.last != key ? "&" : "";
-      result = "${result + key}=$value$and";
-    });
-    return result;
-  }
 
   /// دالة خاصة لجلب البيانات على شكل (قاموس)
   ///
@@ -155,13 +158,14 @@ class RocketRequest {
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       Function(dynamic data)? inspect,
+      List<String>? targetData,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     if (model != null) {
       model.state = RocketState.loading;
     }
     StreamedResponse? response;
-    String mapToParams = params != null ? _mapToString(params) : "";
+    String mapToParams = Uri(queryParameters: params ?? {}).query;
     Uri url = Uri.parse("${this.url}/$endpoint?$mapToParams");
     Request request = Request(method.name, url);
     request.body = json.encode(data);
@@ -172,10 +176,20 @@ class RocketRequest {
         _updateCookie(response);
       }
       return _processData<T>(response,
-          model: model, inspect: inspect, endpoint: endpoint);
+          model: model,
+          inspect: inspect,
+          endpoint: endpoint,
+          targetData: targetData);
     } catch (error, stackTrace) {
       return _catchError(error, stackTrace, response, model: model);
     }
+  }
+
+  _getTarget(Map data, List target) {
+    for (var key in target) {
+      data = data[key];
+    }
+    return data;
   }
 
   _catchError(Object e, StackTrace stackTrace, StreamedResponse? response,
