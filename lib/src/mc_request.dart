@@ -89,7 +89,7 @@ class RocketRequest {
           response: respDecoded,
           statusCode: response.statusCode,
         ));
-        late var result = respDecoded;
+        late dynamic result = respDecoded;
         try {
           result = json.decode(respDecoded);
         } catch (e) {
