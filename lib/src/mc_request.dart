@@ -52,23 +52,24 @@ class RocketRequest {
       String? endpoint}) async {
     // TODO(M97chahboun) : Refactor conditions
     String respDecoded = utf8.decode(await response.stream.toBytes());
-    if (response.statusCode < 300 && response.statusCode >= 200) {
-      var result = json.decode(respDecoded);
-      result = _handleTarget(inspect, result, targetData);
-      if (result is List?) {
-        model.setMulti(result ?? []);
-      } else {
-        model.fromJson(result);
-      }
-    } else {
-      model.setException(RocketException(
-        response: respDecoded,
-        statusCode: response.statusCode,
-      ));
-      _onError(RocketException(
-        response: respDecoded,
-        statusCode: response.statusCode,
-      ));
+    switch (response.statusCode) {
+      case < 300 && >= 200:
+        var result = json.decode(respDecoded);
+        result = _handleTarget(inspect, result, targetData);
+        if (result is List?) {
+          model.setMulti(result ?? []);
+        } else {
+          model.fromJson(result);
+        }
+      default:
+        model.setException(RocketException(
+          response: respDecoded,
+          statusCode: response.statusCode,
+        ));
+        _onError(RocketException(
+          response: respDecoded,
+          statusCode: response.statusCode,
+        ));
     }
     return model;
   }
@@ -78,22 +79,23 @@ class RocketRequest {
       List<String>? targetData,
       String? endpoint}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
-    if (response.statusCode < 300 && response.statusCode >= 200) {
-      var result = json.decode(respDecoded);
-      result = _handleTarget(inspect, result, targetData);
-      return result;
-    } else {
-      _onError(RocketException(
-        response: respDecoded,
-        statusCode: response.statusCode,
-      ));
-      late var result = respDecoded;
-      try {
-        result = json.decode(respDecoded);
-      } catch (e) {
-        result = respDecoded;
-      }
-      return result;
+    switch (response.statusCode) {
+      case < 300 && >= 200:
+        var result = json.decode(respDecoded);
+        result = _handleTarget(inspect, result, targetData);
+        return result;
+      default:
+        _onError(RocketException(
+          response: respDecoded,
+          statusCode: response.statusCode,
+        ));
+        late var result = respDecoded;
+        try {
+          result = json.decode(respDecoded);
+        } catch (e) {
+          result = respDecoded;
+        }
+        return result;
     }
   }
 
@@ -225,3 +227,5 @@ class RocketRequest {
         (index == -1) ? rawCookie : rawCookie.substring(0, index);
   }
 }
+
+class RocketModelReq extends RocketModel {}
