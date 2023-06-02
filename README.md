@@ -1,6 +1,7 @@
-#  🚀 MVCRocket 🚀
 
-State management and request package, Model,View,Controller,Request MVCR.
+#  🚀 Flutter Rocket 🚀
+
+Make state management and request easy to use.
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
 
@@ -9,44 +10,65 @@ State management and request package, Model,View,Controller,Request MVCR.
 [![Flutter CI](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml)
 
 ## Graphic tutorial 
-![JPG](https://github.com/JahezAcademy/mvc_rocket/blob/MVCRocket/mvcRocket_package.jpg)
+![JPG](./mvcRocket_package.jpg)
 [explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
+
+---
+
+| Package                                                                                    | Pub                                                                                                                  |
+| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| [rocket](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket)                         | [![pub package](https://img.shields.io/pub/v/rocket.svg)](https://pub.dev/packages/rocket)                               |
+| [rocket_model](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_model)               | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model)                     |
+| [rocket_client](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_client) | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client)       |
+| [rocket_listenable](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_listenable)         | [![pub package](https://img.shields.io/pub/v/rocket_listenable.svg)](https://pub.dev/packages/rocket_listenable)               |
+| [rocket_view](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_view)         | [![pub package](https://img.shields.io/pub/v/rocket_view.svg)](https://pub.dev/packages/rocket_view)               |
+| [rocket_singleton](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_singleton)       | [![pub package](https://img.shields.io/pub/v/rocket_singleton.svg)](https://pub.dev/packages/rocket_singleton)             |
+| [rocket_mini_view](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_mini_view)           | [![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view)                 |
+
+---
+
 
 # Usage
 ## Simple case use RocketMiniView & RocketValue
 its very simple
 
 ```dart
-class McMiniViewExample extends StatelessWidget {
-  // use mini for convert value to RocketValue
+class MiniViewRocket extends StatelessWidget {
   final RocketValue<String> myStringValue = "My Value".mini;
   final RocketValue<int> myIntValue = 2021.mini;
+
+  MiniViewRocket({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        // use your value in RocketMiniView and if value changed will rebuild widget for show your new value
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // use value for every widget
-            RocketMiniView(myStringValue, () => Text(myStringValue.v)),
-            RocketMiniView(myStringValue, () => Text(myIntValue.v.toString())),
-            const SizedBox(
-              height: 25.0,
-            ),
-            // merge multi values in one widget
-            RocketMiniView(RocketValue.merge([myStringValue, myIntValue]), () {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(myStringValue.v),
-                  Text(myIntValue.v.toString())
-                ],
-              );
-            })
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // use RocketValue for every widget
+          RocketMiniView(
+            value: myStringValue,
+            builder: () => Text(myStringValue.v),
+          ),
+          RocketMiniView(
+            value: myStringValue,
+            builder: () => Text(myIntValue.v.toString()),
+          ),
+          const SizedBox(
+            height: 25.0,
+          ),
+          // merge multi RocketValue in one widget
+          RocketMiniView(
+              value: RocketValue.merge([myStringValue, myIntValue]),
+              builder: () {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(myStringValue.v),
+                    Text(myIntValue.v.toString())
+                  ],
+                );
+              })
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
@@ -56,11 +78,12 @@ class McMiniViewExample extends StatelessWidget {
           myIntValue.v = 2022;
         },
         tooltip: 'change Value',
-        child: Icon(Icons.change_circle),
+        child: const Icon(Icons.change_circle),
       ),
     );
   }
 }
+
 
 ```
 
@@ -84,7 +107,7 @@ class Post extends RocketModel<Post> {
   String? body;
   // disable logs debugging
   @override
-  bool get enableDebug => true;
+  bool get enableDebug => false;
   Post({
     this.userId,
     this.id,
@@ -162,16 +185,18 @@ const String postsEndpoint = "posts";
 
 class GetPosts {
   static Future getPosts(Post postModel) =>
-      Rocket.get(rocketRequestKey).getObjData(
+      Rocket.get(rocketRequestKey).request(
         // endpoint
         postsEndpoint,
         // your model
-        postModel,
+        model: postModel,
         // parameters for send it with request
         // params:{"key":"value"},
         // inspect method for determine exact json use for generate your model in first step
         // if your api send data directly without any supplement values you not should define it
         // inspect:(data)=>data["response"]
+        // or
+        // target: ['response']
       );
 }
 ```
@@ -179,19 +204,12 @@ class GetPosts {
 Next step its build [RocketView] Widget & pass your [RocketModel] in [model] & [RocketRequest] method in [call] parameter
 
 ```dart
-import 'dart:io';
-
-import 'package:example/models/post_model.dart';
-import 'package:example/requests/post_request.dart';
-import 'package:flutter/material.dart';
-import 'package:mvc_rocket/mvc_rocket.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
   // readOnly means if you close and open this screen you will use same data without update it from Api
   // [rocket] is instance of Mccontroller injected in Object by extension for use it easily anywhere
-  final Post post =
-      Rocket.add<Post>(postsEndpoint, Post(), readOnly: true);
+  final Post post = Rocket.add<Post>(postsEndpoint, Post(), readOnly: true);
 
   PostExample({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -214,7 +232,9 @@ class PostExample extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
-              onRefresh: ()=> GetPosts.getPosts(post),
+              onRefresh: () {
+                return GetPosts.getPosts(post);
+              },
               child: RocketView(
                 // call api method
                 call: () => GetPosts.getPosts(post),
@@ -227,6 +247,7 @@ class PostExample extends StatelessWidget {
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
                 // loader:CustomLoading(),
+
                 // handle errors
                 onError: (RocketException exception, Function() reload) {
                   return Center(
@@ -236,8 +257,7 @@ class PostExample extends StatelessWidget {
                         Text(exception.exception),
                         if (exception.statusCode != HttpStatus.ok) ...[
                           Text(exception.response),
-                          Text(rocket
-                              .get(rocketRequestKey)
+                          Text(Rocket.get(rocketRequestKey)
                               .msgByStatusCode(exception.statusCode))
                         ],
                         TextButton(
@@ -246,14 +266,14 @@ class PostExample extends StatelessWidget {
                     ),
                   );
                 },
-                builder: (context) {
+                builder: (context,state) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(
-                      itemCount: post.multi!.length,
+                      itemCount: post.all!.length,
                       itemBuilder: (BuildContext context, int index) {
                         // your data saved in multi list as Post model
-                        Post currentPost = post.multi![index];
+                        Post currentPost = post.all![index];
                         return ListTile(
                             leading: Text(currentPost.id.toString()),
                             title: Text(currentPost.title!),
@@ -261,11 +281,15 @@ class PostExample extends StatelessWidget {
                               color: Colors.brown,
                               icon: const Icon(Icons.update),
                               onPressed: () {
+                                List titles = post.all!
+                                    .toJson(
+                                        include: ["title"], onlyValues: true)
+                                    .map((e) => e[0])
+                                    .toList();
+                                log("$titles");
                                 // update post data
                                 currentPost.updateFields(
-                                  bodyField: "This Body changed",
-                                  titleField: "This Title changed"
-                                );
+                                    titleField: "This Title changed");
                               },
                             ),
                             onTap: () => Navigator.of(context).push(
@@ -285,12 +309,12 @@ class PostExample extends StatelessWidget {
 
 class Details extends StatelessWidget {
   final int index;
-  //  get your model by key
-  final Post post = Rocket.get<Post>(postsEndpoint);
+  //  get your model by key or type
+  final Post post = Rocket.get<Post>();
   Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Post currentPost = post.multi![index];
+    Post currentPost = post.all![index];
     return Scaffold(
       appBar: AppBar(title: Text(currentPost.title!)),
       body: Center(
@@ -303,18 +327,21 @@ class Details extends StatelessWidget {
     );
   }
 }
+
 ```
 
-& last item its McController for save your model or any value and get it anywhere by key
+& last item its Rocket for save your model or any value and get it anywhere by key
 
 ```dart
-// inside of object use mc extension 
-McController().add("key",value,readOnly:true); // you can't edit it if readonly true
+// inside of object use rocket extension 
+Rocket.add(value,readOnly: true); // you can't edit it if readonly true
 // or
-// [add] return value
-Rocket.add<Type>("key",value);
+// add by key or only by value
+Rocket.add<Type>(value, key: "key");
 // [get] return value
 Rocket.get<Type>("key");
+// or get only by Type
+Rocket.get<Type>()
 // [remove]
 Rocket.remove("key");
 // remove with condition

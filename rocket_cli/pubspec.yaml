@@ -1,0 +1,16 @@
+name: rocket_cli
+description: A sample command-line for rocket package.
+version: 1.0.0
+repository: https://github.com/JahezAcademy/rocket/tree/master/rocket_cli
+homepage: https://github.com/JahezAcademy/rocket
+
+environment:
+  sdk: ^3.0.0
+
+# Add regular dependencies here.
+dependencies:
+  dart_style: ^2.3.1
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0
