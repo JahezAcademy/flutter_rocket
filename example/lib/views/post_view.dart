@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:example/models/post_model.dart';
@@ -81,6 +82,12 @@ class PostExample extends StatelessWidget {
                               color: Colors.brown,
                               icon: const Icon(Icons.update),
                               onPressed: () {
+                                List titles = post.all!
+                                    .toJson(
+                                        include: ["title"], onlyValues: true)
+                                    .map((e) => e[0])
+                                    .toList();
+                                log("$titles");
                                 // update post data
                                 currentPost.updateFields(
                                     titleField: "This Title changed");
