@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'mc_constants.dart';
 import 'mc_llistenable.dart';
+import 'mc_model.dart';
 import 'mc_rocket.dart';
 import 'mc_value_listenable.dart';
 
@@ -22,6 +23,18 @@ extension CustomLinkedList on LinkedList<CustomLinkedListEntry<VoidCallback>> {
         remove(entry);
       }
     }
+  }
+}
+
+extension AllToJson on List<RocketModel> {
+  List toJson({List<String>? include, bool onlyValues = false}) {
+    return map((e) {
+      Map<String, dynamic> json = e.toJson();
+      if (include != null) {
+        json.removeWhere((key, value) => !include.contains(key));
+      }
+      return onlyValues ? json.values.toList() : json;
+    }).toList();
   }
 }
 

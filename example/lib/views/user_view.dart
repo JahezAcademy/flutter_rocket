@@ -19,8 +19,8 @@ class UserExample extends StatelessWidget {
       floatingActionButton: Container(
           color: Theme.of(context).primaryColor,
           child: TextButton(
-            child: Wrap(
-              children: const [Icon(Icons.get_app), Text("Get Data")],
+            child: const Wrap(
+              children: [Icon(Icons.get_app), Text("Get Data")],
             ),
             onPressed: () => GetUsers.getUsers(users),
           )),
