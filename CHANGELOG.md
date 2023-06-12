@@ -87,3 +87,6 @@
 - Added end2end test on example
 - Renamed `multi` `RocketModel` field to `all`
 - Added `getByType` & `getFirstByType` methods to `Rocket`
+- Added `AllToJson` extension for convert all models to list of json
+- Added `targetData` parameter on `request` method of `RocketRequest`
+- Added `forEach` method to `Rocket`

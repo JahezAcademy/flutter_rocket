@@ -4,13 +4,13 @@ version: 1.0.2
 homepage: https://github.com/JahezAcademy/MVCRocket
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.4  
+  http: ^0.13.6  
 
 dev_dependencies:
   flutter_lints: ^2.0.1

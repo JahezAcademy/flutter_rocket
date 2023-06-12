@@ -35,6 +35,10 @@ class Rocket {
   static T getFirstByType<T>() {
     return getByType<T>().first;
   }
+  
+  static void forEach(void Function(String, dynamic) action) {
+    _models.forEach(action);
+  }
 
   /// حذف النموذح
   static void remove(String key) {
