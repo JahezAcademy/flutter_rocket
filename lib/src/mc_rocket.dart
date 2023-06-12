@@ -57,4 +57,8 @@ class Rocket {
   static void removeWhere(bool Function(String, dynamic) test) {
     _models.removeWhere(test);
   }
+
+  static void removeAll() {
+    _models.clear();
+  }
 }
