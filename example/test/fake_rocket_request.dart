@@ -10,6 +10,7 @@ class RocketRequestTest extends RocketRequest {
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       Function(dynamic data)? inspect,
+      List<String>? targetData,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     model!.state = RocketState.loading;

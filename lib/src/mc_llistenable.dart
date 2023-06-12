@@ -80,7 +80,7 @@ abstract class RocketListenable {
   }
 }
 
-class CustomLinkedListEntry<T>
+final class CustomLinkedListEntry<T>
     extends LinkedListEntry<CustomLinkedListEntry<VoidCallback>> {
   VoidCallback callBack;
   CustomLinkedListEntry(this.callBack);
