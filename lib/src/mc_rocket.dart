@@ -28,6 +28,14 @@ class Rocket {
     return _models[key];
   }
 
+  static Iterable<T> getByType<T>() {
+    return _models.values.whereType<T>();
+  }
+
+  static T getFirstByType<T>() {
+    return getByType<T>().first;
+  }
+  
   static void forEach(void Function(String, dynamic) action) {
     _models.forEach(action);
   }
