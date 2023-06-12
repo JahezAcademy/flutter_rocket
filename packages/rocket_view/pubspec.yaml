@@ -1,8 +1,9 @@
 name: rocket_view
-description: A new Flutter package project.
+description: Package View widget based on RocketModel.
 version: 0.0.1
-repository: https://github.com/flutter-rocket/flutter_rocket/rocket_view
-issue_tracker: https://github.com/flutter-rocket/flutter_rocket/labels/rocket_view
+repository: https://github.com/JahezAcademy/flutter_rocket/rocket_view
+issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_view
+homepage: https://github.com/JahezAcademy/flutter_rocket
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

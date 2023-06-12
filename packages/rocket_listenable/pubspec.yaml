@@ -1,8 +1,9 @@
 name: rocket_listenable
-description: A new Flutter package project.
+description: Simple listenable support multi listeners.
 version: 0.0.1
-repository: https://github.com/flutter-rocket/flutter_rocket/rocket_listenable
-issue_tracker: https://github.com/flutter-rocket/flutter_rocket/labels/rocket_listenable
+repository: https://github.com/JahezAcademy/flutter_rocket/rocket_listenable
+issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_listenable
+homepage: https://github.com/JahezAcademy/flutter_rocket
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

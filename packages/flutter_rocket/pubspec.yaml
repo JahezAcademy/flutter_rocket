@@ -1,8 +1,9 @@
 name: flutter_rocket
-description: A new Flutter package project.
+description: Powerful package for state management & request.
 version: 0.0.1
-repository: https://github.com/flutter-rocket/flutter_rocket/rocket
-issue_tracker: https://github.com/flutter-rocket/flutter_rocket/labels/rocket
+repository: https://github.com/JahezAcademy/flutter_rocket/flutter_rocket
+issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/flutter_rocket
+homepage: https://github.com/JahezAcademy/flutter_rocket
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

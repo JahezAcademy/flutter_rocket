@@ -9,29 +9,30 @@ import 'utils/template.dart';
 
 class Generator {
   late String copyTemplate;
-  ModelsController controller = ModelsController();
-  ModelsController generate(String inputUser, String className,
-      {bool multi = false}) {
+  Future<void> generate(
+      String inputUser, String className, ModelsController controller,
+      {bool multi = false}) async {
     copyTemplate = template;
     className = className.isEmpty ? "MyModel" : className.firstUpper;
     inputUser =
         inputUser.isEmpty ? '{"MVCRocket Package":"MvcRocket"}' : inputUser;
     var jsonInputUser = json.decode(inputUser.trim());
     if (jsonInputUser is List) {
-      return generate(json.encode(jsonInputUser.first), className, multi: true);
+      return generate(json.encode(jsonInputUser.first), className, controller,
+          multi: true);
     } else if (jsonInputUser is Map<String, dynamic>) {
-      return generateFields(jsonInputUser, className, multi: multi);
+      generateFields(jsonInputUser, className, controller, multi: multi);
     } else {
       print("Unsupported type");
     }
-    return controller;
   }
 
   bool _isPrimitive(item) {
     return item is String || item is int || item is double || item is bool;
   }
 
-  ModelsController generateFields(Map<String, dynamic> fields, String className,
+  generateFields(Map<String, dynamic> fields, String className,
+      ModelsController controller,
       {bool multi = false}) {
     ModelItems modelItems = ModelItems();
     fields.forEach((key, value) {
@@ -79,7 +80,8 @@ class Generator {
           initFields = "$key??=${key.firstUpper}();";
 
           Generator reGenerate = Generator();
-          reGenerate.generate(json.encode(value), key.firstUpper, multi: true);
+          reGenerate.generate(json.encode(value), key.firstUpper, controller,
+              multi: true);
         }
       } else if (value is Map) {
         line = "${key.firstUpper}? $key;";
@@ -91,7 +93,7 @@ class Generator {
         initFields = "$key??=${key.firstUpper}();";
 
         Generator reGenerate = Generator();
-        reGenerate.generate(json.encode(value), key.firstUpper);
+        reGenerate.generate(json.encode(value), key.firstUpper, controller);
       } else {
         print("Unsupported type");
       }
@@ -110,7 +112,7 @@ class Generator {
     modelItems.className = className;
     String result = DartFormatter().format(modelItems.result);
     controller.addModel(result, className);
-    return controller;
+    // return controller;
   }
 
   String _solveDouble(dynamic field) {

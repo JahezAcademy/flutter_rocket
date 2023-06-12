@@ -1,8 +1,9 @@
 name: rocket_mini_view
-description: A new Flutter package project.
+description: Mini view for RocketValue.
 version: 0.0.1
-repository: https://github.com/flutter-rocket/flutter_rocket/rocket_mini_view
-issue_tracker: https://github.com/flutter-rocket/flutter_rocket/labels/rocket_mini_view
+repository: https://github.com/JahezAcademy/flutter_rocket/rocket_mini_view
+issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_mini_view
+homepage: https://github.com/JahezAcademy/flutter_rocket
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

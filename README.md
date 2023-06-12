@@ -17,13 +17,13 @@ Make state management and request easy to use.
 
 | Package                                                                                    | Pub                                                                                                                  |
 | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| [rocket](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket)                         | [![pub package](https://img.shields.io/pub/v/rocket.svg)](https://pub.dev/packages/rocket)                               |
-| [rocket_model](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_model)               | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model)                     |
-| [rocket_client](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_client) | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client)       |
-| [rocket_listenable](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_listenable)         | [![pub package](https://img.shields.io/pub/v/rocket_listenable.svg)](https://pub.dev/packages/rocket_listenable)               |
-| [rocket_view](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_view)         | [![pub package](https://img.shields.io/pub/v/rocket_view.svg)](https://pub.dev/packages/rocket_view)               |
-| [rocket_singleton](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_singleton)       | [![pub package](https://img.shields.io/pub/v/rocket_singleton.svg)](https://pub.dev/packages/rocket_singleton)             |
-| [rocket_mini_view](https://github.com/felangel/flutter-rocket/tree/master/packages/rocket_mini_view)           | [![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view)                 |
+| [flutter_rocket](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/flutter_rocket)                         | [![pub package](https://img.shields.io/pub/v/flutter_rocket.svg)](https://pub.dev/packages/rocket)                               |
+| [rocket_model](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_model)               | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model)                     |
+| [rocket_client](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_client) | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client)       |
+| [rocket_listenable](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_listenable)         | [![pub package](https://img.shields.io/pub/v/rocket_listenable.svg)](https://pub.dev/packages/rocket_listenable)               |
+| [rocket_view](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_view)         | [![pub package](https://img.shields.io/pub/v/rocket_view.svg)](https://pub.dev/packages/rocket_view)               |
+| [rocket_singleton](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_singleton)       | [![pub package](https://img.shields.io/pub/v/rocket_singleton.svg)](https://pub.dev/packages/rocket_singleton)             |
+| [rocket_mini_view](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_mini_view)           | [![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view)                 |
 
 ---
 

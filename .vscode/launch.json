@@ -5,11 +5,210 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-chrome",
+            "name": "mvc_rocket",
+            "cwd": "mvc_rocket",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "type": "dart"
+        },
+        {
+            "name": "mvc_rocket (profile mode)",
+            "cwd": "mvc_rocket",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "mvc_rocket (release mode)",
+            "cwd": "mvc_rocket",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket_cli",
+            "cwd": "rocket_cli",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "example",
+            "cwd": "mvc_rocket/example",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "example (profile mode)",
+            "cwd": "mvc_rocket/example",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "example (release mode)",
+            "cwd": "mvc_rocket/example",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket",
+            "cwd": "packages/rocket",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "rocket (profile mode)",
+            "cwd": "packages/rocket",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "rocket (release mode)",
+            "cwd": "packages/rocket",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket_listenable",
+            "cwd": "packages/rocket_listenable",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "rocket_listenable (profile mode)",
+            "cwd": "packages/rocket_listenable",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "rocket_listenable (release mode)",
+            "cwd": "packages/rocket_listenable",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket_mini_view",
+            "cwd": "packages/rocket_mini_view",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "rocket_mini_view (profile mode)",
+            "cwd": "packages/rocket_mini_view",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "rocket_mini_view (release mode)",
+            "cwd": "packages/rocket_mini_view",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket_model",
+            "cwd": "packages/rocket_model",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "rocket_model (profile mode)",
+            "cwd": "packages/rocket_model",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "rocket_model (release mode)",
+            "cwd": "packages/rocket_model",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket_client",
+            "cwd": "packages/rocket_client",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "rocket_client (profile mode)",
+            "cwd": "packages/rocket_client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "rocket_client (release mode)",
+            "cwd": "packages/rocket_client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket_singleton",
+            "cwd": "packages/rocket_singleton",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "rocket_singleton (profile mode)",
+            "cwd": "packages/rocket_singleton",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "rocket_singleton (release mode)",
+            "cwd": "packages/rocket_singleton",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "rocket_view",
+            "cwd": "packages/rocket_view",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "rocket_view (profile mode)",
+            "cwd": "packages/rocket_view",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "rocket_view (release mode)",
+            "cwd": "packages/rocket_view",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "example",
+            "cwd": "packages/rocket/example",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "example (profile mode)",
+            "cwd": "packages/rocket/example",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "example (release mode)",
+            "cwd": "packages/rocket/example",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
         }
     ]
 }

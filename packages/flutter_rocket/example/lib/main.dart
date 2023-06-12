@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:example/views/counter_view.dart';
 import 'package:example/views/mini_view.dart';
 import 'package:example/views/photo_view.dart';
@@ -52,40 +50,17 @@ class App extends StatelessWidget {
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   final ValueNotifier<double> dx = ValueNotifier<double>(0.1);
-  late BuildContext cntx;
-  final List<String> exps = [
-    "Rocket Package",
-    "Link your app with API easily",
-    "One Package All Features",
-    "Make your work easy",
-    "this animation make by crazy code with timer"
-  ];
   int index = 0;
   MyApp({Key? key}) : super(key: key) {
     const String baseUrl = 'https://jsonplaceholder.typicode.com';
     // create request object
     RocketClient request = RocketClient(url: baseUrl);
-    // save it, for use it from any screen
+    // save it, for use from any screen
     Rocket.add(request);
-    Timer.periodic(const Duration(milliseconds: 5), (timer) {
-      if (dx.value <=
-          MediaQuery.of(cntx).size.width +
-              (MediaQuery.of(cntx).size.width * 0.04)) {
-        dx.value += 0.5;
-      } else {
-        dx.value = -MediaQuery.of(cntx).size.width;
-        if (index < exps.length - 1) {
-          index++;
-        } else {
-          index = 0;
-        }
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    cntx = context;
     return Scaffold(
       appBar: AppBar(
         title: const Text("🚀 Rocket 🚀 PACKAGE"),
@@ -94,30 +69,22 @@ class MyApp extends StatelessWidget {
       body: Center(
         child: SizedBox(
           height: context.height * 0.8,
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ValueListenableBuilder(
-                  valueListenable: dx,
-                  builder: (context, _, __) {
-                    return Transform.translate(
-                      offset: Offset(dx.value, 1),
-                      //dx: dx.value,
-                      child: Text(
-                        exps[index],
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }),
-              const Example("Mini View", "miniView"),
-              const Example("Counter View", "counter"),
-              const Example("10 Users", "user"),
-              const Example("100 Posts", "post"),
-              const Example("5000 Photos", "photo"),
-              const Example("200 Todos", "todo"),
+              Text(
+                "🚀 Flutter Rocket 🚀 PACKAGE",
+                style: TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.brown),
+              ),
+              Example("Mini View", "miniView"),
+              Example("Counter View", "counter"),
+              Example("10 Users", "user"),
+              Example("100 Posts", "post"),
+              Example("5000 Photos", "photo"),
+              Example("200 Todos", "todo"),
             ],
           ),
         ),

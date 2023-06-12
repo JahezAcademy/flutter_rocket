@@ -1,8 +1,10 @@
 name: rocket_singleton
 description: Package for save and get object anywhere by type or key.
 version: 0.0.1
-repository: https://github.com/flutter-rocket/flutter_rocket/rocket_singleton
-issue_tracker: https://github.com/flutter-rocket/flutter_rocket/labels/rocket_singleton
+repository: https://github.com/JahezAcademy/flutter_rocket/rocket_singleton
+issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_singleton
+homepage: https://github.com/JahezAcademy/flutter_rocket
+
 environment:
   sdk: '>=3.0.0 <4.0.0'
   flutter: ">=1.17.0"

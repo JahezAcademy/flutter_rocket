@@ -3,6 +3,7 @@ description: A sample command-line for rocket package.
 version: 1.0.0
 repository: https://github.com/JahezAcademy/rocket/tree/master/rocket_cli
 homepage: https://github.com/JahezAcademy/rocket
+publish_to: none
 
 environment:
   sdk: ^3.0.0

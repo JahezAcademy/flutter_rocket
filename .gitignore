@@ -73,5 +73,4 @@ build/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 .vscode/branch-timer.json
-*pubspec.lock
-
+doc_assistant.py
