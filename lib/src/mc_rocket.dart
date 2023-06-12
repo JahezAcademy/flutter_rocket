@@ -29,6 +29,18 @@ class Rocket {
     return _models[key];
   }
 
+  static Iterable<T> getByType<T>() {
+    return _models.values.whereType<T>();
+  }
+
+  static T getFirstByType<T>() {
+    return getByType<T>().first;
+  }
+  
+  static void forEach(void Function(String, dynamic) action) {
+    _models.forEach(action);
+  }
+
   /// حذف النموذح
   static void remove(String key) {
     _models.remove(key);
@@ -45,6 +57,10 @@ class Rocket {
   // حذف نموذج بشرط معين
   static void removeWhere(bool Function(String, dynamic) test) {
     _models.removeWhere(test);
+  }
+
+  static void removeAll() {
+    _models.clear();
   }
 }
 
