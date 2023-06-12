@@ -86,6 +86,7 @@
 - Removed `multi` parameter from RocketRequest method
 - Added end2end test on example
 - Renamed `multi` `RocketModel` field to `all`
+- Added `InheritedRocket` to share data between widgets in a widget tree
 - Added `removeAll` method to `Rocket`
 - Added `getByType` & `getFirstByType` methods to `Rocket`
 - Added `AllToJson` extension for convert all models to list of json

@@ -68,43 +68,47 @@ class PostExample extends StatelessWidget {
                   );
                 },
                 builder: (context) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.852,
-                    child: ListView.builder(
-                      itemCount: post.all!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        // your data saved in multi list as Post model
-                        Post currentPost = post.all![index];
-                        return ListTile(
-                            leading: Text(currentPost.id.toString()),
-                            title: Text(currentPost.title!),
-                            trailing: IconButton(
-                              color: Colors.brown,
-                              icon: const Icon(Icons.update),
-                              onPressed: () {
-                                List titles = post.all!
-                                    .toJson(
-                                        include: ["title"], onlyValues: true)
-                                    .map((e) => e[0])
-                                    .toList();
-                                log("$titles");
-                                // update post data
-                                currentPost.updateFields(
-                                    titleField: "This Title changed");
-                              },
-                            ),
-                            onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                    return Details(index);
-                                  }),
-                                ));
-                      },
-                    ),
-                  );
+                  // Not Pass post model we will use it from inherited widget
+                  return const Posts();
                 },
               )),
         ));
+  }
+}
+
+class Posts extends StatelessWidget {
+  const Posts({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Get Post model from inherited widget
+    final post = InheritedRocket.of(context).model;
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.852,
+      child: ListView.builder(
+        itemCount: post.all!.length,
+        itemBuilder: (BuildContext context, int index) {
+          // your data saved in multi list as Post model
+          Post currentPost = post.all![index];
+          return ListTile(
+              leading: Text(currentPost.id.toString()),
+              title: Text(currentPost.title!),
+              trailing: IconButton(
+                color: Colors.brown,
+                icon: const Icon(Icons.update),
+                onPressed: () {
+                  // update post data
+                  currentPost.updateFields(titleField: "This Title changed");
+                },
+              ),
+              onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return Details(index);
+                    }),
+                  ));
+        },
+      ),
+    );
   }
 }
 
