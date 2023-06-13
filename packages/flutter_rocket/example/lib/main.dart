@@ -37,7 +37,7 @@ class App extends StatelessWidget {
                 title: "200 Todos",
               ),
         },
-        title: '🚀 Rocket 🚀 Package',
+        title: '🚀 Rocket Package 🚀',
         theme: ThemeData(
           primaryColor: Colors.brown,
           appBarTheme: const AppBarTheme(backgroundColor: Colors.brown),
@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("🚀 Rocket 🚀 PACKAGE"),
+        title: const Text('🚀 Rocket Package 🚀'),
         centerTitle: true,
       ),
       body: Center(
@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(
-                "🚀 Flutter Rocket 🚀 PACKAGE",
+                '🚀 Rocket Package 🚀',
                 style: TextStyle(
                     fontSize: 32.0,
                     fontWeight: FontWeight.bold,
