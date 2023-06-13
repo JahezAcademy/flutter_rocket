@@ -11,29 +11,80 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+RocketModel get data from [RocketClient](https://pub.dev/packages/rocket_client) & Show it with [RocketView](https://pub.dev/packages/rocket_view)
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- support multi models (get from `all` field)
+- support states (loading, done, failed)
+- support update fields
+- support rebuild widget
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Model generate from here 
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+import 'package:flutter_rocket/rocket.dart';
+
+const String postUserIdField = "userId";
+const String postIdField = "id";
+const String postTitleField = "title";
+const String postBodyField = "body";
+
+class Post extends RocketModel<Post> {
+  int? userId;
+  int? id;
+  String? title;
+  String? body;
+  // disable logs debugging
+  @override
+  bool get enableDebug => true;
+  Post({
+    this.userId,
+    this.id,
+    this.title,
+    this.body,
+  });
+
+  @override
+  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+    userId = json[postUserIdField];
+    id = json[postIdField];
+    title = json[postTitleField];
+    body = json[postBodyField];
+    super.fromJson(json, isSub: isSub);
+  }
+
+  void updateFields({
+    int? userIdField,
+    int? idField,
+    String? titleField,
+    String? bodyField,
+  }) {
+    userId = userIdField ?? userId;
+    id = idField ?? id;
+    title = titleField ?? title;
+    body = bodyField ?? body;
+    rebuildWidget(fromUpdate: true);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data[postUserIdField] = userId;
+    data[postIdField] = id;
+    data[postTitleField] = title;
+    data[postBodyField] = body;
+
+    return data;
+  }
+
+  @override
+  get instance => Post();
+}
+
 ```
 
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
