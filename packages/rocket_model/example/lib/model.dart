@@ -39,7 +39,7 @@ class ExampleModel extends RocketModel<ExampleModel> {
 class ExampleApi {
   Future<List<Map<String, dynamic>>> getData() async {
     // Simulate a network request
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
     return [
       {'id': 1, 'name': 'First data'},
