@@ -39,9 +39,8 @@ class App extends StatelessWidget {
         },
         title: '🚀 Rocket Package 🚀',
         theme: ThemeData(
-          primaryColor: Colors.brown,
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.brown),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
         ),
         home: MyApp());
   }

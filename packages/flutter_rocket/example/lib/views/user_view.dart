@@ -16,14 +16,15 @@ class UserExample extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      floatingActionButton: Container(
-          color: Theme.of(context).primaryColor,
-          child: TextButton(
-            child: const Wrap(
-              children: [Icon(Icons.get_app), Text("Get Data")],
-            ),
-            onPressed: () => GetUsers.getUsers(users),
-          )),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => GetUsers.getUsers(users),
+        label: const Text(
+          "Get Data",
+        ),
+        icon: const Icon(
+          Icons.get_app,
+        ),
+      ),
       body: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
