@@ -224,7 +224,7 @@ class ViewRocketState extends State<RocketView> {
   Widget build(BuildContext context) {
     /// Call the builder function if the loader is `null`.
     if (widget.loader == null) {
-      widget.builder(context, widget.model.state);
+      return widget.builder(context, widget.model.state);
     }
 
     /// Return the appropriate widget tree based on the `RocketState`.
