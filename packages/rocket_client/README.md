@@ -86,4 +86,4 @@ An enum representing the HTTP methods.
 - `delete`: The DELETE method.
 ## Conclusion
 
-Rocket Client provides a simple and powerful way to send HTTP requests in Dart. Its easy-to-use API and support for Rocket models make it an excellent choice for building Dart applications that communicate with APIs. If you have any questions or issues, feel free to check out the [Rocket Client GitHub repository](https://github.com/JahezAcademy/flutter_rocket/rocket_client) or ask for help on the [flutter_rocket package Discussions](https://github.com/JahezAcademy/flutter_rocket/discussions).
+Rocket Client provides a simple and powerful way to send HTTP requests in Dart. Its easy-to-use API and support for Rocket models make it an excellent choice for building Dart applications that communicate with APIs. If you have any questions or issues, feel free to check out the [Rocket Client GitHub repository](https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_client) or ask for help on the [flutter_rocket package Discussions](https://github.com/JahezAcademy/flutter_rocket/discussions).
