@@ -11,8 +11,8 @@
 [![Flutter CI](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml)
 
 ## Graphic tutorial 
-![JPG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/mvcRocket_package.jpg)
-[explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
+![JPG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/flutter_rocket_schema.jpg)
+[explain graphic](https://miro.com/app/board/uXjVPndHj2s=/?share_link_id=249635815532)
 
 ---
 
