@@ -14,8 +14,7 @@ dependencies:
     sdk: flutter
   rocket_model:
     path: ../rocket_model
-  rocket_listenable:
-    path: ../rocket_listenable
+  rocket_listenable: ^0.0.1
 
 dev_dependencies:
   flutter_test:
