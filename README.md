@@ -1,7 +1,7 @@
 
 
 
-#  <img src="https://github.com/JahezAcademy/flutter_rocket/images/mvcRocket_package.jpg" width="35">  Flutter Rocket <img src="https://github.com/JahezAcademy/flutter_rocket/images/mvcRocket_package.jpg" width="35"> 
+#  <img src="https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/logo.png" width="35">  Flutter Rocket <img src="https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/logo.png" width="35"> 
 ## Fly high with Flutter Rocket - the ultimate package for Flutter developers
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
@@ -11,7 +11,7 @@
 [![Flutter CI](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml)
 
 ## Graphic tutorial 
-![JPG](https://github.com/JahezAcademy/flutter_rocket/images/mvcRocket_package.jpg)
+![JPG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/mvcRocket_package.jpg)
 [explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
 
 ---
