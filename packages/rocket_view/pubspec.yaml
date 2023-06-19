@@ -12,8 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rocket_model:
-    path: ../rocket_model
+  rocket_model: ^0.0.1
   rocket_listenable: ^0.0.1
 
 dev_dependencies:
