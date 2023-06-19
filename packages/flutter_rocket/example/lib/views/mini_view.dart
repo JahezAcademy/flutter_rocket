@@ -1,26 +1,25 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 class MiniView extends StatelessWidget {
-
-  /// This is a widget that shows the usage of RocketMiniView, 
+  /// This is a widget that shows the usage of RocketMiniView,
   /// wraps other widgets and rebuilds them only when their values change.
   MiniView({Key? key, required this.title}) : super(key: key);
-  
+
   /// The title of the widget
   final String title;
-  
+
   /// This is a RocketValue with an initial value of "Initial value" of type String
   final RocketValue<String> rocketString = "Initial value".mini;
-  
+
   /// This is a RocketValue with an initial value of 5 of type int
   final RocketValue<int> rocketNum = 5.mini;
-  
-  /// This is a RocketValue with an initial empty List value of type List<dynamic> 
+
+  /// This is a RocketValue with an initial empty List value of type List<dynamic>
   final RocketValue<List> rocketList = [].mini;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

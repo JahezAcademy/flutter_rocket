@@ -1,4 +1,4 @@
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 class RocketClientTest extends RocketClient {
   List<Map<String, dynamic>> dummyData;

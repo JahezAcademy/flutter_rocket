@@ -8,7 +8,7 @@ import 'package:example/views/todos_view.dart';
 import 'package:example/views/user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 import 'dummy_data.dart';
 import 'fake_rocket_client.dart';

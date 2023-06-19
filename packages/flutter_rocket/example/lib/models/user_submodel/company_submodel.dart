@@ -1,4 +1,4 @@
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 const String companyNameField = "name";
 const String companyCatchPhraseField = "catchPhrase";

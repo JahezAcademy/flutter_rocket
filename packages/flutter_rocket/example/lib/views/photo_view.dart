@@ -1,7 +1,7 @@
 import 'package:example/models/photo_model.dart';
 import 'package:example/requests/photo_request.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 class PhotoExample extends StatelessWidget {
   PhotoExample({Key? key, required this.title}) : super(key: key);

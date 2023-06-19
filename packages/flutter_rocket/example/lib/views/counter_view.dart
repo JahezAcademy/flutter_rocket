@@ -1,6 +1,6 @@
 import 'package:example/models/counter_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 /// A StatelessWidget that displays a counter example.
 class CounterExample extends StatelessWidget {

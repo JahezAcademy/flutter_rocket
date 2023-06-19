@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:example/models/post_model.dart';
 import 'package:example/requests/post_request.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen

@@ -1,7 +1,7 @@
 import 'package:example/models/todo.dart';
 import 'package:example/requests/todos_request.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 class TodosExample extends StatelessWidget {
   TodosExample({Key? key, required this.title}) : super(key: key);

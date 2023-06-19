@@ -1,4 +1,4 @@
-import 'package:flutter_rocket/rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 import 'user_submodel/address_submodel.dart';
 import 'user_submodel/company_submodel.dart';

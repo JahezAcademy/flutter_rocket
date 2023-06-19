@@ -1,4 +1,4 @@
-library rocket;
+library flutter_rocket;
 
 export 'package:rocket_mini_view/rocket_mini_view.dart';
 export 'package:rocket_view/rocket_view.dart';
