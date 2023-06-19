@@ -1,16 +1,17 @@
 
-#  🚀 Flutter Rocket 🚀
 
-Make state management and request easy to use.
+
+#  <img src="https://github.com/JahezAcademy/flutter_rocket/images/mvcRocket_package.jpg" width="35">  Flutter Rocket <img src="https://github.com/JahezAcademy/flutter_rocket/images/mvcRocket_package.jpg" width="35"> 
+## Fly high with Flutter Rocket - the ultimate package for Flutter developers
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
 
-[![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/flutter_rocket)
+[![Pub](https://img.shields.io/pub/v/flutter_rocket.svg)](https://pub.dartlang.org/packages/flutter_rocket)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 [![Flutter CI](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml)
 
 ## Graphic tutorial 
-![JPG](./mvcRocket_package.jpg)
+![JPG](https://github.com/JahezAcademy/flutter_rocket/images/mvcRocket_package.jpg)
 [explain graphic](https://miro.com/welcomeonboard/cjY2OWRqRGFZMnZLRXBSemdZZmF2NkduZXdlMkJOenRaaWJ2cXhUejVXenByYVFSZ2F4YkxhMDBVaDZTcExzRHwzMDc0NDU3MzY0OTgzODE0OTU3?invite_link_id=677217465426)
 
 ---
@@ -29,7 +30,7 @@ Make state management and request easy to use.
 
 
 # Usage
-## Simple case use RocketMiniView & RocketValue
+## Simple case usage RocketMiniView & RocketValue
 its very simple
 
 ```dart
@@ -87,7 +88,7 @@ class MiniViewRocket extends StatelessWidget {
 
 ```
 
-## Complex case (state management & request)
+## State management & request
 
 firstly you need to create your model by your json data from this [Link](https://json2dart.web.app/)
 you get something like this:
@@ -332,43 +333,45 @@ class Details extends StatelessWidget {
 
 & last item its Rocket for save your model or any value and get it anywhere by key
 
+Sure, here are the comments for each item, with an additional comment at the top:
+
 ```dart
-// inside of object use rocket extension 
-Rocket.add(value,readOnly: true); // you can't edit it if readonly true
-// or
-// add by key or only by value
-Rocket.add<Type>(value, key: "key");
-// [get] return value
-Rocket.get<Type>("key");
-// or get only by Type
-Rocket.get<Type>()
-// [remove]
-Rocket.remove("key");
-// remove with condition
-Rocket.removeWhere((key,value)=>key.contains("ke"));
-
+# Add a value to the Rocket object with read-only access
+Rocket.add(value, readOnly: true);
 ```
+This code adds a value to the `Rocket` object and sets it to be read-only.
 
+```dart
+# Add a key-value pair to the Rocket object with a specified key and generic type
+Rocket.add<Type>(value, key: "key");
+```
+This code adds a key-value pair to the `Rocket` object with a specified key and generic type.
+
+```dart
+# Get the value associated with the specified key and generic type
+Rocket.get<Type>("key");
+```
+This code retrieves the value associated with the specified key and generic type from the `Rocket` object.
+
+```dart
+# Get the first value in the Rocket object with a specified generic type
+Rocket.get<Type>();
+```
+This code retrieves the first value in the `Rocket` object with a specified generic type.
+
+```dart
+# Remove the key-value pair associated with the specified key from the Rocket object
+Rocket.remove("key");
+```
+This code removes the key-value pair associated with the specified key from the `Rocket` object.
+
+```dart
+# Remove all key-value pairs from the Rocket object for which the given function returns true
+Rocket.removeWhere((key,value)=>key.contains("ke"));
+```
+This code removes all key-value pairs from the `Rocket` object for which the given function returns `true`. The function checks if the key contains the substring "ke".
+
+[more details about Rocket](https://pub.dev/documentation/rocket_singleton/latest/rocket_singleton/Rocket-class.html)
 ## [More examples](https://github.com/JahezAcademy/flutter_rocket/tree/main/example)
-# License
-    MIT License
-    
-    Copyright (c) 2022 Jahez team
-    
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-    
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-    
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
+
+If you have any questions or issues, feel free to check out the [Rocket Client GitHub repository](https://github.com/JahezAcademy/flutter_rocket) or ask for help on the [flutter_rocket package Discussions](https://github.com/JahezAcademy/flutter_rocket/discussions).
