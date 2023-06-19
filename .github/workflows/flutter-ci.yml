@@ -5,7 +5,7 @@ name: Flutter CI
 on:
   pull_request:
     branches:
-    - dev
+    - config-ci
     
   workflow_dispatch:
     
@@ -28,10 +28,7 @@ jobs:
     
     - name: Get flutter dependencies.
       run: flutter pub get
-      
-    - name: Upgrade flutter dependencies.
-      run: flutter packages upgrade
-      working-directory: ./example
+      working-directory: ./packages/flutter_rocket/example
     
     - name: Check for any formatting issues in the code.
       run: dart format --set-exit-if-changed .
@@ -39,6 +36,6 @@ jobs:
     - name: Statically analyze the Dart code for any errors.
       run: dart analyze .
 
-    - name: Test model & view example
+    - name: Test model & view examples
       run: flutter test
-      working-directory: ./example
+      working-directory: ./packages/flutter_rocket/example
