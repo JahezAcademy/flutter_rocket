@@ -72,5 +72,7 @@ build/
 !**/ios/**/default.mode2v3
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
-.vscode/branch-timer.json
-doc_assistant.py
+**/ephemeral
+**/pubspec.lock
+pubspec.lock
+.vscode
