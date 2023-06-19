@@ -35,9 +35,11 @@ jobs:
     
     - name: Check for any formatting issues in the code.
       run: dart format --set-exit-if-changed .
+      working-directory: ./packages/flutter_rocket
     
     - name: Statically analyze the Dart code for any errors.
       run: dart analyze .
+      working-directory: ./packages/flutter_rocket
 
     - name: Test model & view examples
       run: flutter test
