@@ -86,9 +86,10 @@ packages:
   flutter_rocket:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      name: flutter_rocket
+      sha256: "6524f043497297021bd53e47157ab172bc07a912d097236628c0480e55b1b318"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   flutter_test:
     dependency: "direct dev"
@@ -188,44 +189,50 @@ packages:
   rocket_client:
     dependency: transitive
     description:
-      path: "../../rocket_client"
-      relative: true
-    source: path
+      name: rocket_client
+      sha256: "62b9b40d5d3fc35666bc7497998e6254338558e158a11a4862c3ca5eddacb602"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   rocket_listenable:
     dependency: transitive
     description:
-      path: "../../rocket_listenable"
-      relative: true
-    source: path
+      name: rocket_listenable
+      sha256: "908014caa9bde6d8b9910eee50001f52a9db6f575ae86957289ff81d444b14f5"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   rocket_mini_view:
     dependency: transitive
     description:
-      path: "../../rocket_mini_view"
-      relative: true
-    source: path
+      name: rocket_mini_view
+      sha256: "65db09cad60a951576fccff37923d72120afa0fb164f14e78a487001d8a43c84"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   rocket_model:
     dependency: transitive
     description:
-      path: "../../rocket_model"
-      relative: true
-    source: path
+      name: rocket_model
+      sha256: "310769ada98ca688cb330c668bb5717011d7d0d84872292dd0a6fbf09cf397f3"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   rocket_singleton:
     dependency: transitive
     description:
-      path: "../../rocket_singleton"
-      relative: true
-    source: path
+      name: rocket_singleton
+      sha256: "2c8a1c205a7193ff66a1952bd13a51ff17109ff8544f870bb9c7c58b1c3b5420"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   rocket_view:
     dependency: transitive
     description:
-      path: "../../rocket_view"
-      relative: true
-    source: path
+      name: rocket_view
+      sha256: "117fda34d966fc42a219b3a667457cb1ccb0e652eecb50010e2253e2f2956ea7"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   sky_engine:
     dependency: transitive

@@ -149,16 +149,18 @@ packages:
   rocket_listenable:
     dependency: transitive
     description:
-      path: "../../rocket_listenable"
-      relative: true
-    source: path
+      name: rocket_listenable
+      sha256: "908014caa9bde6d8b9910eee50001f52a9db6f575ae86957289ff81d444b14f5"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   rocket_model:
     dependency: transitive
     description:
-      path: "../../rocket_model"
-      relative: true
-    source: path
+      name: rocket_model
+      sha256: "310769ada98ca688cb330c668bb5717011d7d0d84872292dd0a6fbf09cf397f3"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.1"
   sky_engine:
     dependency: transitive
