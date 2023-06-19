@@ -1,39 +1,99 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Rocket MiniView
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+`RocketMiniView` is a widget provided by the `rocket_listenable` package that listens to changes in a `RocketListenable` object and rebuilds when a change occurs. It is designed to be used in conjunction with `RocketValue` objects to build reactive UIs in Flutter.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+To use `RocketMiniView`, import it into your Dart file:
 
 ```dart
-const like = 'sample';
+import 'package:flutter/material.dart';
+import 'package:rocket_listenable/rocket_listenable.dart';
+import 'package:your_app/constants.dart';
+
+import 'rocket_mini_view.dart';
+
+final RocketValue value = [].mini;
+...
+RocketMiniView(
+  value: value,
+  builder: () {
+    return Text(value.length.toString());
+  },
+)
 ```
 
-## Additional information
+The `RocketMiniView` widget takes two required parameters:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+- `value`: The `RocketListenable` object to listen to.
+- `builder`: A function that returns the widget tree to build.
+
+The `builder` function should return the widget tree that needs to be rebuilt when the `RocketListenable` object changes.
+
+## API Reference
+
+### `RocketMiniView`
+
+The `RocketMiniView` widget is a widget that listens to changes in a `RocketListenable` object and rebuilds when a change occurs.
+
+#### Constructor
+
+```dart
+RocketMiniView({
+  Key? key,
+  required this.value,
+  required this.builder,
+})
+```
+
+- `key`: An optional `Key` object to use for the widget.
+- `value`: The `RocketListenable` object to listen to.
+- `builder`: A function that returns the widget tree to build.
+
+#### `MiniViewRocketState`
+
+The `MiniViewRocketState` class is the state object for the `RocketMiniView` widget.
+
+#### `initState` Method
+
+```dart
+void initState()
+```
+
+Called when the widget is first inserted into the widget tree.
+
+#### `didUpdateWidget` Method
+
+```dart
+void didUpdateWidget(RocketMiniView oldWidget)
+```
+
+Called when the widget is updated with new parameters.
+
+#### `dispose` Method
+
+```dart
+void dispose()
+```
+
+Called when the widget is removed from the widget tree.
+
+#### `_rebuildWidget` Method
+
+```dart
+void _rebuildWidget()
+```
+
+Called when the `RocketListenable` object changes.
+
+#### `build` Method
+
+```dart
+Widget build(BuildContext context)
+```
+
+Builds the widget tree using the `builder` function.
+
+## Conclusion
+
+`RocketMiniView` is a useful widget provided by the `rocket_listenable` package that enables you to build reactive UIs in Flutter. Its simple API and ability to listen to changes in `RocketListenable` objects make it an ideal choice for building Flutter applications that need to react to changes in data.
