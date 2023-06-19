@@ -27,7 +27,8 @@ class RocketListenableCounterExample extends StatefulWidget {
   const RocketListenableCounterExample({super.key});
 
   @override
-  RocketListenableCounterExampleState createState() => RocketListenableCounterExampleState();
+  RocketListenableCounterExampleState createState() =>
+      RocketListenableCounterExampleState();
 }
 
 class RocketListenableCounterExampleState
