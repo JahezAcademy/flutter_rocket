@@ -4,11 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rocket/rocket.dart';
 
 class MiniView extends StatelessWidget {
+
+  /// This is a widget that shows the usage of RocketMiniView, 
+  /// wraps other widgets and rebuilds them only when their values change.
   MiniView({Key? key, required this.title}) : super(key: key);
+  
+  /// The title of the widget
   final String title;
+  
+  /// This is a RocketValue with an initial value of "Initial value" of type String
   final RocketValue<String> rocketString = "Initial value".mini;
+  
+  /// This is a RocketValue with an initial value of 5 of type int
   final RocketValue<int> rocketNum = 5.mini;
+  
+  /// This is a RocketValue with an initial empty List value of type List<dynamic> 
   final RocketValue<List> rocketList = [].mini;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,58 +99,7 @@ class MiniView extends StatelessWidget {
     );
   }
 
-  valChanged() {
+  void valChanged() {
     log('this listener called when widget of mcNum rebuild');
   }
 }
-
-// class MiniViewRocket extends StatelessWidget {
-//   final RocketValue<String> myStringValue = "My Value".mini;
-//   final RocketValue<int> myIntValue = 2021.mini;
-
-//   MiniViewRocket({Key? key}) : super(key: key);
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           // use RocketValue for every widget
-//           RocketMiniView(
-//             value: myStringValue,
-//             builder: () => Text(myStringValue.v),
-//           ),
-//           RocketMiniView(
-//             value: myStringValue,
-//             builder: () => Text(myIntValue.v.toString()),
-//           ),
-//           const SizedBox(
-//             height: 25.0,
-//           ),
-//           // merge multi RocketValue in one widget
-//           RocketMiniView(
-//               value: RocketValue.merge([myStringValue, myIntValue]),
-//               builder: () {
-//                 return Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                   children: [
-//                     Text(myStringValue.v),
-//                     Text(myIntValue.v.toString())
-//                   ],
-//                 );
-//               })
-//         ],
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         backgroundColor: Theme.of(context).primaryColor,
-//         onPressed: () {
-//           // change value
-//           myStringValue.v = "Value Changed";
-//           myIntValue.v = 2022;
-//         },
-//         tooltip: 'change Value',
-//         child: const Icon(Icons.change_circle),
-//       ),
-//     );
-//   }
-// }
