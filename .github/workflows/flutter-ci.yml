@@ -28,6 +28,10 @@ jobs:
     - name: Get flutter dependencies.
       run: flutter pub get
       working-directory: ./packages/flutter_rocket/example
+
+    - name: Upgrade flutter dependencies.
+      run: flutter packages upgrade
+      working-directory: ./packages/flutter_rocket/example
     
     - name: Check for any formatting issues in the code.
       run: dart format --set-exit-if-changed .
