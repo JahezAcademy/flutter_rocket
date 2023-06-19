@@ -1,4 +1,4 @@
-[old changelogs](https://github.com/JahezAcademy/mvc_rocket/blob/dev/CHANGELOG.md)
+[old changelogs](https://github.com/JahezAcademy/flutter_rocket/blob/dev/CHANGELOG.md)
 
 ## 0.0.1
 

@@ -5,21 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mvc_rocket",
-            "cwd": "mvc_rocket",
+            "name": "flutter_rocket",
+            "cwd": "flutter_rocket",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "mvc_rocket (profile mode)",
-            "cwd": "mvc_rocket",
+            "name": "flutter_rocket (profile mode)",
+            "cwd": "flutter_rocket",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "mvc_rocket (release mode)",
-            "cwd": "mvc_rocket",
+            "name": "flutter_rocket (release mode)",
+            "cwd": "flutter_rocket",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
@@ -32,20 +32,20 @@
         },
         {
             "name": "example",
-            "cwd": "mvc_rocket/example",
+            "cwd": "flutter_rocket/example",
             "request": "launch",
             "type": "dart"
         },
         {
             "name": "example (profile mode)",
-            "cwd": "mvc_rocket/example",
+            "cwd": "flutter_rocket/example",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
             "name": "example (release mode)",
-            "cwd": "mvc_rocket/example",
+            "cwd": "flutter_rocket/example",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

@@ -5,9 +5,9 @@ Make state management and request easy to use.
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
 
-[![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/mvc_rocket)
+[![Pub](https://img.shields.io/pub/v/rocket.svg)](https://pub.dartlang.org/packages/flutter_rocket)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
-[![Flutter CI](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/mvc_rocket/actions/workflows/flutter-ci.yml)
+[![Flutter CI](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml)
 
 ## Graphic tutorial 
 ![JPG](./mvcRocket_package.jpg)
@@ -93,7 +93,7 @@ firstly you need to create your model by your json data from this [Link](https:/
 you get something like this:
 
 ```dart
-import 'package:mvc_rocket/mvc_rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 String postUserIdField = "userId";
 String postIdField = "id";
@@ -179,7 +179,7 @@ Now create request method for post
 
 ```dart
 import 'package:example/models/post_model.dart';
-import 'package:mvc_rocket/mvc_rocket.dart';
+import 'package:flutter_rocket/flutter_rocket.dart';
 
 const String postsEndpoint = "posts";
 
@@ -349,7 +349,7 @@ Rocket.removeWhere((key,value)=>key.contains("ke"));
 
 ```
 
-## [More examples](https://github.com/JahezAcademy/mvc_rocket/tree/main/example)
+## [More examples](https://github.com/JahezAcademy/flutter_rocket/tree/main/example)
 # License
     MIT License
     
