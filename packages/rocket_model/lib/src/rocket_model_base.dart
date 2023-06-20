@@ -51,8 +51,8 @@ abstract class RocketModel<T> extends RocketListenable {
   }
 
   /// Sets the exception object with the given exception.
-  void setException(RocketException exception) {
-    exception = exception;
+  void setException(RocketException rocketException) {
+    exception = rocketException;
     state = RocketState.failed;
     if (enableDebug) {
       log("[MVCR]> Failed details :${exception.toString()}");
