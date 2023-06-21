@@ -33,6 +33,7 @@ abstract class RocketListenable {
   void registerListeners(Map<String, List<VoidCallback>> listeners) {
     listeners.forEach((key, value) {
       for (var element in value) {
+        _observers[key] ??= LinkedList();
         _observers[key]!.add(CustomLinkedListEntry(element));
       }
     });
