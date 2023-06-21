@@ -5,8 +5,8 @@ import 'package:rocket_singleton/rocket_singleton.dart';
 extension HasKey on HashMap {
   bool hasKey(String key) {
     bool checker = false;
-    forEach((key, value) {
-      if (key == key) checker = true;
+    forEach((k, value) {
+      if (key == k) checker = true;
     });
     return checker;
   }
