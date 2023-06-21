@@ -9,63 +9,72 @@ class Rocket {
 
   static HashMap<String, dynamic>? _modelsDelegate;
 
-  /// Adds a rocket model to the collection.
+  /// Adds a value to the collection.
   ///
-  /// [model] The rocket model to add.
-  /// [key] The key to use for the model. If not provided, the model's runtime type will be used.
-  /// [readOnly] Whether the model is read-only. If true, the model cannot be replaced from the collection.
+  /// [value] The value to add.
+  /// [key] The key to use for the value. If not provided, the value's runtime type will be used.
+  /// [readOnly] Whether the value is read-only. If true, the value cannot be replaced from the collection.
   ///
-  /// Returns the added model.
-  static T add<T>(T model, {String? key, bool readOnly = false}) {
-    key ??= model.runtimeType.toString();
+  /// Returns the added value.
+  static T add<T>(T value, {String? key, bool readOnly = false}) {
+    key ??= value.runtimeType.toString() + value.hashCode.toString();
     if (readOnly) {
-      return _models.putIfAbsent(key, () => model);
+      return _models.putIfAbsent(key, () => value);
     } else {
-      _models[key] = model;
-      return model;
+      _models[key] = value;
+      return value;
     }
   }
 
-  /// Gets a rocket model from the collection.
+  /// Gets a value from the collection.
   ///
-  /// [key] The key of the model to get.
+  /// [key] The key of the value to get.
   ///
-  /// Returns the model, or null if no model with the given key exists.
-  static T get<T>([String? key]) {
-    assert(key != null || getByType<T>().isNotEmpty,
-        "No model of type $T and key $key");
+  /// Returns the value, or null if no value with the given key exists.
+  static T? get<T>([String? key]) {
+    // assert(key != null && getByType<T>().isNotEmpty,
+    //     "No value of type $T and key $key");
     if (key == null) return getFirstByType<T>();
     return _models[key];
   }
 
   /// Iterates over all rocket models in the collection.
   ///
-  /// [action] The function to call for each model.
+  /// [action] The function to call for each value.
   static void forEach(void Function(String, dynamic) action) {
     _models.forEach(action);
   }
 
-  /// Removes a rocket model from the collection.
+  /// Removes a value from the collection.
   ///
-  /// [key] The key of the model to remove.
+  /// [key] The key of the value to remove.
   ///
-  /// Throws an AssertionError if no model with the given key exists.
+  /// Throws an AssertionError if no value with the given key exists.
   static void remove<T>({String? key}) {
-    assert(key != null || getByType<T>().isNotEmpty,
-        "No model of type $T and key $key");
-    key ??= T.toString();
+    // assert(key != null || getByType<T>().isNotEmpty,
+    //     "No value of type $T and key $key");
+    if (key == null) {
+      _models.removeWhere((key, value) => key.contains(T.toString()));
+      return;
+    }
     _models.remove(key);
   }
 
-  /// Returns true if the collection contains a model with the given key.
+  /// Returns true if the collection contains a value with the given key.
   static bool hasKey(String key) {
     return _models.hasKey(key);
   }
 
-  /// Returns true if the collection contains a model of the given type.
+  /// Returns true if the collection contains a value of the given type.
   static bool hasType<T>() {
     final String key = T.toString();
-    return _models.hasKey(key);
+    bool exist = false;
+    _models.forEach((k, value) {
+      if (k.contains(key)) {
+        exist = true;
+      }
+    });
+    return exist;
   }
 
   /// Gets a list of the keys of all rocket models in the collection.
@@ -73,7 +82,7 @@ class Rocket {
 
   /// Removes all rocket models from the collection that match the given predicate.
   ///
-  /// [test] The predicate to test each model against.
+  /// [test] The predicate to test each value against.
   static void removeWhere(bool Function(String, dynamic) test) {
     _models.removeWhere(test);
   }
@@ -84,22 +93,22 @@ class Rocket {
   ///
   /// Returns a list of rocket models of the given type.
   static List<T> getByType<T>() {
-    assert(hasType<T>(), "No model of type $T");
+    // assert(hasType<T>(), "No value of type $T");
     return _models.values.whereType<T>().toList();
   }
 
-  /// Gets the first rocket model in the collection of the given type.
+  /// Gets the first value in the collection of the given type.
   ///
   /// [T] The type of rocket models to get.
   ///
-  /// Returns the first rocket model of the given type, or null if no models of the given type exist.
-  static T getFirstByType<T>() {
-    assert(getByType<T>().isNotEmpty, "No model of type $T");
-    return getByType<T>().first;
+  /// Returns the first value of the given type, or null if no models of the given type exist.
+  static T? getFirstByType<T>() {
+    // assert(getByType<T>().isNotEmpty, "No value of type $T");
+    return getByType<T>().firstOrNull;
   }
 
   /// Removes all rocket models from the collection.
-  static void removeAll() {
+  static void clear() {
     _models.clear();
   }
 }
