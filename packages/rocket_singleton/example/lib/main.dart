@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Text(
-            'The Falcon 9 has a fuel capacity of ${falcon9.fuelCapacity} gallons.',
+            'The Falcon 9 has a fuel capacity of ${falcon9!.fuelCapacity} gallons.',
           ),
         ),
       ),
