@@ -8,6 +8,8 @@ import 'enums.dart';
 
 typedef OnError = Widget Function(RocketException error, Function() reload);
 
+typedef OnLoading = Widget Function(BuildContext);
+
 class RocketView<T> extends StatefulWidget {
   /// A widget that helps to manage the state of a `RocketModel` and handle the different states of the data.
   ///
@@ -64,7 +66,7 @@ class RocketView<T> extends StatefulWidget {
     this.call = _myDefaultFunc,
     this.callType = CallType.callAsFuture,
     this.secondsOfStream = 1,
-    this.loader,
+    this.onLoading = _defaultOnLoading,
     this.onError = _defaultOnError,
   }) : super(key: key) {
     /// Call the `call` function based on the `callType` parameter.
@@ -112,8 +114,14 @@ class RocketView<T> extends StatefulWidget {
     );
   }
 
+  static Widget _defaultOnLoading(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
   /// The function that builds the widget tree based on the state.
-  final Widget Function(BuildContext, RocketState) builder;
+  final Widget Function(BuildContext) builder;
 
   /// The function that fetches data.
   final dynamic Function() call;
@@ -125,7 +133,7 @@ class RocketView<T> extends StatefulWidget {
   final int secondsOfStream;
 
   /// The widget to display while data is loading.
-  final Widget? loader;
+  final OnLoading onLoading;
 
   /// The `RocketModel` object that holds the data and state.
   final RocketModel<T> model;
@@ -212,9 +220,9 @@ class ViewRocketState extends State<RocketView> {
   _handleStates() {
     switch (widget.model.state) {
       case RocketState.loading:
-        return Center(child: widget.loader);
+        return widget.onLoading(context);
       case RocketState.done:
-        return widget.builder(context, widget.model.state);
+        return widget.builder(context);
       case RocketState.failed:
         return widget.onError(widget.model.exception, reload);
     }
@@ -222,11 +230,6 @@ class ViewRocketState extends State<RocketView> {
 
   @override
   Widget build(BuildContext context) {
-    /// Call the builder function if the loader is `null`.
-    if (widget.loader == null) {
-      return widget.builder(context, widget.model.state);
-    }
-
     /// Return the appropriate widget tree based on the `RocketState`.
     return _handleStates();
   }
