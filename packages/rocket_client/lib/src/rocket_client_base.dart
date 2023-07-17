@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart';
+import 'package:rocket_client/src/rocket_response.dart';
 import 'package:rocket_model/rocket_model.dart';
 
 import 'extensions.dart';
@@ -48,7 +49,7 @@ class RocketClient {
     return model;
   }
 
-  _processData<T>(StreamedResponse response,
+  Future<RocketResponse> _processData<T>(StreamedResponse response,
       {RocketDataCallback inspect,
       List<String>? targetData,
       String? endpoint}) async {
@@ -69,7 +70,7 @@ class RocketClient {
         } catch (e) {
           result = respDecoded;
         }
-        return result;
+        return RocketResponse(result, response.statusCode);
     }
   }
 
@@ -81,7 +82,7 @@ class RocketClient {
       try {
         result = _getTarget(result, targetData);
       } catch (e) {
-        log("Error in Target : $e, Try to use inspect instead");
+        log("Error in Target : $e, Try to use inspect method instead");
       }
     }
     return result;
