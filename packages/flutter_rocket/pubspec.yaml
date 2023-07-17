@@ -4,6 +4,7 @@ version: 0.0.1
 repository: https://github.com/JahezAcademy/flutter_rocket/flutter_rocket
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/flutter_rocket
 homepage: https://github.com/JahezAcademy/flutter_rocket
+publish_to: 'none'
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

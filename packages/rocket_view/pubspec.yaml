@@ -4,6 +4,7 @@ version: 0.0.2
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_view
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_view
 homepage: https://github.com/JahezAcademy/flutter_rocket
+publish_to: 'none'
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
