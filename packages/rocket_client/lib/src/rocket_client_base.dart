@@ -187,11 +187,12 @@ class RocketClient {
       _onError(e);
       return Future.value(e);
     } else {
-      model.setException(RocketException(
-          response: body!,
+      RocketException exception = RocketException(
+          response: body.toString(),
           statusCode: statusCode!,
           exception: e.toString(),
-          stackTrace: stackTrace));
+          stackTrace: stackTrace);
+      model.setException(exception);
       return Future.value(model);
     }
   }
