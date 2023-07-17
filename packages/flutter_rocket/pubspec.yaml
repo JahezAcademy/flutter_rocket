@@ -14,7 +14,8 @@ dependencies:
     sdk: flutter
   rocket_model: ^0.0.1
   rocket_listenable: ^0.0.1
-  rocket_view: ^0.0.1
+  rocket_view:
+    path: ../rocket_view
   rocket_mini_view: ^0.0.1
   rocket_client: ^0.0.1
   rocket_singleton: ^0.0.1
