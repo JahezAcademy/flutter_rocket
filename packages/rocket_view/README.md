@@ -20,9 +20,9 @@ class TodoList extends StatelessWidget {
     return RocketView(
       model: todoModel,
       call: () => GetTodos.getTodos(todoModel),
-      loader: const CircularProgressIndicator(),
+      loader: (context) => Center(child: CircularProgressIndicator()),
       callType: CallType.callIfModelEmpty,
-      builder: (context, state) {
+      builder: (context) {
         return ListView.builder(
           itemCount: todoModel.all!.length,
           itemBuilder: (context, index) {

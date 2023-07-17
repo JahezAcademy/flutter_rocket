@@ -247,7 +247,7 @@ class PostExample extends StatelessWidget {
                 // callType: CallType.callAsStream,
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
-                // loader:CustomLoading(),
+                // loader:(context)=> CustomLoading(),
 
                 // handle errors
                 onError: (RocketException exception, Function() reload) {
@@ -267,7 +267,7 @@ class PostExample extends StatelessWidget {
                     ),
                   );
                 },
-                builder: (context,state) {
+                builder: (context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(
