@@ -1,8 +1,8 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:example/models/post_model.dart';
 import 'package:example/requests/post_request.dart';
+import 'package:example/utils/widget_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rocket/flutter_rocket.dart';
 
@@ -47,27 +47,10 @@ class PostExample extends StatelessWidget {
                 // callType: CallType.callAsStream,
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
-                loader: const CircularProgressIndicator(),
-
+                onLoading: WidgetStates.onLoading,
                 // handle errors
-                onError: (RocketException exception, Function() reload) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(exception.exception),
-                        if (exception.statusCode != HttpStatus.ok) ...[
-                          Text(exception.response),
-                          Text(Rocket.get(rocketRequestKey)
-                              .msgByStatusCode(exception.statusCode))
-                        ],
-                        TextButton(
-                            onPressed: reload, child: const Text("retry"))
-                      ],
-                    ),
-                  );
-                },
-                builder: (context, state) {
+                onError: WidgetStates.onError,
+                builder: (context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.852,
                     child: ListView.builder(

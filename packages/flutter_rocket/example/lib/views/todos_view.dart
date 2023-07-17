@@ -1,5 +1,6 @@
 import 'package:example/models/todo.dart';
 import 'package:example/requests/todos_request.dart';
+import 'package:example/utils/widget_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rocket/flutter_rocket.dart';
 
@@ -23,9 +24,9 @@ class TodosExample extends StatelessWidget {
       body: RocketView(
           model: todoModel,
           call: () => GetTodos.getTodos(todoModel),
-          loader: const CircularProgressIndicator(),
+          onLoading: WidgetStates.onLoading,
           callType: CallType.callIfModelEmpty,
-          builder: (context, state) {
+          builder: (context) {
             return ListView.builder(
               itemCount: todoModel.all!.length,
               itemBuilder: (context, index) {

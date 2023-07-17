@@ -52,7 +52,7 @@ class CounterExample extends StatelessWidget {
               ///
               /// In this case, we are returning a `Text` widget that displays
               /// the current count value of the `Counter` instance.
-              builder: (context, modelState) {
+              builder: (context) {
                 return Text(
                   counter.count.toString(),
                   style: Theme.of(context).textTheme.headlineMedium,

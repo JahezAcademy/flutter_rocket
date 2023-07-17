@@ -55,7 +55,7 @@ class RocketViewExample extends StatelessWidget {
         // Pass the Todo object to the RocketView widget as the model
         model: todos,
         // Define how the Todo list should be displayed
-        builder: (context, state) {
+        builder: (context) {
           return ListView.builder(
             itemCount: todos.all!.length,
             itemBuilder: (context, index) {
@@ -97,10 +97,9 @@ class RocketViewExample extends StatelessWidget {
         // Define how to handle errors
         onError: (error, reload) => Text('Error: ${error.exception}'),
         // Add a loading indicator while the Todo list is being fetched
-        loader: const Center(
+        onLoading: (BuildContext context) => Center(
           child: CircularProgressIndicator(
-            color: Colors.red,
-          ),
+              color: Theme.of(context).colorScheme.primary),
         ),
       ),
     );

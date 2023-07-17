@@ -3,6 +3,7 @@ import 'package:example/models/user_submodel/address_submodel.dart';
 import 'package:example/models/user_submodel/company_submodel.dart';
 import 'package:example/models/user_submodel/geo_submodel.dart';
 import 'package:example/requests/user_request.dart';
+import 'package:example/utils/widget_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rocket/flutter_rocket.dart';
 
@@ -38,8 +39,8 @@ class UserExample extends StatelessWidget {
             // your model
             model: users,
             // your widget for show data from model
-            loader: const CircularProgressIndicator(),
-            builder: (context, modelState) {
+            onLoading: WidgetStates.onLoading,
+            builder: (context) {
               return ListView.builder(
                 itemCount: users.all!.length,
                 itemBuilder: (BuildContext context, int index) {
