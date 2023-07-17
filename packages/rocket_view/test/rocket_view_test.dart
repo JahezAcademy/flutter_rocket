@@ -13,8 +13,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            builder: (context, state) => const Text('Data is loading...'),
-            loader: const CircularProgressIndicator(),
+            builder: (context) => const Text('Data is loading...'),
           ),
         ),
       );
@@ -38,7 +37,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            builder: (context, state) => Text('Data is ${rocketModel.data}'),
+            builder: (context) => Text('Data is ${rocketModel.data}'),
           ),
         ),
       );
@@ -62,9 +61,8 @@ void main() {
                 response: 'Data not found',
               );
             },
-            builder: (context, state) => Text('Data is ${rocketModel.data}'),
+            builder: (context) => Text('Data is ${rocketModel.data}'),
             onError: (error, reload) => Text('Error: ${error.exception}'),
-            loader: const CircularProgressIndicator(),
           ),
         ),
       );
@@ -86,12 +84,11 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             call: () async {},
-            builder: (context, state) => Text('Data is ${rocketModel.data}'),
+            builder: (context) => Text('Data is ${rocketModel.data}'),
             onError: (error, reload) => TextButton(
               onPressed: reload,
               child: Text('Error: ${error.exception}. Tap to retry.'),
             ),
-            loader: const CircularProgressIndicator(),
           ),
         ),
       );
@@ -100,7 +97,6 @@ void main() {
       expect(rocketModel.state == RocketState.loading, isTrue);
       expect(rocketModel.exception.statusCode, equals(404));
     });
-    ;
 
     testWidgets('RocketView calls call function when CallType is callAsFuture',
         (WidgetTester tester) async {
@@ -111,7 +107,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            builder: (context, state) => Text('Data is ${rocketModel.data}'),
+            builder: (context) => Text('Data is ${rocketModel.data}'),
             call: () {
               callFunctionCalled = true;
             },
@@ -136,7 +132,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            builder: (context, state) => Text('Data is ${rocketModel.data}'),
+            builder: (context) => Text('Data is ${rocketModel.data}'),
             call: () {
               callFunctionCalled = true;
             },
@@ -160,7 +156,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            builder: (context, state) => Text('Data is ${rocketModel.data}'),
+            builder: (context) => Text('Data is ${rocketModel.data}'),
             call: () {
               callFunctionCalled = true;
             },

@@ -7,8 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dummy_data.dart';
 
 void main() {
-  group('Test Post model (multi, fromJson, toJson, updateFields, modelState)',
-      () {
+  group('Test Post model (multi, fromJson, toJson, updateFields)', () {
     final post = Post();
     const String newTitle = "New title";
     test("Test Post model (multi, fromJson, toJson)", () {
@@ -52,8 +51,7 @@ void main() {
     });
   });
 
-  group('Test Todo model (multi, fromJson, toJson, updateFields, modelState)',
-      () {
+  group('Test Todo model (multi, fromJson, toJson, updateFields)', () {
     final todos = Todos();
     test("Test Todo model (multi, fromJson, toJson)", () {
       // Test setMulti, fromJson & toJson
