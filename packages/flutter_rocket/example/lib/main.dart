@@ -1,14 +1,19 @@
-import 'package:example/views/counter_view.dart';
-import 'package:example/views/mini_view.dart';
-import 'package:example/views/photo_view.dart';
-import 'package:example/views/post_view.dart';
-import 'package:example/views/todos_view.dart';
-import 'package:example/views/user_view.dart';
+import 'package:example/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rocket/flutter_rocket.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
+  configureRequest();
   runApp(const App());
+}
+
+void configureRequest() {
+  const String baseUrl = 'https://jsonplaceholder.typicode.com';
+  // create request object
+  RocketClient request = RocketClient(url: baseUrl);
+  // save it, for use from any screen
+  Rocket.add(request);
 }
 
 class App extends StatelessWidget {
@@ -16,33 +21,16 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/miniView': (BuildContext context) => MiniView(
-                title: "MiniView Example",
-              ),
-          '/counter': (BuildContext context) => CounterExample(
-                title: "Counter",
-              ),
-          '/user': (BuildContext context) => UserExample(
-                title: "10 Users",
-              ),
-          '/post': (BuildContext context) => PostExample(
-                title: "100 Posts",
-              ),
-          '/photo': (BuildContext context) => PhotoExample(
-                title: "5000 Photos",
-              ),
-          '/todo': (BuildContext context) => TodosExample(
-                title: "200 Todos",
-              ),
-        },
-        title: '🚀 Rocket Package 🚀',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: MyApp());
+    return MaterialApp.router(
+      routeInformationParser: router.routeInformationParser,
+      routeInformationProvider: router.routeInformationProvider,
+      routerDelegate: router.routerDelegate,
+      title: '🚀 Rocket Package 🚀',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+    );
   }
 }
 
@@ -50,13 +38,7 @@ class App extends StatelessWidget {
 class MyApp extends StatelessWidget {
   final ValueNotifier<double> dx = ValueNotifier<double>(0.1);
   int index = 0;
-  MyApp({Key? key}) : super(key: key) {
-    const String baseUrl = 'https://jsonplaceholder.typicode.com';
-    // create request object
-    RocketClient request = RocketClient(url: baseUrl);
-    // save it, for use from any screen
-    Rocket.add(request);
-  }
+  MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +62,10 @@ class MyApp extends StatelessWidget {
               ),
               Example("Mini View", "miniView"),
               Example("Counter View", "counter"),
-              Example("10 Users", "user"),
-              Example("100 Posts", "post"),
-              Example("5000 Photos", "photo"),
-              Example("200 Todos", "todo"),
+              Example("10 Users", "users"),
+              Example("100 Posts", "posts"),
+              Example("5000 Photos", "photos"),
+              Example("200 Todos", "todos"),
             ],
           ),
         ),
@@ -109,7 +91,7 @@ class Example extends StatelessWidget {
                 fontSize: 24.0,
                 color: Colors.brown),
           ),
-          onPressed: () => Navigator.pushNamed(context, "/$to")),
+          onPressed: () => context.go("/$to")),
     );
   }
 }
