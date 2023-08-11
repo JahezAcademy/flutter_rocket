@@ -11,7 +11,7 @@ extension EString on String {
         return e;
       }).join("");
     }
-    return this;
+    return toLowerCase();
   }
 }
 
