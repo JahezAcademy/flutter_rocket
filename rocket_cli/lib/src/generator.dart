@@ -73,7 +73,7 @@ class Generator {
           line = "${key.firstUpper}? $key;";
           fromJson = "${key.camel}!.setMulti(json['$key']);";
           toJson =
-              "data[$fieldKeyMap] = ${key.camel}!.multi.map((e)=> e.toJson()).toList();";
+              "data[$fieldKeyMap] = ${key.camel}!.all.map((e)=> e.toJson()).toList();";
           fieldsKey = fieldLine;
           updateFieldsParams = "${key.firstUpper}? ${key.camel}Field,";
           updateFieldsBody = updateFieldBodyLine;
