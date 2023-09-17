@@ -1,3 +1,1 @@
-## 0.0.1
-
-* TODO: Describe initial release.
+[CHANGELOG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/packages/flutter_rocket/CHANGELOG.md)
