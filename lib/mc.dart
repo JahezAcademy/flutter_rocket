@@ -20,6 +20,7 @@ class McRequest extends McModel {
   final Map<String, String> headers;
   final bool setCookies;
   final bool debugging;
+  void Function(dynamic, int)? onError;
 
   /// انشاء الطلب.
   ///
@@ -53,7 +54,8 @@ class McRequest extends McModel {
       {required this.url,
       this.headers = const {},
       this.setCookies = false,
-      this.debugging = true});
+      this.debugging = true,
+      this.onError});
 
   @protected
   checkerJson(http.Response response,
@@ -66,7 +68,9 @@ class McRequest extends McModel {
       return data;
     } else {
       getDebugging(response, endpoint);
-      return json.decode(utf8.decode(response.bodyBytes));
+      var result = json.decode(utf8.decode(response.bodyBytes));
+      onError?.call(result, response.statusCode);
+      return result;
     }
   }
 
