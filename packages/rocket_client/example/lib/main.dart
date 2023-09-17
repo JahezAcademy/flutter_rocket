@@ -33,6 +33,7 @@ class RocketClientExample extends StatefulWidget {
 class RocketClientExampleState extends State<RocketClientExample> {
   final client = RocketClient(url: 'https://jsonplaceholder.typicode.com');
   bool isLoading = false;
+  bool isFailed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,37 +45,68 @@ class RocketClientExampleState extends State<RocketClientExample> {
         child: isLoading
             // ignore: prefer_const_constructors
             ? CircularProgressIndicator()
-            : ElevatedButton(
-                onPressed: () async {
-                  isLoading = true;
-                  setState(() {});
-                  // Make a GET request to the /posts endpoint
-                  final response = await client.request('posts');
-                  isLoading = false;
-                  setState(() {});
-                  // Display the response in a dialog
-                  // ignore: use_build_context_synchronously
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Response'),
-                        content: Text(json.encode(response)),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _makeRequest(context, "posts");
                     },
-                  );
-                },
-                child: const Text('Make Request'),
+                    child: const Text('Make Request'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // pass wrong endpoint for produce error
+                      _makeRequest(context, "postss");
+                    },
+                    child: const Text('Make Failed Request'),
+                  ),
+                ],
               ),
       ),
     );
+  }
+
+  Future<void> _makeRequest(BuildContext context, String endpoint) async {
+    isLoading = true;
+    isFailed = false;
+    setState(() {});
+    // Make a GET request to the /posts endpoint
+    final response = await client.request(
+      endpoint,
+      onError: (response, statusCode) {
+        isFailed = true;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Column(
+          children: [
+            const Text("Failed"),
+            Text("response : $response & status code: $statusCode"),
+          ],
+        )));
+      },
+    );
+    isLoading = false;
+    setState(() {});
+    // Display the response in a dialog
+    if (!isFailed) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Response'),
+            content: Text(json.encode(response)),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
