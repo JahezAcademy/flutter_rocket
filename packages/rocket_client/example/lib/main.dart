@@ -32,7 +32,7 @@ class RocketClientExample extends StatefulWidget {
 }
 
 class RocketClientExampleState extends State<RocketClientExample> {
-  final client = RocketClient(url: 'https://jsonplaceholder.typicode.com');
+  final client = RocketClient(url: 'https://dummyjson.com');
   bool isLoading = false;
 
   @override
@@ -50,7 +50,8 @@ class RocketClientExampleState extends State<RocketClientExample> {
                   isLoading = true;
                   setState(() {});
                   // Make a GET request to the /posts endpoint
-                  final RocketModel response = await client.request('posts');
+                  final RocketModel response = await client
+                      .request('products', targetData: ['products']);
                   isLoading = false;
                   setState(() {});
                   // Display the response in a dialog
