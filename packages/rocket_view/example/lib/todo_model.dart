@@ -4,7 +4,7 @@ const String todoUserIdField = "userId";
 const String todoIdField = "id";
 const String todoTitleField = "title";
 const String todoCompletedField = "completed";
-
+// TODO : Fix issue on this example
 class Todo extends RocketModel<Todo> {
   int? userId;
   int? id;
