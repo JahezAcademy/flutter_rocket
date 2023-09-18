@@ -35,15 +35,15 @@ void main() {
     });
 
     test('request - should get data from endpoint', () async {
-      var data =  await client.request('posts/1');
-      expect(data, isA<Map>());
-      expect(data['id'], 1);
+      RocketModel data =  await client.request('posts/1');
+      expect(data.apiResponse, isA<Map>());
+      expect(data.apiResponse['id'], 1);
     });
 
     test('request - should get list data from endpoint', () async {
-      var data = await client.request('posts');
-      expect(data, isA<List>());
-      expect(data.isNotEmpty, isTrue);
+      RocketModel data = await client.request('posts');
+      expect(data.apiResponse, isA<List>());
+      expect(data.apiResponse.isNotEmpty, isTrue);
     });
   });
 }
