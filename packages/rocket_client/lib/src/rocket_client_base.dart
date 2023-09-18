@@ -22,14 +22,14 @@ class RocketClient {
   Future<RocketModel> _processData<T>(StreamedResponse response,
       {RocketModel<T>? model,
       RocketDataCallback inspect,
-      List<String>? targetData,
+      List<String>? target,
       String? endpoint}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
     RocketResponse? rocketResponse;
     switch (response.statusCode) {
       case < 300 && >= 200:
         var result = json.decode(respDecoded);
-        result = _handleTarget(inspect, result, targetData);
+        result = _handleTarget(inspect, result, target);
         if (model != null) {
           if (result is List?) {
             model.setMulti(result ?? []);
@@ -117,7 +117,7 @@ class RocketClient {
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       RocketDataCallback inspect,
-      List<String>? targetData,
+      List<String>? target,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     if (model != null) {
@@ -138,7 +138,7 @@ class RocketClient {
           model: model,
           inspect: inspect,
           endpoint: endpoint,
-          targetData: targetData);
+          target: target);
     } catch (error, stackTrace) {
       log("$error $stackTrace");
       return _catchError(error, stackTrace, response, model: model);
