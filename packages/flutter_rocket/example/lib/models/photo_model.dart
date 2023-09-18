@@ -22,7 +22,8 @@ class Photo extends RocketModel<Photo> {
   });
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     albumId = json[photoAlbumIdField];
     id = json[photoIdField];
     title = json[photoTitleField];

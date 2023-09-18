@@ -19,7 +19,8 @@ class Todos extends RocketModel<Todos> {
   });
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     userId = json[todosUserIdField];
     id = json[todosIdField];
     title = json[todosTitleField];

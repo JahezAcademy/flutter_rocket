@@ -16,7 +16,8 @@ class Company extends RocketModel<Company> {
   });
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     name = json[companyNameField];
     catchPhrase = json[companyCatchPhraseField];
     bs = json[companyBsField];
