@@ -17,7 +17,8 @@ class ExampleModel extends RocketModel<ExampleModel> {
   }
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     if (isSub) {
       id = json['id'];
       name = json['name'];

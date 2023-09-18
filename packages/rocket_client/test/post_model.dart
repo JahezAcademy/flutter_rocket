@@ -8,7 +8,7 @@ class Post extends RocketModel<Post> {
 
   @override
   void fromJson(json, {bool isSub = false}) {
-    id = json['id'] ?? 0;
+    id = json!['id'] ?? 0;
     title = json['title'] ?? "";
     body = json['body'] ?? "";
     super.fromJson(json, isSub: isSub);

@@ -10,7 +10,7 @@ class -name- extends RocketModel<-name-> {
   })-initFields-
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
     -fromJsonFields-
     super.fromJson(json, isSub: isSub);
   }
