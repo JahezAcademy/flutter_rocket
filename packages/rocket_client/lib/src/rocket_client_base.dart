@@ -19,57 +19,47 @@ class RocketClient {
     this.setCookies = false,
   });
 
-  Future<RocketModel> _processModel<T>(StreamedResponse response,
-      {required RocketModel<T> model,
+  Future<RocketModel> _processData<T>(StreamedResponse response,
+      {RocketModel<T>? model,
       RocketDataCallback inspect,
       List<String>? targetData,
       String? endpoint}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
+    RocketResponse? rocketResponse;
     switch (response.statusCode) {
       case < 300 && >= 200:
         var result = json.decode(respDecoded);
         result = _handleTarget(inspect, result, targetData);
-        if (result is List?) {
-          model.setMulti(result ?? []);
+        if (model != null) {
+          if (result is List?) {
+            model.setMulti(result ?? []);
+          } else {
+            model.fromJson(result);
+          }
+          return model;
         } else {
-          model.fromJson(result);
+          try {
+            result = json.decode(respDecoded);
+          } catch (e) {
+            result = respDecoded;
+          }
+          rocketResponse = RocketResponse(result, response.statusCode);
+          return rocketResponse;
         }
-        return model;
       default:
-        model.setException(RocketException(
-          response: respDecoded,
-          statusCode: response.statusCode,
-        ));
-        _onError(RocketException(
-          response: respDecoded,
-          statusCode: response.statusCode,
-        ));
-    }
-    return model;
-  }
-
-  _processData<T>(StreamedResponse response,
-      {RocketDataCallback inspect,
-      List<String>? targetData,
-      String? endpoint}) async {
-    String respDecoded = utf8.decode(await response.stream.toBytes());
-    switch (response.statusCode) {
-      case < 300 && >= 200:
-        var result = json.decode(respDecoded);
-        result = _handleTarget(inspect, result, targetData);
-        return result;
-      default:
-        _onError(RocketException(
-          response: respDecoded,
-          statusCode: response.statusCode,
-        ));
-        late dynamic result = respDecoded;
-        try {
-          result = json.decode(respDecoded);
-        } catch (e) {
-          result = respDecoded;
+        if (model != null) {
+          model.setException(RocketException(
+            response: respDecoded,
+            statusCode: response.statusCode,
+          ));
+          return model;
+        } else {
+          rocketResponse!.setException(RocketException(
+            response: respDecoded,
+            statusCode: response.statusCode,
+          ));
+          return rocketResponse;
         }
-        return result;
     }
   }
 
@@ -86,8 +76,6 @@ class RocketClient {
     }
     return result;
   }
-
-  static _onError(Object e) => log(e.toString());
 
   /// Sends an HTTP request to the specified `endpoint` using the specified HTTP `method`.
   ///
@@ -151,16 +139,11 @@ class RocketClient {
       if (setCookies) {
         _updateCookie(response);
       }
-      if (model != null) {
-        return _processModel<T>(response,
-            model: model,
-            inspect: inspect,
-            endpoint: endpoint,
-            targetData: targetData);
-      } else {
-        return _processData<T>(response,
-            inspect: inspect, endpoint: endpoint, targetData: targetData);
-      }
+      return _processData<T>(response,
+          model: model,
+          inspect: inspect,
+          endpoint: endpoint,
+          targetData: targetData);
     } catch (error, stackTrace) {
       log("$error $stackTrace");
       return _catchError(error, stackTrace, response, model: model);
@@ -184,7 +167,6 @@ class RocketClient {
       statusCode = response.statusCode;
     }
     if (model == null) {
-      _onError(e);
       return Future.value(e);
     } else {
       model.setException(RocketException(
@@ -263,4 +245,16 @@ class RocketClient {
     headers['cookie'] =
         (index == -1) ? rawCookie : rawCookie.substring(0, index);
   }
+}
+
+class RocketResponse extends RocketModel {
+  RocketResponse(this.response, this.kStatusCode);
+  final dynamic response;
+  final int kStatusCode;
+
+  @override
+  get apiResponse => response;
+
+  @override
+  int get statusCode => kStatusCode;
 }
