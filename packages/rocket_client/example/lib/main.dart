@@ -51,7 +51,7 @@ class RocketClientExampleState extends State<RocketClientExample> {
                   setState(() {});
                   // Make a GET request to the /posts endpoint
                   final RocketModel response = await client
-                      .request('products', targetData: ['products']);
+                      .request('products', target: ['products']);
                   isLoading = false;
                   setState(() {});
                   // Display the response in a dialog
