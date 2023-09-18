@@ -75,4 +75,4 @@ build/
 **/ephemeral
 **/pubspec.lock
 pubspec.lock
-.vscode
+.vscode.vscode/branch-timer.json

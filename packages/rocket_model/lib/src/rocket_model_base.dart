@@ -91,7 +91,7 @@ abstract class RocketModel<T> extends RocketListenable {
   }
 
   /// Deserializes the model's data from the given JSON map.
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
     if (!isSub) {
       existData = true;
       state = RocketState.done;

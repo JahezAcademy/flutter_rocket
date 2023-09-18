@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:dart_style/dart_style.dart';
-import 'package:rocket_cli/src/utils/extensions.dart';
+import 'package:rocket_cli/src/model_generator/models/utils/extensions.dart';
 
 import 'controller/controller.dart';
-import 'models/model.dart';
+import 'model.dart';
 import 'utils/template.dart';
 
 class Generator {

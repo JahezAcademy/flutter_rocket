@@ -1,4 +1,4 @@
-import 'package:rocket_cli/src/models/result.dart';
+import 'package:rocket_cli/src/model_generator/models/result.dart';
 
 class ModelsController {
   final List<ModelResult> models = [];

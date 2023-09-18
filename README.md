@@ -18,7 +18,7 @@
 
 | Package                                                                                    | Pub                                                                                                                  |
 | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| [flutter_rocket](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/flutter_rocket)                         | [![pub package](https://img.shields.io/pub/v/flutter_rocket.svg)](https://pub.dev/packages/rocket)                               |
+| [flutter_rocket](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/flutter_rocket)                         | [![pub package](https://img.shields.io/pub/v/flutter_rocket.svg)](https://pub.dev/packages/flutter_rocket)                               |
 | [rocket_model](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_model)               | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model)                     |
 | [rocket_client](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_client) | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client)       |
 | [rocket_listenable](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_listenable)         | [![pub package](https://img.shields.io/pub/v/rocket_listenable.svg)](https://pub.dev/packages/rocket_listenable)               |
@@ -333,45 +333,7 @@ class Details extends StatelessWidget {
 
 & last item its Rocket for save your model or any value and get it anywhere by key
 
-Sure, here are the comments for each item, with an additional comment at the top:
-
-```dart
-# Add a value to the Rocket object with read-only access
-Rocket.add(value, readOnly: true);
-```
-This code adds a value to the `Rocket` object and sets it to be read-only.
-
-```dart
-# Add a key-value pair to the Rocket object with a specified key and generic type
-Rocket.add<Type>(value, key: "key");
-```
-This code adds a key-value pair to the `Rocket` object with a specified key and generic type.
-
-```dart
-# Get the value associated with the specified key and generic type
-Rocket.get<Type>("key");
-```
-This code retrieves the value associated with the specified key and generic type from the `Rocket` object.
-
-```dart
-# Get the first value in the Rocket object with a specified generic type
-Rocket.get<Type>();
-```
-This code retrieves the first value in the `Rocket` object with a specified generic type.
-
-```dart
-# Remove the key-value pair associated with the specified key from the Rocket object
-Rocket.remove("key");
-```
-This code removes the key-value pair associated with the specified key from the `Rocket` object.
-
-```dart
-# Remove all key-value pairs from the Rocket object for which the given function returns true
-Rocket.removeWhere((key,value)=>key.contains("ke"));
-```
-This code removes all key-value pairs from the `Rocket` object for which the given function returns `true`. The function checks if the key contains the substring "ke".
-
-[more details about Rocket](https://pub.dev/documentation/rocket_singleton/latest/rocket_singleton/Rocket-class.html)
+[Rocket object details](https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_singleton)
 ## [More examples](https://github.com/JahezAcademy/flutter_rocket/tree/main/example)
 
-If you have any questions or issues, feel free to check out the [Rocket Client GitHub repository](https://github.com/JahezAcademy/flutter_rocket) or ask for help on the [flutter_rocket package Discussions](https://github.com/JahezAcademy/flutter_rocket/discussions).
+If you have any questions or issues, feel free to check out the [Flutter Rocket GitHub repository](https://github.com/JahezAcademy/flutter_rocket) or ask for help on the [flutter_rocket package Discussions](https://github.com/JahezAcademy/flutter_rocket/discussions).

@@ -1,4 +1,4 @@
-import '../utils/template.dart';
+import 'utils/template.dart';
 
 class ModelItems {
   String fieldsLines = "";

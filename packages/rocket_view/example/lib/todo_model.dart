@@ -4,7 +4,7 @@ const String todoUserIdField = "userId";
 const String todoIdField = "id";
 const String todoTitleField = "title";
 const String todoCompletedField = "completed";
-
+// TODO : Fix issue on this example
 class Todo extends RocketModel<Todo> {
   int? userId;
   int? id;
@@ -19,7 +19,8 @@ class Todo extends RocketModel<Todo> {
   });
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     userId = json[todoUserIdField];
     id = json[todoIdField];
     title = json[todoTitleField];
