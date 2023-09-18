@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:rocket_client/rocket_client.dart';
+import 'package:rocket_model/rocket_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,7 +50,7 @@ class RocketClientExampleState extends State<RocketClientExample> {
                   isLoading = true;
                   setState(() {});
                   // Make a GET request to the /posts endpoint
-                  final response = await client.request('posts');
+                  final RocketModel response = await client.request('posts');
                   isLoading = false;
                   setState(() {});
                   // Display the response in a dialog
@@ -59,7 +60,14 @@ class RocketClientExampleState extends State<RocketClientExample> {
                     builder: (context) {
                       return AlertDialog(
                         title: const Text('Response'),
-                        content: Text(json.encode(response)),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Text("Status Code :${response.statusCode}"),
+                              Text(json.encode(response.apiResponse)),
+                            ],
+                          ),
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () {
