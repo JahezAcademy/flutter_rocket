@@ -38,11 +38,6 @@ class RocketClient {
           }
           return model;
         } else {
-          try {
-            result = json.decode(respDecoded);
-          } catch (e) {
-            result = respDecoded;
-          }
           rocketResponse = RocketResponse(result, response.statusCode);
           return rocketResponse;
         }
@@ -118,7 +113,7 @@ class RocketClient {
   /// }
   /// ```
 
-  Future request<T>(String endpoint,
+  Future<RocketModel> request<T>(String endpoint,
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       RocketDataCallback inspect,
@@ -151,10 +146,11 @@ class RocketClient {
   }
 
   _getTarget(Map data, List target) {
+    dynamic result = data;
     for (var key in target) {
-      data = data[key];
+      result = result[key];
     }
-    return data;
+    return result;
   }
 
   _catchError(Object e, StackTrace stackTrace, StreamedResponse? response,
