@@ -7,9 +7,11 @@ import 'post_model.dart';
 void main() {
   group('RocketClient', () {
     late RocketClient client;
+    late RocketClient anotherClient;
 
     setUp(() {
       client = RocketClient(url: 'https://jsonplaceholder.typicode.com');
+      anotherClient = RocketClient(url: "https://dummyjson.com");
     });
 
     test('request - should get data using model from endpoint', () async {
@@ -35,7 +37,7 @@ void main() {
     });
 
     test('request - should get data from endpoint', () async {
-      RocketModel data =  await client.request('posts/1');
+      RocketModel data = await client.request('posts/1');
       expect(data.apiResponse, isA<Map>());
       expect(data.apiResponse['id'], 1);
     });
@@ -45,5 +47,23 @@ void main() {
       expect(data.apiResponse, isA<List>());
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
+
+    test('request - should get list data from endpoint using inspect',
+        () async {
+      RocketModel data = await anotherClient.request('products',
+          inspect: (data) => data['products']);
+      expect(data.apiResponse, isA<List>());
+      expect(data.apiResponse.isNotEmpty, isTrue);
+    });
+
+    test('request - should get list data from endpoint using targetData',
+        () async {
+      RocketModel data =
+          await anotherClient.request('products', targetData: ['products']);
+      expect(data.apiResponse, isA<List>());
+      expect(data.apiResponse.isNotEmpty, isTrue);
+    });
   });
+
+  //TODO : Add test for request using model & inspect/targetData
 }
