@@ -7,6 +7,7 @@ import 'package:rocket_model/rocket_model.dart';
 import 'extensions.dart';
 
 typedef RocketDataCallback = Function(dynamic data)?;
+typedef RocketOnError = void Function(dynamic response, int statusCode)?;
 
 class RocketClient {
   final String url;
@@ -24,7 +25,8 @@ class RocketClient {
       {required RocketModel<T> model,
       RocketDataCallback inspect,
       List<String>? targetData,
-      String? endpoint}) async {
+      String? endpoint,
+      RocketOnError onError}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
     onResponse?.call(json.decode(respDecoded), response.statusCode);
     switch (response.statusCode) {
@@ -42,10 +44,7 @@ class RocketClient {
           response: respDecoded,
           statusCode: response.statusCode,
         ));
-        _onError(RocketException(
-          response: respDecoded,
-          statusCode: response.statusCode,
-        ));
+        onError?.call(respDecoded, response.statusCode);
     }
     return model;
   }
@@ -53,7 +52,8 @@ class RocketClient {
   _processData<T>(StreamedResponse response,
       {RocketDataCallback inspect,
       List<String>? targetData,
-      String? endpoint}) async {
+      String? endpoint,
+      RocketOnError? onError}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
     onResponse?.call(json.decode(respDecoded), response.statusCode);
     switch (response.statusCode) {
@@ -62,10 +62,7 @@ class RocketClient {
         result = _handleTarget(inspect, result, targetData);
         return result;
       default:
-        _onError(RocketException(
-          response: respDecoded,
-          statusCode: response.statusCode,
-        ));
+        onError?.call(respDecoded, response.statusCode);
         late dynamic result = respDecoded;
         try {
           result = json.decode(respDecoded);
@@ -89,8 +86,6 @@ class RocketClient {
     }
     return result;
   }
-
-  static _onError(Object e) => log(e.toString());
 
   /// Sends an HTTP request to the specified `endpoint` using the specified HTTP `method`.
   ///
@@ -138,6 +133,7 @@ class RocketClient {
       HttpMethods method = HttpMethods.get,
       RocketDataCallback inspect,
       List<String>? targetData,
+      RocketOnError onError,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     if (model != null) {
@@ -159,14 +155,20 @@ class RocketClient {
             model: model,
             inspect: inspect,
             endpoint: endpoint,
+            onError: onError,
             targetData: targetData);
       } else {
-        return _processData<T>(response,
-            inspect: inspect, endpoint: endpoint, targetData: targetData);
+        return _processData<T>(
+          response,
+          inspect: inspect,
+          endpoint: endpoint,
+          onError: onError,
+          targetData: targetData,
+        );
       }
     } catch (error, stackTrace) {
       log("$error $stackTrace");
-      return _catchError(error, stackTrace, response, model: model);
+      return _catchError(error, stackTrace, model: model);
     }
   }
 
@@ -177,24 +179,12 @@ class RocketClient {
     return data;
   }
 
-  _catchError(Object e, StackTrace stackTrace, StreamedResponse? response,
-      {RocketModel? model}) async {
-    String? body;
-    int? statusCode;
-    if (response != null) {
-      var decodeResponse = json.decode(await response.stream.bytesToString());
-      body = decodeResponse;
-      statusCode = response.statusCode;
-    }
+  _catchError(Object e, StackTrace stackTrace, {RocketModel? model}) async {
     if (model == null) {
-      _onError(e);
       return Future.value(e);
     } else {
-      model.setException(RocketException(
-          response: body!,
-          statusCode: statusCode!,
-          exception: e.toString(),
-          stackTrace: stackTrace));
+      model.setException(
+          RocketException(exception: e.toString(), stackTrace: stackTrace));
       return Future.value(model);
     }
   }
