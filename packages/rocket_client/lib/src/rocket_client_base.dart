@@ -12,12 +12,13 @@ class RocketClient {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
+  void Function(dynamic, int)? onResponse;
 
-  RocketClient({
-    required this.url,
-    this.headers = const {},
-    this.setCookies = false,
-  });
+  RocketClient(
+      {required this.url,
+      this.headers = const {},
+      this.setCookies = false,
+      this.onResponse});
 
   Future<RocketModel> _processData<T>(StreamedResponse response,
       {RocketModel<T>? model,
@@ -25,6 +26,7 @@ class RocketClient {
       List<String>? target,
       String? endpoint}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
+    onResponse?.call(respDecoded, response.statusCode);
     RocketResponse? rocketResponse;
     switch (response.statusCode) {
       case < 300 && >= 200:
@@ -135,10 +137,7 @@ class RocketClient {
         _updateCookie(response);
       }
       return _processData<T>(response,
-          model: model,
-          inspect: inspect,
-          endpoint: endpoint,
-          target: target);
+          model: model, inspect: inspect, endpoint: endpoint, target: target);
     } catch (error, stackTrace) {
       log("$error $stackTrace");
       return _catchError(error, stackTrace, response, model: model);
