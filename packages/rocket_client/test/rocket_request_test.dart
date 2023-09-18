@@ -59,7 +59,7 @@ void main() {
     test('request - should get list data from endpoint using targetData',
         () async {
       RocketModel data =
-          await anotherClient.request('products', targetData: ['products']);
+          await anotherClient.request('products', target: ['products']);
       expect(data.apiResponse, isA<List>());
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
