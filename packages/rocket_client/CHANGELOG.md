@@ -1,6 +1,8 @@
 ## 0.0.1
 
-* [Old changelogs](https://pub.dev/packages/mvc_rocket/changelog)
+[CHANGELOG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/packages/flutter_rocket/CHANGELOG.md)
 
-# 0.0.2
+## 0.0.2
+
+* Added `onResponse` parameter to `RocketRequest` for handle common cases
 * Added onError method parameter to request method

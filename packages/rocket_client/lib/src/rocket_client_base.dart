@@ -13,12 +13,13 @@ class RocketClient {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
+  void Function(dynamic, int)? onResponse;
 
-  RocketClient({
-    required this.url,
-    this.headers = const {},
-    this.setCookies = false,
-  });
+  RocketClient(
+      {required this.url,
+      this.headers = const {},
+      this.setCookies = false,
+      this.onResponse});
 
   Future<RocketModel> _processModel<T>(StreamedResponse response,
       {required RocketModel<T> model,
@@ -27,6 +28,7 @@ class RocketClient {
       String? endpoint,
       RocketOnError onError}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
+    onResponse?.call(json.decode(respDecoded), response.statusCode);
     switch (response.statusCode) {
       case < 300 && >= 200:
         var result = json.decode(respDecoded);
@@ -53,6 +55,7 @@ class RocketClient {
       String? endpoint,
       RocketOnError? onError}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
+    onResponse?.call(json.decode(respDecoded), response.statusCode);
     switch (response.statusCode) {
       case < 300 && >= 200:
         var result = json.decode(respDecoded);
