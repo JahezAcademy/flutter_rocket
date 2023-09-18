@@ -1,3 +1,8 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+[CHANGELOG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/packages/flutter_rocket/CHANGELOG.md)
+
+## 0.0.2
+    - Added `onResponse` parameter to `RocketRequest` for handle common cases
+
+
