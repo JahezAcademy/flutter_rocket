@@ -37,6 +37,9 @@ abstract class RocketModel<T> extends RocketListenable {
   /// Returns the current state of the model.
   RocketState get state => _state;
 
+  dynamic apiResponse;
+  int? statusCode;
+
   /// Sets the current state of the model.
   set state(currentState) {
     _state = currentState == RocketState.loading

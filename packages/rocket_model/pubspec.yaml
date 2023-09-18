@@ -1,6 +1,6 @@
 name: rocket_model
 description: Package for ready model to rebuild RocketView widget
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_model
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_model
 homepage: https://github.com/JahezAcademy/flutter_rocket

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:rocket_client/rocket_client.dart';
+import 'package:rocket_model/rocket_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +32,7 @@ class RocketClientExample extends StatefulWidget {
 }
 
 class RocketClientExampleState extends State<RocketClientExample> {
-  final client = RocketClient(url: 'https://jsonplaceholder.typicode.com');
+  final client = RocketClient(url: 'https://dummyjson.com');
   bool isLoading = false;
   bool isFailed = false;
 
@@ -50,14 +51,14 @@ class RocketClientExampleState extends State<RocketClientExample> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      _makeRequest(context, "posts");
+                      _makeRequest(context, "products");
                     },
                     child: const Text('Make Request'),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       // pass wrong endpoint for produce error
-                      _makeRequest(context, "postss");
+                      _makeRequest(context, "productsss");
                     },
                     child: const Text('Make Failed Request'),
                   ),
@@ -72,8 +73,9 @@ class RocketClientExampleState extends State<RocketClientExample> {
     isFailed = false;
     setState(() {});
     // Make a GET request to the /posts endpoint
-    final response = await client.request(
+    final RocketModel response = await client.request(
       endpoint,
+      target: ['products'],
       onError: (response, statusCode) {
         isFailed = true;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -94,8 +96,8 @@ class RocketClientExampleState extends State<RocketClientExample> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Response'),
-            content: Text(json.encode(response)),
+            title: Text('Response : ${response.statusCode}'),
+            content: Text(json.encode(response.apiResponse)),
             actions: [
               TextButton(
                 onPressed: () {

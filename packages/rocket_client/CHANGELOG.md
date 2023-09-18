@@ -1,8 +1,11 @@
 ## 0.0.1
 
-[CHANGELOG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/packages/flutter_rocket/CHANGELOG.md)
+* [Old changelogs](https://pub.dev/packages/flutter_rocket/changelog)
 
-## 0.0.2
+# 0.0.2
 
+* Renamed `targetData` param to `target` on request `method`
+* Fixed issues on `inspect` & `targetData` param of `request`
+* Return `RocketModel` from `request` method instead of `dynamic`
 * Added `onResponse` parameter to `RocketRequest` for handle common cases
-* Added onError method parameter to request method
+* Added `onError` method parameter to `request` method
