@@ -1,5 +1,5 @@
 name: rocket_client
-description: Simple http package for RocketModel or get json data.
+description: for making HTTP requests and handling responses.
 version: 0.0.3
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_client
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_client
