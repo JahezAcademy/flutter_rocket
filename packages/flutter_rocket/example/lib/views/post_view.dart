@@ -5,6 +5,7 @@ import 'package:example/models/post_model.dart';
 import 'package:example/requests/post_request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rocket/flutter_rocket.dart';
+import 'package:go_router/go_router.dart';
 
 class PostExample extends StatelessWidget {
   // Save your model to use on another screen
@@ -93,12 +94,7 @@ class PostExample extends StatelessWidget {
                                     titleField: "This Title changed");
                               },
                             ),
-                            onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                    return Details(index);
-                                  }),
-                                ));
+                            onTap: () => context.go('/posts/$index'));
                       },
                     ),
                   );

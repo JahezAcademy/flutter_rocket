@@ -2,6 +2,7 @@ import 'package:example/models/photo_model.dart';
 import 'package:example/requests/photo_request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rocket/flutter_rocket.dart';
+import 'package:go_router/go_router.dart';
 
 class PhotoExample extends StatelessWidget {
   PhotoExample({Key? key, required this.title}) : super(key: key);
@@ -34,10 +35,9 @@ class PhotoExample extends StatelessWidget {
                             title: Text(currentphoto.title!),
                             leading: Text(currentphoto.id!.toString()),
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                return ApiImage(currentphoto.url!);
-                              }));
+                              context.go(
+                                  '/photos/${photo.all!.indexOf(currentphoto) + 1}',
+                                  extra: currentphoto.url!);
                             },
                           ),
                         ],

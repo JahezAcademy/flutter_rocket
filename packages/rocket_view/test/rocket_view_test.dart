@@ -100,7 +100,6 @@ void main() {
       expect(rocketModel.state == RocketState.loading, isTrue);
       expect(rocketModel.exception.statusCode, equals(404));
     });
-    ;
 
     testWidgets('RocketView calls call function when CallType is callAsFuture',
         (WidgetTester tester) async {
