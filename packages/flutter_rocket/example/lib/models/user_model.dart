@@ -39,7 +39,8 @@ class User extends RocketModel<User> {
   }
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     id = json[userIdField];
     name = json[userNameField];
     username = json[userUsernameField];

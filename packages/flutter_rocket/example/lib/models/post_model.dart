@@ -21,7 +21,8 @@ class Post extends RocketModel<Post> {
   });
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     userId = json[postUserIdField];
     id = json[postIdField];
     title = json[postTitleField];

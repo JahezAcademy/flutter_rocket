@@ -12,7 +12,8 @@ class Geo extends RocketModel<Geo> {
     this.lng,
   });
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     lat = json[geoLatField];
     lng = json[geoLngField];
     super.fromJson(json, isSub: isSub);

@@ -25,7 +25,8 @@ class Address extends RocketModel<Address> {
   }
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     street = json[addressStreetField];
     suite = json[addressSuiteField];
     city = json[addressCityField];

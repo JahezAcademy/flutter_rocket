@@ -10,7 +10,8 @@ class RocketClientTest extends RocketClient {
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       RocketDataCallback? inspect,
-      List<String>? targetData,
+      List<String>? target,
+      RocketOnError? onError,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params}) async {
     model!.state = RocketState.loading;
