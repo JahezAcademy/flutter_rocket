@@ -7,7 +7,8 @@ class TestModel extends RocketModel<TestModel> {
   TestModel({this.id, this.name});
 
   @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (json == null) return;
     super.fromJson(json, isSub: isSub);
     id = json['id'] as int?;
     name = json['name'] as String?;
