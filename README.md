@@ -12,7 +12,7 @@
 
 ## Graphic tutorial 
 ![JPG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/flutter_rocket_schema.jpg)
-[explain graphic](https://miro.com/app/board/uXjVPndHj2s=/?share_link_id=249635815532)
+[Open with miro](https://miro.com/app/board/uXjVPndHj2s=/?share_link_id=307293362528)
 
 ---
 
