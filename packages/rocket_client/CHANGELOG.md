@@ -9,3 +9,7 @@
 * Return `RocketModel` from `request` method instead of `dynamic`
 * Added `onResponse` parameter to `RocketRequest` for handle common cases
 * Added `onError` method parameter to `request` method
+
+# 0.0.3
+
+* Fixed bug on `request` method
