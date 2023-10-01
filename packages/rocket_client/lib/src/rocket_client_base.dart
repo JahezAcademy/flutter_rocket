@@ -28,13 +28,17 @@ class RocketClient {
       String? endpoint,
       RocketOnError onError}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
-    onResponse?.call(respDecoded, response.statusCode);
+    late dynamic result;
+    try {
+      result = json.decode(respDecoded);
+    } catch (e) {
+      result = respDecoded;
+    }
+    onResponse?.call(result, response.statusCode);
     // TODO : need more enhancements
-    RocketResponse rocketResponse =
-        RocketResponse(respDecoded, response.statusCode);
+    RocketResponse rocketResponse = RocketResponse(result, response.statusCode);
     switch (response.statusCode) {
       case < 300 && >= 200:
-        var result = json.decode(respDecoded);
         result = _handleTarget(inspect, result, target);
         if (model != null) {
           if (result is List?) {
@@ -43,21 +47,19 @@ class RocketClient {
             model.fromJson(result);
           }
           return model;
-        } else {
-          rocketResponse.update(result, response.statusCode);
-          return rocketResponse;
         }
-
+        rocketResponse.update(result, response.statusCode);
+        return rocketResponse;
       default:
         if (model != null) {
           model.setException(RocketException(
-            response: respDecoded,
+            response: result,
             statusCode: response.statusCode,
           ));
           return model;
         } else {
           rocketResponse.setException(RocketException(
-            response: respDecoded,
+            response: result,
             statusCode: response.statusCode,
           ));
           return rocketResponse;
