@@ -1,10 +1,10 @@
 class RocketException {
   RocketException(
-      {this.response = "",
-      this.statusCode = 0,
-      this.exception = "",
+      {this.response = "Check model",
+      this.statusCode = 200,
+      this.exception = "Nothing",
       this.stackTrace = StackTrace.empty});
-  final String response;
+  final dynamic response;
   final int statusCode;
   final String exception;
   final StackTrace stackTrace;
