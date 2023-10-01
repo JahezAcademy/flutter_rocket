@@ -5,3 +5,7 @@
 ## 0.0.2
 
 * Added `apiResponse` & `statusCode` fields
+
+## 0.0.3
+
+* Updated `RocketException` object fields
