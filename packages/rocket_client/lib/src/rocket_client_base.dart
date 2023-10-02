@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:rocket_model/rocket_model.dart';
 
 import 'extensions.dart';
+import 'rocket_response.dart';
 
 typedef RocketDataCallback = Function(dynamic data)?;
 typedef RocketOnError = void Function(dynamic response, int statusCode)?;
@@ -27,13 +29,8 @@ class RocketClient {
       List<String>? target,
       String? endpoint,
       RocketOnError onError}) async {
-    String respDecoded = utf8.decode(await response.stream.toBytes());
-    late dynamic result;
-    try {
-      result = json.decode(respDecoded);
-    } catch (e) {
-      result = respDecoded;
-    }
+    final bytes = await response.stream.toBytes();
+    dynamic result = await _tryConvertToJson(bytes);
     onResponse?.call(result, response.statusCode);
     // TODO : need more enhancements
     RocketResponse rocketResponse = RocketResponse(result, response.statusCode);
@@ -51,6 +48,7 @@ class RocketClient {
         rocketResponse.update(result, response.statusCode);
         return rocketResponse;
       default:
+        onError?.call(result, response.statusCode);
         if (model != null) {
           model.setException(RocketException(
             response: result,
@@ -65,6 +63,18 @@ class RocketClient {
           return rocketResponse;
         }
     }
+  }
+
+  _tryConvertToJson(Uint8List? bytes) async {
+    if (bytes == null) return;
+    String respDecoded = utf8.decode(bytes);
+    late dynamic result;
+    try {
+      result = json.decode(respDecoded);
+    } catch (e) {
+      result = respDecoded;
+    }
+    return result;
   }
 
   _handleTarget(
@@ -122,7 +132,7 @@ class RocketClient {
   /// }
   /// ```
 
-  Future<RocketModel> request<T>(String endpoint,
+  Future<RocketModel?> request<T>(String endpoint,
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
       RocketDataCallback inspect,
@@ -148,7 +158,11 @@ class RocketClient {
           model: model, inspect: inspect, endpoint: endpoint, target: target);
     } catch (error, stackTrace) {
       log("$error $stackTrace");
-      return _catchError(error, stackTrace, model: model);
+      dynamic result = _tryConvertToJson(await response?.stream.toBytes());
+      onError?.call(result, response?.statusCode ?? 200);
+      model?.setException(
+          RocketException(exception: error.toString(), stackTrace: stackTrace));
+      return model;
     }
   }
 
@@ -158,16 +172,6 @@ class RocketClient {
       result = result[key];
     }
     return result;
-  }
-
-  _catchError(Object e, StackTrace stackTrace, {RocketModel? model}) async {
-    if (model == null) {
-      return Future.value(e);
-    } else {
-      model.setException(
-          RocketException(exception: e.toString(), stackTrace: stackTrace));
-      return Future.value(model);
-    }
   }
 
   /// Sends a file or files to the specified endpoint and returns the response as a Future.
@@ -237,20 +241,4 @@ class RocketClient {
     headers['cookie'] =
         (index == -1) ? rawCookie : rawCookie.substring(0, index);
   }
-}
-
-class RocketResponse extends RocketModel {
-  RocketResponse(this.response, this.kStatusCode);
-  dynamic response;
-  int kStatusCode;
-  void update(dynamic resp, int statusCode) {
-    kStatusCode = statusCode;
-    response = resp;
-  }
-
-  @override
-  get apiResponse => response;
-
-  @override
-  int get statusCode => kStatusCode;
 }
