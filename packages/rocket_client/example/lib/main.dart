@@ -73,7 +73,7 @@ class RocketClientExampleState extends State<RocketClientExample> {
     isFailed = false;
     setState(() {});
     // Make a GET request to the /posts endpoint
-    final RocketModel response = await client.request(
+    final RocketModel? response = await client.request(
       endpoint,
       target: ['products'],
       onError: (response, statusCode) {
@@ -96,7 +96,7 @@ class RocketClientExampleState extends State<RocketClientExample> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Response : ${response.statusCode}'),
+            title: Text('Response : ${response!.statusCode}'),
             content: Text(json.encode(response.apiResponse)),
             actions: [
               TextButton(
