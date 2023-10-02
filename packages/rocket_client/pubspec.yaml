@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.6
-  rocket_model: ^0.0.2
+  rocket_model: ^0.0.3
 
 dev_dependencies:
   flutter_test:
