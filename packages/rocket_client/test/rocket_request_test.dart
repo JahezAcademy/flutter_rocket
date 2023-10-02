@@ -37,30 +37,30 @@ void main() {
     });
 
     test('request - should get data from endpoint', () async {
-      RocketModel data = await client.request('posts/1');
-      expect(data.apiResponse, isA<Map>());
+      RocketModel? data = await client.request('posts/1');
+      expect(data!.apiResponse, isA<Map>());
       expect(data.apiResponse['id'], 1);
     });
 
     test('request - should get list data from endpoint', () async {
-      RocketModel data = await client.request('posts');
-      expect(data.apiResponse, isA<List>());
+      RocketModel? data = await client.request('posts');
+      expect(data!.apiResponse, isA<List>());
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
 
     test('request - should get list data from endpoint using inspect',
         () async {
-      RocketModel data = await anotherClient.request('products',
+      RocketModel? data = await anotherClient.request('products',
           inspect: (data) => data['products']);
-      expect(data.apiResponse, isA<List>());
+      expect(data!.apiResponse, isA<List>());
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
 
     test('request - should get list data from endpoint using targetData',
         () async {
-      RocketModel data =
+      RocketModel? data =
           await anotherClient.request('products', target: ['products']);
-      expect(data.apiResponse, isA<List>());
+      expect(data!.apiResponse, isA<List>());
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
   });
