@@ -38,7 +38,11 @@ class UserExample extends StatelessWidget {
             // your model
             model: users,
             // your widget for show data from model
-            loader: const CircularProgressIndicator(),
+            onLoading: () {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
             builder: (context, modelState) {
               return ListView.builder(
                 itemCount: users.all!.length,

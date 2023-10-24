@@ -48,7 +48,11 @@ class PostExample extends StatelessWidget {
                 // callType: CallType.callAsStream,
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
-                loader: const CircularProgressIndicator(),
+                onLoading: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
 
                 // handle errors
                 onError: (RocketException exception, Function() reload) {

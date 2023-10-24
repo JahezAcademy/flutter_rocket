@@ -19,7 +19,11 @@ class PhotoExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: RocketView(
             model: photo,
-            loader: const CircularProgressIndicator(),
+            onLoading: () {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
             // get 5000 items
             call: () => GetPhotos.getPhotos(photo),
             builder: (context, modelState) {
