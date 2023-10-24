@@ -14,7 +14,9 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             builder: (context, state) => const Text('Data is loading...'),
-            loader: const CircularProgressIndicator(),
+            onLoading: () {
+              return const CircularProgressIndicator();
+            },
           ),
         ),
       );
@@ -64,7 +66,9 @@ void main() {
             },
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
             onError: (error, reload) => Text('Error: ${error.exception}'),
-            loader: const CircularProgressIndicator(),
+            onLoading: () {
+              return const CircularProgressIndicator();
+            },
           ),
         ),
       );
@@ -91,7 +95,9 @@ void main() {
               onPressed: reload,
               child: Text('Error: ${error.exception}. Tap to retry.'),
             ),
-            loader: const CircularProgressIndicator(),
+            onLoading: () {
+              return const CircularProgressIndicator();
+            },
           ),
         ),
       );
