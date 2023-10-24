@@ -97,11 +97,13 @@ class RocketViewExample extends StatelessWidget {
         // Define how to handle errors
         onError: (error, reload) => Text('Error: ${error.exception}'),
         // Add a loading indicator while the Todo list is being fetched
-        loader: const Center(
-          child: CircularProgressIndicator(
-            color: Colors.red,
-          ),
-        ),
+        onLoading: () {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.red,
+            ),
+          );
+        },
       ),
     );
   }

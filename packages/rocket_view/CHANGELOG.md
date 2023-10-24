@@ -1,3 +1,8 @@
 ## 0.0.1
 
-* [CHANGELOG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/packages/flutter_rocket/CHANGELOG.md)
+* [Old changelogs](https://pub.dev/packages/flutter_rocket/changelog)
+
+# 0.0.2
+
+* Changed `loader` widget arg to `onLoading` buidlder
+* Improved states onLoading & onError

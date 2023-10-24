@@ -23,7 +23,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage<void>(
         key: state.pageKey,
         child: MiniView(
-          title: "MiniView",
+          title: state.extra.toString(),
         ),
       ),
     ),
@@ -32,7 +32,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage<void>(
         key: state.pageKey,
         child: CounterExample(
-          title: "Counter",
+          title: state.extra.toString(),
         ),
       ),
     ),
@@ -41,7 +41,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage<void>(
         key: state.pageKey,
         child: PostExample(
-          title: "Posts",
+          title: state.extra.toString(),
         ),
       ),
     ),
@@ -59,7 +59,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage<void>(
         key: state.pageKey,
         child: UserExample(
-          title: "Users",
+          title: state.extra.toString(),
         ),
       ),
     ),
@@ -68,7 +68,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage<void>(
         key: state.pageKey,
         child: PhotoExample(
-          title: "Photos",
+          title: state.extra.toString(),
         ),
       ),
     ),
@@ -84,7 +84,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage<void>(
         key: state.pageKey,
         child: TodosExample(
-          title: "Todos",
+          title: state.extra.toString(),
         ),
       ),
     ),

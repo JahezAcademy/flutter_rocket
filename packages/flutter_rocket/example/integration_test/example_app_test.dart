@@ -20,7 +20,7 @@ void main() {
       // Verify the 100 posts button exist.
       expect(find.text('100 Posts'), findsOneWidget);
 
-      final Finder postButton = find.byKey(const Key('post'));
+      final Finder postButton = find.byKey(const Key('posts'));
 
       // open posts screen
       await tester.tap(postButton);
@@ -45,7 +45,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('10 Users'), findsOneWidget);
 
-      final Finder userButton = find.byKey(const Key('user'));
+      final Finder userButton = find.byKey(const Key('users'));
 
       // open users screen
       await tester.tap(userButton);
@@ -69,7 +69,7 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
       expect(find.text('5000 Photos'), findsOneWidget);
-      final Finder photoButton = find.byKey(const Key('photo'));
+      final Finder photoButton = find.byKey(const Key('photos'));
 
       // open photos screen
       await tester.tap(photoButton);
@@ -80,7 +80,7 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
       expect(find.text('200 Todos'), findsOneWidget);
-      final Finder todosButton = find.byKey(const Key('todo'));
+      final Finder todosButton = find.byKey(const Key('todos'));
 
       // open photos screen
       await tester.tap(todosButton);

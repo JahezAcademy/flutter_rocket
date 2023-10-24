@@ -88,3 +88,9 @@
 - Renamed `multi` `RocketModel` field to `all`
 - Added `targetData` parameter on `request` method of `RocketRequest`
 - Added `forEach` method to `Rocket`
+
+/// New Updates 
+
+## 0.0.4
+
+* Update RocketView

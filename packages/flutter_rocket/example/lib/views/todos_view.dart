@@ -23,7 +23,11 @@ class TodosExample extends StatelessWidget {
       body: RocketView(
           model: todoModel,
           call: () => GetTodos.getTodos(todoModel),
-          loader: const CircularProgressIndicator(),
+          onLoading: () {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
           callType: CallType.callIfModelEmpty,
           builder: (context, state) {
             return ListView.builder(

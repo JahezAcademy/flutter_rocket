@@ -22,9 +22,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routeInformationParser: router.routeInformationParser,
-      routeInformationProvider: router.routeInformationProvider,
-      routerDelegate: router.routerDelegate,
+      routerConfig: router,
       title: '🚀 Rocket Package 🚀',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -91,7 +89,7 @@ class Example extends StatelessWidget {
                 fontSize: 24.0,
                 color: Colors.brown),
           ),
-          onPressed: () => context.go("/$to")),
+          onPressed: () => context.go("/$to", extra: title)),
     );
   }
 }

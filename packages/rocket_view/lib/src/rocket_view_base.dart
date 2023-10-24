@@ -6,7 +6,7 @@ import 'package:rocket_model/rocket_model.dart';
 
 import 'enums.dart';
 
-typedef OnError = Widget Function(RocketException error, Function() reload);
+typedef OnError = Widget Function(RocketException error, Function() reload)?;
 
 class RocketView<T> extends StatefulWidget {
   /// A widget that helps to manage the state of a `RocketModel` and handle the different states of the data.
@@ -61,27 +61,27 @@ class RocketView<T> extends StatefulWidget {
     Key? key,
     required this.model,
     required this.builder,
-    this.call = _myDefaultFunc,
+    this.call,
     this.callType = CallType.callAsFuture,
     this.secondsOfStream = 1,
-    this.loader,
-    this.onError = _defaultOnError,
+    this.onLoading,
+    this.onError,
   }) : super(key: key) {
     /// Call the `call` function based on the `callType` parameter.
     switch (callType) {
       case CallType.callAsFuture:
-        call();
+        call?.call();
         break;
       case CallType.callIfModelEmpty:
         if (!model.existData) {
-          call();
+          call?.call();
         }
         break;
       case CallType.callAsStream:
-        call();
+        call?.call();
         Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
           model.loadingChecking = true;
-          call();
+          call?.call();
           if (!model.hasListeners || model.state != RocketState.done) {
             timer.cancel();
           }
@@ -90,33 +90,11 @@ class RocketView<T> extends StatefulWidget {
     }
   }
 
-  /// Default function that does nothing.
-  static _myDefaultFunc() {}
-
-  /// Default error widget that displays the error message, status code, response, and a retry button.
-  static Widget _defaultOnError(
-      RocketException error, dynamic Function() reload) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(error.exception.toString()),
-          Text("StatusCode : ${error.statusCode.toString()}"),
-          Text(
-            error.response.toString(),
-            style: const TextStyle(overflow: TextOverflow.fade),
-          ),
-          TextButton(onPressed: reload, child: const Text("Retry"))
-        ],
-      ),
-    );
-  }
-
   /// The function that builds the widget tree based on the state.
   final Widget Function(BuildContext, RocketState) builder;
 
   /// The function that fetches data.
-  final dynamic Function() call;
+  final dynamic Function()? call;
 
   /// When to call the `call` function.
   final CallType callType;
@@ -124,13 +102,13 @@ class RocketView<T> extends StatefulWidget {
   /// Number of seconds between calls if `callType` is `CallType.callAsStream`.
   final int secondsOfStream;
 
-  /// The widget to display while data is loading.
-  final Widget? loader;
+  /// The widget to display while data is loading, if not defined you need to handle it on `builder` by `state`
+  final Widget Function()? onLoading;
 
   /// The `RocketModel` object that holds the data and state.
   final RocketModel<T> model;
 
-  /// The function to call if an error occurs.
+  /// The function to call if an error occurs, if not defined you need to handle it on `builder` by `state`
   final OnError onError;
 
   @override
@@ -153,7 +131,7 @@ class ViewRocketState extends State<RocketView> {
     /// Register this listener to the `RocketModel`.
     reload = () {
       widget.model.state = RocketState.loading;
-      widget.call.call();
+      widget.call?.call();
     };
     widget.model.registerListener(rocketRebuild, _handleChange);
     super.initState();
@@ -212,19 +190,30 @@ class ViewRocketState extends State<RocketView> {
   _handleStates() {
     switch (widget.model.state) {
       case RocketState.loading:
-        return Center(child: widget.loader);
+        return widget.onLoading!();
       case RocketState.done:
         return widget.builder(context, widget.model.state);
       case RocketState.failed:
-        return widget.onError(widget.model.exception, reload);
+        return widget.onError!(widget.model.exception, reload);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     /// Call the builder function if the loader is `null`.
-    if (widget.loader == null) {
-      return widget.builder(context, widget.model.state);
+    final bool invalidonLoading =
+        widget.model.state == RocketState.loading && widget.onLoading == null;
+    final bool invalidOnError =
+        widget.model.state == RocketState.failed && widget.onError == null;
+    final bool invalidCase = invalidonLoading || invalidOnError;
+    if (invalidCase) {
+      try {
+        return widget.builder(context, widget.model.state);
+      } catch (e) {
+        assert(!invalidCase,
+            "Should define ${invalidOnError ? "onError" : "onLoading"} or handle state in builder\n$e");
+        return const SizedBox.shrink();
+      }
     }
 
     /// Return the appropriate widget tree based on the `RocketState`.
