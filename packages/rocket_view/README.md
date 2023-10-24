@@ -20,7 +20,14 @@ class TodoList extends StatelessWidget {
     return RocketView(
       model: todoModel,
       call: () => GetTodos.getTodos(todoModel),
-      loader: const CircularProgressIndicator(),
+      onLoading: () {
+        return const Center(
+          child: CircularProgressIndicator(
+            color: Colors.red,
+          ),
+        );
+      },
+      onError: (error, reload) => Text('Error: ${error.exception}'),
       callType: CallType.callIfModelEmpty,
       builder: (context, state) {
         return ListView.builder(
