@@ -57,7 +57,7 @@ class RocketView<T> extends StatefulWidget {
   /// )
   /// ```
   ///
-  RocketView({
+  const RocketView({
     Key? key,
     required this.model,
     required this.builder,
@@ -66,29 +66,7 @@ class RocketView<T> extends StatefulWidget {
     this.secondsOfStream = 1,
     this.onLoading,
     this.onError,
-  }) : super(key: key) {
-    /// Call the `call` function based on the `callType` parameter.
-    switch (callType) {
-      case CallType.callAsFuture:
-        call?.call();
-        break;
-      case CallType.callIfModelEmpty:
-        if (!model.existData) {
-          call?.call();
-        }
-        break;
-      case CallType.callAsStream:
-        call?.call();
-        Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
-          model.loadingChecking = true;
-          call?.call();
-          if (!model.hasListeners || model.state != RocketState.done) {
-            timer.cancel();
-          }
-        });
-        break;
-    }
-  }
+  }) : super(key: key);
 
   /// The function that builds the widget tree based on the state.
   final Widget Function(BuildContext, RocketState) builder;
@@ -134,6 +112,29 @@ class ViewRocketState extends State<RocketView> {
       widget.call?.call();
     };
     widget.model.registerListener(rocketRebuild, _handleChange);
+
+    /// Call the `call` function based on the `callType` parameter.
+    switch (widget.callType) {
+      case CallType.callAsFuture:
+        widget.call?.call();
+        break;
+      case CallType.callIfModelEmpty:
+        if (!widget.model.existData) {
+          widget.call?.call();
+        }
+        break;
+      case CallType.callAsStream:
+        widget.call?.call();
+        Timer.periodic(Duration(seconds: widget.secondsOfStream), (timer) {
+          widget.model.loadingChecking = true;
+          widget.call?.call();
+          if (!widget.model.hasListeners ||
+              widget.model.state != RocketState.done) {
+            timer.cancel();
+          }
+        });
+        break;
+    }
     super.initState();
   }
 
