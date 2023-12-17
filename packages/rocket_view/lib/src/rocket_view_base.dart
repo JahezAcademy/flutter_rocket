@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rocket_model/rocket_model.dart';
@@ -63,7 +61,6 @@ class RocketView<T> extends StatefulWidget {
     required this.builder,
     this.call,
     this.callType = CallType.callAsFuture,
-    this.secondsOfStream = 1,
     this.onLoading,
     this.onError,
   }) : super(key: key);
@@ -76,9 +73,6 @@ class RocketView<T> extends StatefulWidget {
 
   /// When to call the `call` function.
   final CallType callType;
-
-  /// Number of seconds between calls if `callType` is `CallType.callAsStream`.
-  final int secondsOfStream;
 
   /// The widget to display while data is loading, if not defined you need to handle it on `builder` by `state`
   final Widget Function()? onLoading;
@@ -122,17 +116,6 @@ class ViewRocketState extends State<RocketView> {
         if (!widget.model.existData) {
           widget.call?.call();
         }
-        break;
-      case CallType.callAsStream:
-        widget.call?.call();
-        Timer.periodic(Duration(seconds: widget.secondsOfStream), (timer) {
-          widget.model.loadingChecking = true;
-          widget.call?.call();
-          if (!widget.model.hasListeners ||
-              widget.model.state != RocketState.done) {
-            timer.cancel();
-          }
-        });
         break;
     }
     super.initState();
