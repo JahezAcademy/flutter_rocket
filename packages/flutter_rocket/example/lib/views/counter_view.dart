@@ -37,16 +37,6 @@ class CounterExample extends StatelessWidget {
               /// instance after a delay of one second.
               call: add,
 
-              /// The type of call that will trigger the `call` function.
-              ///
-              /// We are using `CallType.callAsStream` to increment the counter
-              /// every second.
-              callType: CallType.callAsStream,
-
-              /// The number of seconds to wait between each stream of
-              /// data from the server.
-              secondsOfStream: 1,
-
               /// The widget builder function that will be called whenever
               /// the RocketView is updated.
               ///
