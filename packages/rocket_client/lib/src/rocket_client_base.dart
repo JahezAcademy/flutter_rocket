@@ -129,7 +129,8 @@ class RocketClient {
       List<String>? target,
       RocketOnError onError,
       Map<String, dynamic>? data,
-      Map<String, dynamic>? params}) async {
+      Map<String, dynamic>? params,
+      int maxRetries = 2}) async {
     if (model != null) {
       model.state = RocketState.loading;
     }
@@ -139,18 +140,25 @@ class RocketClient {
     Request request = Request(method.name, url);
     request.body = json.encode(data);
     request.headers.addAll(headers);
-    try {
-      response = await request.send();
-      if (setCookies) {
-        _updateCookie(response);
+    for (int attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        response = await request.send();
+        if (setCookies) {
+          _updateCookie(response);
+        }
+        return _processData<T>(response,
+            model: model, inspect: inspect, endpoint: endpoint, target: target);
+      } catch (error, stackTrace) {
+        log("Attempt $attempt failed: $error $stackTrace");
+        if (attempt == maxRetries - 1) {
+          return _catchError(error, stackTrace, model: model);
+        }
+        await Future.delayed(const Duration(seconds: 2));
       }
-      return _processData<T>(response,
-          model: model, inspect: inspect, endpoint: endpoint, target: target);
-    } catch (error, stackTrace) {
-      log("$error $stackTrace");
-      return _catchError(error, stackTrace, model: model);
     }
+    throw Exception("Failed to request after $maxRetries attempts");
   }
+
 
   _getTarget(Map data, List target) {
     dynamic result = data;

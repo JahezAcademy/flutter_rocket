@@ -13,3 +13,6 @@
 # 0.0.3
 
 * Fixed bug on `request` method
+
+# 0.0.4
+* Added maxRetries parameter to request method
