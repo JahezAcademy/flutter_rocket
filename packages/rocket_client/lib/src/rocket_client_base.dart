@@ -13,7 +13,7 @@ class RocketClient {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
-  void Function(dynamic, int)? onResponse;
+  void Function(dynamic, int, String)? onResponse;
 
   RocketClient(
       {required this.url,
@@ -25,7 +25,7 @@ class RocketClient {
       {RocketModel<T>? model,
       RocketDataCallback inspect,
       List<String>? target,
-      String? endpoint,
+      required String endpoint,
       RocketOnError onError}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
     late dynamic result;
@@ -34,7 +34,7 @@ class RocketClient {
     } catch (e) {
       result = respDecoded;
     }
-    onResponse?.call(result, response.statusCode);
+    onResponse?.call(result, response.statusCode, endpoint);
     // TODO : need more enhancements
     RocketResponse rocketResponse = RocketResponse(result, response.statusCode);
     switch (response.statusCode) {
@@ -158,7 +158,6 @@ class RocketClient {
     }
     throw Exception("Failed to request after $maxRetries attempts");
   }
-
 
   _getTarget(Map data, List target) {
     dynamic result = data;
