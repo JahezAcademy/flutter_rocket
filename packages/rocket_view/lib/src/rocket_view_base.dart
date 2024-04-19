@@ -106,19 +106,19 @@ class ViewRocketState extends State<RocketView> {
       widget.call?.call();
     };
     widget.model.registerListener(rocketRebuild, _handleChange);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      /// Call the `call` function based on the `callType` parameter.
-      switch (widget.callType) {
-        case CallType.callAsFuture:
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /// Call the `call` function based on the `callType` parameter.
+    switch (widget.callType) {
+      case CallType.callAsFuture:
+        widget.call?.call();
+        break;
+      case CallType.callIfModelEmpty:
+        if (!widget.model.existData) {
           widget.call?.call();
-          break;
-        case CallType.callIfModelEmpty:
-          if (!widget.model.existData) {
-            widget.call?.call();
-          }
-          break;
-      }
-    });
+        }
+        break;
+    }
+    // });
     super.initState();
   }
 
