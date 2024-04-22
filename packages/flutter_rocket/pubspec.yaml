@@ -5,6 +5,8 @@ repository: https://github.com/JahezAcademy/flutter_rocket/flutter_rocket
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/flutter_rocket
 homepage: https://github.com/JahezAcademy/flutter_rocket
 
+publish_to: none
+
 environment:
   sdk: '>=3.0.0 <4.0.0'
   flutter: ">=1.17.0"
@@ -16,7 +18,11 @@ dependencies:
   rocket_listenable: ^0.0.1
   rocket_view: ^0.0.2
   rocket_mini_view: ^0.0.1
-  rocket_client: ^0.0.2
+  rocket_client:
+      git:
+        url: https://github.com/JahezAcademy/flutter_rocket.git
+        path: packages/rocket_client/
+        ref: 90-support-retry-on-rocketclient
   rocket_singleton: ^0.0.1
   
 

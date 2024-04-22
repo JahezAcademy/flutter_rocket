@@ -13,7 +13,8 @@ class RocketClientTest extends RocketClient {
       List<String>? target,
       RocketOnError? onError,
       Map<String, dynamic>? data,
-      Map<String, dynamic>? params}) async {
+      Map<String, dynamic>? params,
+      int maxRetries = 2}) async {
     model!.state = RocketState.loading;
     await Future.delayed(const Duration(seconds: 1));
     try {
