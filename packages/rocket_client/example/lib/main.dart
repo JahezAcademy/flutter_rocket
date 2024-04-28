@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:rocket_client/rocket_client.dart';
@@ -76,6 +78,11 @@ class RocketClientExampleState extends State<RocketClientExample> {
     final RocketModel response = await client.request(
       endpoint,
       target: ['products'],
+      retries: 5,
+      retryWhen: (r) => r.statusCode != 200,
+      onRetry: (p0, p1, p2) {
+        log("Retry $p2");
+      },
       onError: (response, statusCode) {
         isFailed = true;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
