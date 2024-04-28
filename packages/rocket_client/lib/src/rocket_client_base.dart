@@ -16,11 +16,13 @@ class RocketClient {
   final Map<String, String> headers;
   final bool setCookies;
   void Function(dynamic, int, String?)? onResponse;
+  final RetryOptions globalRetryOptions;
 
   RocketClient(
       {required this.url,
       this.headers = const {},
       this.setCookies = false,
+      this.globalRetryOptions = const RetryOptions(),
       this.onResponse});
 
   Future<RocketModel> _processData<T>(StreamedResponse response,
@@ -133,9 +135,7 @@ class RocketClient {
     RocketOnError onError,
     Map<String, dynamic>? data,
     Map<String, dynamic>? params,
-    int retries = 3,
-    FutureOr<bool> Function(BaseResponse)? retryWhen,
-    FutureOr<void> Function(BaseRequest, BaseResponse?, int)? onRetry,
+    RetryOptions retryOptions = const RetryOptions(),
   }) async {
     if (model != null) {
       model.state = RocketState.loading;
@@ -149,10 +149,12 @@ class RocketClient {
     final client = Client();
     final retryClient = RetryClient(
       client,
-      retries: retries,
+      retries: retryOptions.retries ?? globalRetryOptions.retries ?? 3,
       when: (r) =>
-          retryWhen?.call(r) ?? !(r.statusCode < 300 && r.statusCode >= 200),
-      onRetry: onRetry,
+          retryOptions.retryWhen?.call(r) ??
+          globalRetryOptions.retryWhen?.call(r) ??
+          r.statusCode == 503,
+      onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
     );
 
     try {
@@ -269,4 +271,11 @@ class RocketResponse extends RocketModel {
 
   @override
   int get statusCode => kStatusCode;
+}
+
+class RetryOptions {
+  const RetryOptions({this.retries, this.retryWhen, this.onRetry});
+  final int? retries;
+  final FutureOr<bool> Function(BaseResponse)? retryWhen;
+  final FutureOr<void> Function(BaseRequest, BaseResponse?, int)? onRetry;
 }

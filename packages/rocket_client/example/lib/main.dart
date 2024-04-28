@@ -34,7 +34,16 @@ class RocketClientExample extends StatefulWidget {
 }
 
 class RocketClientExampleState extends State<RocketClientExample> {
-  final client = RocketClient(url: 'https://dummyjson.com');
+  final client = RocketClient(
+    url: 'https://dummyjson.com',
+    globalRetryOptions: RetryOptions(
+      retries: 5,
+      retryWhen: (r) => r.statusCode != 200,
+      onRetry: (p0, p1, p2) {
+        log("Retry $p2");
+      },
+    ),
+  );
   bool isLoading = false;
   bool isFailed = false;
 
@@ -78,11 +87,10 @@ class RocketClientExampleState extends State<RocketClientExample> {
     final RocketModel response = await client.request(
       endpoint,
       target: ['products'],
-      retries: 5,
-      retryWhen: (r) => r.statusCode != 200,
-      onRetry: (p0, p1, p2) {
-        log("Retry $p2");
-      },
+      retryOptions: RetryOptions(
+        retries: 2,
+        retryWhen: (r) => r.statusCode != 200,
+      ),
       onError: (response, statusCode) {
         isFailed = true;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
