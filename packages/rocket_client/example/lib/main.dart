@@ -90,6 +90,7 @@ class RocketClientExampleState extends State<RocketClientExample> {
       retryOptions: RetryOptions(
         retries: 2,
         retryWhen: (r) => r.statusCode != 200,
+      
       ),
       onError: (response, statusCode) {
         isFailed = true;

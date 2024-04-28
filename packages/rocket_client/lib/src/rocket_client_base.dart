@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart';
 import 'package:http/retry.dart';
+import 'package:rocket_client/src/retry_options.dart';
 import 'package:rocket_model/rocket_model.dart';
 
 import 'extensions.dart';
@@ -147,15 +148,17 @@ class RocketClient {
     request.body = json.encode(data);
     request.headers.addAll(headers);
     final client = Client();
-    final retryClient = RetryClient(
-      client,
-      retries: retryOptions.retries ?? globalRetryOptions.retries ?? 3,
-      when: (r) =>
-          retryOptions.retryWhen?.call(r) ??
-          globalRetryOptions.retryWhen?.call(r) ??
-          r.statusCode == 503,
-      onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
-    );
+    final retryClient = RetryClient(client,
+        retries: retryOptions.retries ??
+            globalRetryOptions.retries ??
+            RetryOptions.defaultRetries,
+        when: retryOptions.retryWhen ??
+            globalRetryOptions.retryWhen ??
+            RetryOptions.defaultWhen,
+        onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
+        delay: retryOptions.delay ??
+            globalRetryOptions.delay ??
+            RetryOptions.defaultDelay);
 
     try {
       response = await retryClient.send(request);
@@ -271,11 +274,4 @@ class RocketResponse extends RocketModel {
 
   @override
   int get statusCode => kStatusCode;
-}
-
-class RetryOptions {
-  const RetryOptions({this.retries, this.retryWhen, this.onRetry});
-  final int? retries;
-  final FutureOr<bool> Function(BaseResponse)? retryWhen;
-  final FutureOr<void> Function(BaseRequest, BaseResponse?, int)? onRetry;
 }
