@@ -1,6 +1,6 @@
 name: rocket_client
 description: for making HTTP requests and handling responses.
-version: 0.0.4
+version: 0.0.5
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_client
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_client
 homepage: https://github.com/JahezAcademy/flutter_rocket
@@ -12,13 +12,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.6
+  http: ^1.2.1
   rocket_model: ^0.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
