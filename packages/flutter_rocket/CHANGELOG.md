@@ -94,3 +94,7 @@
 ## 0.0.4
 
 * Update RocketView
+
+## 0.0.5
+
+* Added retry options to `RocketClient`
