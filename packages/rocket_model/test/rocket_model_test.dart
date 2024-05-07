@@ -39,13 +39,13 @@ void main() {
 
     test('adds and deletes items correctly', () {
       final model = TestModel();
-      model.all = [TestModel(id:1), TestModel(id:2), TestModel(id:3)];
+      model.all = [TestModel(id: 1), TestModel(id: 2), TestModel(id: 3)];
       expect(model.all!.length, equals(3));
       model.delItem(1);
       expect(model.all!.length, equals(2));
       expect(model.all![0].id, equals(1));
       expect(model.all![1].id, equals(3));
-      model.addItem(TestModel(id:4));
+      model.addItem(TestModel(id: 4));
       expect(model.all!.length, equals(3));
       expect(model.all![0].id, equals(1));
       expect(model.all![1].id, equals(3));

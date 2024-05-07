@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart';
+import 'package:http/retry.dart';
+import 'package:rocket_client/src/retry_options.dart';
 import 'package:rocket_model/rocket_model.dart';
 
 import 'extensions.dart';
@@ -13,12 +16,14 @@ class RocketClient {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
-  void Function(dynamic, int)? onResponse;
+  void Function(dynamic, int, String?)? onResponse;
+  final RetryOptions globalRetryOptions;
 
   RocketClient(
       {required this.url,
       this.headers = const {},
       this.setCookies = false,
+      this.globalRetryOptions = const RetryOptions(),
       this.onResponse});
 
   Future<RocketModel> _processData<T>(StreamedResponse response,
@@ -34,7 +39,7 @@ class RocketClient {
     } catch (e) {
       result = respDecoded;
     }
-    onResponse?.call(result, response.statusCode);
+    onResponse?.call(result, response.statusCode, endpoint);
     // TODO : need more enhancements
     RocketResponse rocketResponse = RocketResponse(result, response.statusCode);
     switch (response.statusCode) {
@@ -122,14 +127,17 @@ class RocketClient {
   /// }
   /// ```
 
-  Future<RocketModel> request<T>(String endpoint,
-      {RocketModel<T>? model,
-      HttpMethods method = HttpMethods.get,
-      RocketDataCallback inspect,
-      List<String>? target,
-      RocketOnError onError,
-      Map<String, dynamic>? data,
-      Map<String, dynamic>? params}) async {
+  Future<RocketModel> request<T>(
+    String endpoint, {
+    RocketModel<T>? model,
+    HttpMethods method = HttpMethods.get,
+    RocketDataCallback inspect,
+    List<String>? target,
+    RocketOnError onError,
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? params,
+    RetryOptions retryOptions = const RetryOptions(),
+  }) async {
     if (model != null) {
       model.state = RocketState.loading;
     }
@@ -139,8 +147,21 @@ class RocketClient {
     Request request = Request(method.name, url);
     request.body = json.encode(data);
     request.headers.addAll(headers);
+    final client = Client();
+    final retryClient = RetryClient(client,
+        retries: retryOptions.retries ??
+            globalRetryOptions.retries ??
+            RetryOptions.defaultRetries,
+        when: retryOptions.retryWhen ??
+            globalRetryOptions.retryWhen ??
+            RetryOptions.defaultWhen,
+        onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
+        delay: retryOptions.delay ??
+            globalRetryOptions.delay ??
+            RetryOptions.defaultDelay);
+
     try {
-      response = await request.send();
+      response = await retryClient.send(request);
       if (setCookies) {
         _updateCookie(response);
       }
