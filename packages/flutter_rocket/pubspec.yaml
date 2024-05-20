@@ -19,7 +19,7 @@ dependencies:
   rocket_view: ^0.0.2
   rocket_mini_view: ^0.0.1
   rocket_client: ^0.0.4
-  rocket_singleton: ^0.0.1
+  rocket_singleton: ^0.0.2
   
 
 dev_dependencies:
