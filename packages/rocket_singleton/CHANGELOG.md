@@ -8,3 +8,7 @@
 ## 0.0.2
 
 * Fixed haskey method issue
+
+## 0.0.3
+
+* Fixed get method issue

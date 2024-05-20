@@ -1,6 +1,6 @@
 name: flutter_rocket
 description: Powerful package for state management & request.
-version: 0.0.6
+version: 0.0.7
 repository: https://github.com/JahezAcademy/flutter_rocket/flutter_rocket
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/flutter_rocket
 homepage: https://github.com/JahezAcademy/flutter_rocket
@@ -17,7 +17,7 @@ dependencies:
   rocket_view: ^0.0.2
   rocket_mini_view: ^0.0.2
   rocket_client: ^0.0.4
-  rocket_singleton: ^0.0.2
+  rocket_singleton: ^0.0.3
   
 
 dev_dependencies:
