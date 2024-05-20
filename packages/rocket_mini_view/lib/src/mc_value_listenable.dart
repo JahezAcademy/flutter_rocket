@@ -19,7 +19,7 @@ class RocketValue<T> extends RocketListenable {
   }
 
   factory RocketValue.merge(List<RocketListenable> kMerges) {
-    var rv = RocketValue(null as T);
+    final rv = RocketValue(null as T);
     rv.merges = kMerges;
     return rv;
   }
