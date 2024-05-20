@@ -27,6 +27,8 @@ class _MyAppState extends State<MyApp> {
     RocketModel(name: 'Delta IV', fuelCapacity: 15000),
   ];
 
+  final rockeyByType = Rocket.add(5);
+
   @override
   void initState() {
     // Add each model to the Rocket class's internal collection.
@@ -40,7 +42,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // Retrieve the Falcon 9 model from the Rocket class.
     final falcon9 = Rocket.get<RocketModel>('Falcon 9');
-
+    final rockeyByType = Rocket.get<int>();
     return MaterialApp(
       title: 'Rocket App',
       home: Scaffold(
@@ -49,7 +51,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Text(
-            'The Falcon 9 has a fuel capacity of ${falcon9.fuelCapacity} gallons.',
+            'The Falcon 9 has a fuel capacity of ${falcon9.fuelCapacity} gallons. $rockeyByType',
           ),
         ),
       ),

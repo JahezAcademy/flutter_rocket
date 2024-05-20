@@ -103,8 +103,11 @@ class Rocket {
   ///
   /// Returns the first value of the given type, or null if no models of the given type exist.
   static T getFirstByType<T>() {
-    // assert(getByType<T>().isNotEmpty, "No value of type $T");
-    return getByType<T>().firstOrNull!;
+    final result = getByType<T>().firstOrNull;
+    if (result == null) {
+      throw Exception("No value of type $T found.");
+    }
+    return result;
   }
 
   /// Removes all rocket models from the collection.
