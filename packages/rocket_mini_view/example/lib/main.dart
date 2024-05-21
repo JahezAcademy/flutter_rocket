@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
 
 class RocketMiniViewExample extends StatelessWidget {
   final RocketValue _value = 0.mini;
+  final RocketValue _mergedValue = 100.mini;
 
   RocketMiniViewExample({super.key});
 
@@ -35,20 +36,31 @@ class RocketMiniViewExample extends StatelessWidget {
       ),
       body: Center(
         child: RocketMiniView(
-          value: _value,
+          value: RocketValue.merge([_value, _mergedValue]),
           builder: () {
             return Text(
-              '${_value.v}',
+              'value : ${_value.v} - merged value : ${_mergedValue.v}',
               style: const TextStyle(fontSize: 20),
             );
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _value.v = _value.v + 1;
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              _value.v = _value.v + 1;
+            },
+            child: const Icon(Icons.add),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              _mergedValue.v = _mergedValue.v + 1;
+            },
+            child: const Icon(Icons.merge),
+          ),
+        ],
       ),
     );
   }

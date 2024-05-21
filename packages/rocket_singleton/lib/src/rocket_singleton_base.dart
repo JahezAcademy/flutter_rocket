@@ -31,7 +31,7 @@ class Rocket {
   /// [key] The key of the value to get.
   ///
   /// Returns the value, or null if no value with the given key exists.
-  static T? get<T>([String? key]) {
+  static T get<T>([String? key]) {
     // assert(key != null && getByType<T>().isNotEmpty,
     //     "No value of type $T and key $key");
     if (key == null) return getFirstByType<T>();
@@ -102,9 +102,12 @@ class Rocket {
   /// [T] The type of rocket models to get.
   ///
   /// Returns the first value of the given type, or null if no models of the given type exist.
-  static T? getFirstByType<T>() {
-    // assert(getByType<T>().isNotEmpty, "No value of type $T");
-    return getByType<T>().firstOrNull;
+  static T getFirstByType<T>() {
+    final result = getByType<T>().firstOrNull;
+    if (result == null) {
+      throw Exception("No value of type $T found.");
+    }
+    return result;
   }
 
   /// Removes all rocket models from the collection.
