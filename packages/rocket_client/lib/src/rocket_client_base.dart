@@ -258,6 +258,28 @@ class RocketClient {
     headers['cookie'] =
         (index == -1) ? rawCookie : rawCookie.substring(0, index);
   }
+
+  Future<void> requestSimulation<T>(
+    String endpoint, {
+    required RocketModel<T> model,
+    HttpMethods method = HttpMethods.get,
+    RocketDataCallback inspect,
+    List<String>? target,
+    dynamic data,
+    Duration responseDuration = const Duration(seconds: 2),
+  }) async {
+    final result = _handleTarget(inspect, data, target);
+    ;
+    model.state = RocketState.loading;
+    await Future.delayed(responseDuration);
+    if (result is List) {
+      model.setMulti(result);
+    } else if (result is Map<String, dynamic>) {
+      model.fromJson(result);
+    } else {
+      throw Exception("Failed to process data");
+    }
+  }
 }
 
 class RocketResponse extends RocketModel {
