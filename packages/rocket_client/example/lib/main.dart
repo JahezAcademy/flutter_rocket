@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:example/product_model.dart';
+import 'package:example/simulation_data.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:rocket_client/rocket_client.dart';
@@ -68,6 +70,12 @@ class RocketClientExampleState extends State<RocketClientExample> {
                   ),
                   ElevatedButton(
                     onPressed: () {
+                      _makeRequestSimulation(context, "products");
+                    },
+                    child: const Text('Make Request Simulation'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
                       // pass wrong endpoint for produce error
                       _makeRequest(context, "productsss");
                     },
@@ -77,6 +85,40 @@ class RocketClientExampleState extends State<RocketClientExample> {
               ),
       ),
     );
+  }
+
+  Future<void> _makeRequestSimulation(
+      BuildContext context, String endpoint) async {
+    isLoading = true;
+    isFailed = false;
+    final product = Product();
+    setState(() {});
+    // Make a GET request simulation to the /products endpoint
+    await client.requestSimulation(endpoint,
+        model: product, target: ['products'], data: productsData);
+    isLoading = false;
+    setState(() {});
+    // Display the model content in a dialog
+    if (!isFailed) {
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Request Simulation'),
+            content: Text(json.encode(product.all)),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   Future<void> _makeRequest(BuildContext context, String endpoint) async {
@@ -90,7 +132,6 @@ class RocketClientExampleState extends State<RocketClientExample> {
       retryOptions: RetryOptions(
         retries: 2,
         retryWhen: (r) => r.statusCode != 200,
-      
       ),
       onError: (response, statusCode) {
         isFailed = true;
