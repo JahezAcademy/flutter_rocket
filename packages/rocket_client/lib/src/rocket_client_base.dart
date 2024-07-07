@@ -269,7 +269,6 @@ class RocketClient {
     Duration responseDuration = const Duration(seconds: 2),
   }) async {
     final result = _handleTarget(inspect, data, target);
-    ;
     model.state = RocketState.loading;
     await Future.delayed(responseDuration);
     if (result is List) {
