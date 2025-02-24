@@ -31,7 +31,7 @@ class UserExample extends StatelessWidget {
           child: RocketView(
             // call api by RocketRequest saved in McController and make model on ready
             call: () => GetUsers.getUsers(users),
-            
+
             // your model
             model: users,
             // your widget for show data from model
