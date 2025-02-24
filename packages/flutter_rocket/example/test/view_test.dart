@@ -26,7 +26,7 @@ void main() {
     // Check loading
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 1 second data loaded
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
     expect(find.text(postData.first[postTitleField]), findsOneWidget);
     // Click to refresh for reload data
     await tester.tap(find.byIcon(Icons.data_usage));
@@ -34,7 +34,7 @@ void main() {
     // Check loading
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 1 second data loaded
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
     expect(find.text(postData.first[postTitleField]), findsOneWidget);
     // Change first post title
     await tester.tap(find.byIcon(Icons.update).first);
@@ -55,7 +55,7 @@ void main() {
     // Check loading
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 2 second data loaded
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
     expect(find.text("${userData.first[userNameField]}"), findsOneWidget);
     // Click to refresh for reload data
     await tester.tap(find.byIcon(Icons.get_app));
@@ -63,7 +63,7 @@ void main() {
     // Check loading
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 1 second data loaded
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
     expect(find.text("${userData.first[userNameField]}"), findsOneWidget);
     // Change first username
     await tester.tap(find.byIcon(Icons.update));
@@ -84,7 +84,7 @@ void main() {
     // Check loading
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 1 second data loaded
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
     expect(find.text(photoData.first[photoTitleField]), findsOneWidget);
   });
 
@@ -100,7 +100,7 @@ void main() {
     // Check loading
     expect(find.bySubtype<CircularProgressIndicator>(), findsOneWidget);
     // After 1 second data loaded
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
     // Check todo title
     expect(find.text(todosData.first[todoTitleField]), findsOneWidget);
     final Finder checkBox = find.byType(Checkbox);
