@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:example/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rocket/flutter_rocket.dart';
@@ -12,6 +14,9 @@ void configureRequest() {
   const String baseUrl = 'https://jsonplaceholder.typicode.com';
   // create request object
   RocketClient request = RocketClient(url: baseUrl);
+  request.onResponse = (data, statusCode, endpoint) {
+    log('Response Status: $statusCode, Endpoint: /$endpoint');
+  };
   // save it, for use from any screen
   Rocket.add(request);
 }

@@ -17,7 +17,7 @@ class Rocket {
   ///
   /// Returns the added value.
   static T add<T>(T value, {String? key, bool readOnly = false}) {
-    key ??= value.runtimeType.toString() + value.hashCode.toString();
+    key ??= value.runtimeType.toString();
     if (readOnly) {
       return _models.putIfAbsent(key, () => value);
     } else {

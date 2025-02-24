@@ -10,7 +10,6 @@ import 'package:go_router/go_router.dart';
 import 'main.dart';
 
 final router = GoRouter(
-  observers: [Obervator()],
   routes: [
     GoRoute(
       path: '/',
@@ -101,11 +100,3 @@ final router = GoRouter(
     ),
   ),
 );
-
-class Obervator extends NavigatorObserver {
-  @override
-  void didPush(Route route, Route? previousRoute) {
-    print("${route.settings} ${previousRoute?.settings}");
-    super.didPush(route, previousRoute);
-  }
-}
