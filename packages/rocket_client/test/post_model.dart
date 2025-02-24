@@ -1,4 +1,3 @@
-
 import 'package:rocket_model/rocket_model.dart';
 
 class Post extends RocketModel<Post> {

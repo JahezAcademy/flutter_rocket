@@ -76,3 +76,4 @@ build/
 **/pubspec.lock
 pubspec.lock
 .vscode.vscode/branch-timer.json
+.vscode/branch-timer.json

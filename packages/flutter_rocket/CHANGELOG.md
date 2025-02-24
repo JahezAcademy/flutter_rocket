@@ -94,3 +94,15 @@
 ## 0.0.4
 
 * Update RocketView
+
+## 0.0.5
+
+* Added retry options to `RocketClient`
+
+## 0.0.6
+
+* Fixed nullable value issue on `RocketValue`
+
+## 0.0.7
+
+* Fixed haskey method and get issues on `Rocket
