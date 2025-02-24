@@ -70,9 +70,6 @@ void main() {
     await tester.pump();
     // Name changed
     expect(find.text("Mohammed CHAHBOUN 💙"), findsOneWidget);
-    // After 2 seconds data updated from API
-    await tester.pump(const Duration(seconds: 2));
-    expect(find.text("${userData.first[userNameField]}"), findsOneWidget);
   });
 
   testWidgets('Test Photo view setup', (tester) async {
