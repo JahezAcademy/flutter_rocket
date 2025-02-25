@@ -12,3 +12,7 @@
 ## 0.0.3
 
 * Fixed get method issue
+
+## 0.0.4
+
+* Fixed get method issue by type

@@ -105,7 +105,7 @@ class Rocket {
   static T getFirstByType<T>() {
     final result = getByType<T>().firstOrNull;
     if (result == null) {
-      throw Exception("No value of type $T found.");
+      throw StateError("No value of type $T found.");
     }
     return result;
   }

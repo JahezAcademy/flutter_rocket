@@ -2,7 +2,7 @@ class RocketException {
   RocketException(
       {this.response = "Check model",
       this.statusCode = 200,
-      this.exception = "Nothing",
+      this.exception = "",
       this.stackTrace = StackTrace.empty});
   final dynamic response;
   final int statusCode;

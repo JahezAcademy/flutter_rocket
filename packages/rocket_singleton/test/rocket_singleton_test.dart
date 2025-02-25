@@ -26,8 +26,8 @@ void main() {
       Rocket.clear();
       final model1 = TestModel('test1');
       final model2 = TestModel('test2');
-      Rocket.add(model1);
-      Rocket.add(model2);
+      Rocket.add(model1, key: model1.name);
+      Rocket.add(model2, key: model2.name);
       final models = Rocket.getByType<TestModel>();
       expect(models.length, equals(2));
       expect(models.contains(model1), equals(true));
@@ -35,17 +35,18 @@ void main() {
     });
 
     test('remove', () {
+      Rocket.clear();
       final model = TestModel('test');
       Rocket.add(model);
       Rocket.remove<TestModel>();
-      expect(Rocket.get<TestModel>(), equals(null));
+      expect(() => Rocket.get<TestModel>(), throwsStateError);
     });
 
     test('remove by key', () {
       final model = TestModel('test');
       Rocket.add(model, key: 'myModel');
       Rocket.remove<TestModel>(key: 'myModel');
-      expect(Rocket.get<TestModel>('myModel'), equals(null));
+      expect(() => Rocket.get<TestModel>(), throwsStateError);
     });
 
     test('remove by predicate', () {
