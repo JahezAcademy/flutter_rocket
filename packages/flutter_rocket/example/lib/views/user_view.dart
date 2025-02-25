@@ -30,11 +30,8 @@ class UserExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: RocketView(
             // call api by RocketRequest saved in McController and make model on ready
-            call: () => GetUsers.getUsers(users),
-            // call api every 2 sec
-            callType: CallType.callAsStream,
-            // update data from server every 2 sec
-            secondsOfStream: 2,
+            fetch: () => GetUsers.getUsers(users),
+
             // your model
             model: users,
             // your widget for show data from model

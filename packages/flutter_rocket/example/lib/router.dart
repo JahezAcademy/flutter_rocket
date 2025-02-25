@@ -37,23 +37,27 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: '/posts',
-      pageBuilder: (context, state) => NoTransitionPage<void>(
-        key: state.pageKey,
-        child: PostExample(
-          title: state.extra.toString(),
-        ),
-      ),
-    ),
-    GoRoute(
-      path: '/posts/:index',
-      pageBuilder: (context, state) => NoTransitionPage<void>(
-        key: state.pageKey,
-        child: Details(
-          int.tryParse(state.pathParameters['index']!) ?? 1,
-        ),
-      ),
-    ),
+        path: '/posts',
+        name: "posts",
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              name: state.name,
+              child: PostExample(
+                title: state.extra.toString(),
+              ),
+            ),
+        routes: [
+          GoRoute(
+            path: ':index',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              name: "index",
+              child: Details(
+                int.tryParse(state.pathParameters['index']!) ?? 1,
+              ),
+            ),
+          ),
+        ]),
     GoRoute(
       path: '/users',
       pageBuilder: (context, state) => NoTransitionPage<void>(

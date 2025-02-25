@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rocket_model/rocket_model.dart';
@@ -51,56 +49,30 @@ class RocketView<T> extends StatefulWidget {
   ///     }
   ///   },
   /// //create fetch data method inside model
-  ///   call: () async => await myModel.fetchData(),
+  ///   fetch: () async => await myModel.fetchData(),
   ///   callType: CallType.callAsFuture,
   ///   onError: (error, reload) => Text('Error: ${error.response}'),
   /// )
   /// ```
   ///
-  RocketView({
+  const RocketView({
     Key? key,
     required this.model,
     required this.builder,
-    this.call,
+    this.fetch,
     this.callType = CallType.callAsFuture,
-    this.secondsOfStream = 1,
     this.onLoading,
     this.onError,
-  }) : super(key: key) {
-    /// Call the `call` function based on the `callType` parameter.
-    switch (callType) {
-      case CallType.callAsFuture:
-        call?.call();
-        break;
-      case CallType.callIfModelEmpty:
-        if (!model.existData) {
-          call?.call();
-        }
-        break;
-      case CallType.callAsStream:
-        call?.call();
-        Timer.periodic(Duration(seconds: secondsOfStream), (timer) {
-          model.loadingChecking = true;
-          call?.call();
-          if (!model.hasListeners || model.state != RocketState.done) {
-            timer.cancel();
-          }
-        });
-        break;
-    }
-  }
+  }) : super(key: key);
 
   /// The function that builds the widget tree based on the state.
   final Widget Function(BuildContext, RocketState) builder;
 
   /// The function that fetches data.
-  final dynamic Function()? call;
+  final dynamic Function()? fetch;
 
   /// When to call the `call` function.
   final CallType callType;
-
-  /// Number of seconds between calls if `callType` is `CallType.callAsStream`.
-  final int secondsOfStream;
 
   /// The widget to display while data is loading, if not defined you need to handle it on `builder` by `state`
   final Widget Function()? onLoading;
@@ -131,9 +103,22 @@ class ViewRocketState extends State<RocketView> {
     /// Register this listener to the `RocketModel`.
     reload = () {
       widget.model.state = RocketState.loading;
-      widget.call?.call();
+      widget.fetch?.call();
     };
     widget.model.registerListener(rocketRebuild, _handleChange);
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /// Call the `call` function based on the `callType` parameter.
+    switch (widget.callType) {
+      case CallType.callAsFuture:
+        widget.fetch?.call();
+        break;
+      case CallType.callIfModelEmpty:
+        if (!widget.model.existData) {
+          widget.fetch?.call();
+        }
+        break;
+    }
+    // });
     super.initState();
   }
 

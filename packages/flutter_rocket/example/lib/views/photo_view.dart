@@ -25,7 +25,7 @@ class PhotoExample extends StatelessWidget {
               );
             },
             // get 5000 items
-            call: () => GetPhotos.getPhotos(photo),
+            fetch: () => GetPhotos.getPhotos(photo),
             builder: (context, modelState) {
               return ListView.builder(
                   itemCount: photo.all!.length,

@@ -56,7 +56,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            call: () {
+            fetch: () {
               rocketModel.state = RocketState.failed;
               rocketModel.exception = RocketException(
                 exception: 'Error fetching data',
@@ -89,7 +89,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            call: () async {},
+            fetch: () async {},
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
             onError: (error, reload) => TextButton(
               onPressed: reload,
@@ -117,7 +117,7 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
-            call: () {
+            fetch: () {
               callFunctionCalled = true;
             },
             callType: CallType.callAsFuture,
@@ -142,7 +142,7 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
-            call: () {
+            fetch: () {
               callFunctionCalled = true;
             },
             callType: CallType.callIfModelEmpty,
@@ -166,7 +166,7 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
-            call: () {
+            fetch: () {
               callFunctionCalled = true;
             },
             callType: CallType.callIfModelEmpty,

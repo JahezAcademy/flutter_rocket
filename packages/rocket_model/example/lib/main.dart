@@ -83,8 +83,6 @@ class RocketModelExampleState extends State<RocketModelExample> {
         } else {
           return const Text('No data');
         }
-      default:
-        return Container();
     }
   }
 }

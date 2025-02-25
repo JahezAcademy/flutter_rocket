@@ -145,7 +145,7 @@ class RocketClient {
     String mapToParams = Uri(queryParameters: params ?? {}).query;
     Uri url = Uri.parse("${this.url}/$endpoint?$mapToParams");
     Request request = Request(method.name, url);
-    request.body = json.encode(data);
+    if (data != null) request.body = json.encode(data);
     request.headers.addAll(headers);
     final client = Client();
     final retryClient = RetryClient(client,

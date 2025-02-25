@@ -15,7 +15,10 @@
 * Fixed bug on `request` method
 
 # 0.0.4
+
 * Support request retry
 
 # 0.0.5
+
 * Adds `requestSimulation` method for Support api integration simulation
+* Fix `Request with GET/HEAD method cannot have body` bug

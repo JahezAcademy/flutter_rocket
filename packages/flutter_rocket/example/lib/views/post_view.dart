@@ -39,7 +39,7 @@ class PostExample extends StatelessWidget {
               },
               child: RocketView(
                 // call api method
-                call: () => GetPosts.getPosts(post),
+                fetch: () => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
                 // call call Voidcallback if model empty

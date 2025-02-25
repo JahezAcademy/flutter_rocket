@@ -1,7 +1,5 @@
+# <img src="https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/logo.png" width="35"> Flutter Rocket <img src="https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/logo.png" width="35">
 
-
-
-#  <img src="https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/logo.png" width="35">  Flutter Rocket <img src="https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/logo.png" width="35"> 
 ## Fly high with Flutter Rocket - the ultimate package for Flutter developers
 
 # Author: [Jahez team](https://github.com/JahezAcademy)
@@ -10,27 +8,29 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-brown.svg)](https://opensource.org/licenses/MIT)
 [![Flutter CI](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/JahezAcademy/flutter_rocket/actions/workflows/flutter-ci.yml)
 
-## Graphic tutorial 
+## Graphic tutorial
+
 ![JPG](https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/flutter_rocket_schema.jpg)
 [Open with miro](https://miro.com/app/board/uXjVPndHj2s=/?share_link_id=307293362528)
 
 ---
 
-| Package                                                                                    | Pub                                                                                                                  |
-| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| [flutter_rocket](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/flutter_rocket)                         | [![pub package](https://img.shields.io/pub/v/flutter_rocket.svg)](https://pub.dev/packages/flutter_rocket)                               |
-| [rocket_model](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_model)               | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model)                     |
-| [rocket_client](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_client) | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client)       |
-| [rocket_listenable](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_listenable)         | [![pub package](https://img.shields.io/pub/v/rocket_listenable.svg)](https://pub.dev/packages/rocket_listenable)               |
-| [rocket_view](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_view)         | [![pub package](https://img.shields.io/pub/v/rocket_view.svg)](https://pub.dev/packages/rocket_view)               |
-| [rocket_singleton](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_singleton)       | [![pub package](https://img.shields.io/pub/v/rocket_singleton.svg)](https://pub.dev/packages/rocket_singleton)             |
-| [rocket_mini_view](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_mini_view)           | [![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view)                 |
+| Package                                                                                                    | Pub                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [flutter_rocket](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/flutter_rocket)       | [![pub package](https://img.shields.io/pub/v/flutter_rocket.svg)](https://pub.dev/packages/flutter_rocket)       |
+| [rocket_model](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_model)           | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model)           |
+| [rocket_client](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_client)         | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client)         |
+| [rocket_listenable](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_listenable) | [![pub package](https://img.shields.io/pub/v/rocket_listenable.svg)](https://pub.dev/packages/rocket_listenable) |
+| [rocket_view](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_view)             | [![pub package](https://img.shields.io/pub/v/rocket_view.svg)](https://pub.dev/packages/rocket_view)             |
+| [rocket_singleton](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_singleton)   | [![pub package](https://img.shields.io/pub/v/rocket_singleton.svg)](https://pub.dev/packages/rocket_singleton)   |
+| [rocket_mini_view](https://github.com/JahezAcademy/flutter_rocket/tree/master/packages/rocket_mini_view)   | [![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view)   |
 
 ---
 
-
 # Usage
+
 ## Simple case usage RocketMiniView & RocketValue
+
 its very simple
 
 ```dart
@@ -164,7 +164,7 @@ class MyApp extends StatelessWidget {
     // create request object
     RocketRequest request = RocketRequest(url: baseUrl);
     // save it, for use it from any screen by key
-    Rocket.add(rocketRequestKey, request);    
+    Rocket.add(rocketRequestKey, request);
   }
 
   @override
@@ -238,7 +238,7 @@ class PostExample extends StatelessWidget {
               },
               child: RocketView(
                 // call api method
-                call: () => GetPosts.getPosts(post),
+                fetch: () => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
                 // call call Voidcallback if model empty
@@ -334,6 +334,7 @@ class Details extends StatelessWidget {
 & last item its Rocket for save your model or any value and get it anywhere by key
 
 [Rocket object details](https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_singleton)
+
 ## [More examples](https://github.com/JahezAcademy/flutter_rocket/tree/main/example)
 
 If you have any questions or issues, feel free to check out the [Flutter Rocket GitHub repository](https://github.com/JahezAcademy/flutter_rocket) or ask for help on the [flutter_rocket package Discussions](https://github.com/JahezAcademy/flutter_rocket/discussions).
