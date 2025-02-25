@@ -16,3 +16,6 @@
 
 # 0.0.4
 * Support request retry
+
+# 0.0.5
+* Adds `requestSimulation` method for Support api integration simulation
