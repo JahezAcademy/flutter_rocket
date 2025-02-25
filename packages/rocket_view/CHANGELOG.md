@@ -6,3 +6,8 @@
 
 * Changed `loader` widget arg to `onLoading` buidlder
 * Improved states onLoading & onError
+
+# 0.0.2
+
+* Renamed `call` to `fetch` RocketView Parameter
+* Improved invoke `fetch` method

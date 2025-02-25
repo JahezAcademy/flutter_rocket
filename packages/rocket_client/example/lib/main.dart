@@ -90,7 +90,6 @@ class RocketClientExampleState extends State<RocketClientExample> {
       retryOptions: RetryOptions(
         retries: 2,
         retryWhen: (r) => r.statusCode != 200,
-      
       ),
       onError: (response, statusCode) {
         isFailed = true;
@@ -107,8 +106,8 @@ class RocketClientExampleState extends State<RocketClientExample> {
     setState(() {});
     // Display the response in a dialog
     if (!isFailed) {
-      // ignore: use_build_context_synchronously
       showDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (context) {
           return AlertDialog(
