@@ -28,10 +28,24 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
-
   flutter_rocket:
     path: ../
   go_router: ^10.0.0
+
+
+dependency_overrides:
+    rocket_model:
+      path: ../../rocket_model
+    rocket_listenable:
+      path: ../../rocket_listenable
+    rocket_view:
+      path: ../../rocket_view
+    rocket_mini_view:
+      path: ../../rocket_mini_view
+    rocket_client:
+      path: ../../rocket_client
+    rocket_singleton:
+      path: ../../rocket_singleton
 
     
 
