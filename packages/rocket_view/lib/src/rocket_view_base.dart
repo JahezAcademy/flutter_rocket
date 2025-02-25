@@ -49,7 +49,7 @@ class RocketView<T> extends StatefulWidget {
   ///     }
   ///   },
   /// //create fetch data method inside model
-  ///   call: () async => await myModel.fetchData(),
+  ///   fetch: () async => await myModel.fetchData(),
   ///   callType: CallType.callAsFuture,
   ///   onError: (error, reload) => Text('Error: ${error.response}'),
   /// )
@@ -59,7 +59,7 @@ class RocketView<T> extends StatefulWidget {
     Key? key,
     required this.model,
     required this.builder,
-    this.call,
+    this.fetch,
     this.callType = CallType.callAsFuture,
     this.onLoading,
     this.onError,
@@ -69,7 +69,7 @@ class RocketView<T> extends StatefulWidget {
   final Widget Function(BuildContext, RocketState) builder;
 
   /// The function that fetches data.
-  final dynamic Function()? call;
+  final dynamic Function()? fetch;
 
   /// When to call the `call` function.
   final CallType callType;
@@ -103,18 +103,18 @@ class ViewRocketState extends State<RocketView> {
     /// Register this listener to the `RocketModel`.
     reload = () {
       widget.model.state = RocketState.loading;
-      widget.call?.call();
+      widget.fetch?.call();
     };
     widget.model.registerListener(rocketRebuild, _handleChange);
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
     /// Call the `call` function based on the `callType` parameter.
     switch (widget.callType) {
       case CallType.callAsFuture:
-        widget.call?.call();
+        widget.fetch?.call();
         break;
       case CallType.callIfModelEmpty:
         if (!widget.model.existData) {
-          widget.call?.call();
+          widget.fetch?.call();
         }
         break;
     }

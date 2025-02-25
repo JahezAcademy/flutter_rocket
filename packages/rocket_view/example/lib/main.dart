@@ -92,7 +92,7 @@ class RocketViewExample extends StatelessWidget {
           );
         },
         // Define how the Todo list should be fetched
-        call: todos.fetch,
+        fetch: todos.fetch,
         callType: CallType.callAsFuture,
         // Define how to handle errors
         onError: (error, reload) => Text('Error: ${error.exception}'),

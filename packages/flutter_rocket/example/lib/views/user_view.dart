@@ -30,7 +30,7 @@ class UserExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: RocketView(
             // call api by RocketRequest saved in McController and make model on ready
-            call: () => GetUsers.getUsers(users),
+            fetch: () => GetUsers.getUsers(users),
 
             // your model
             model: users,

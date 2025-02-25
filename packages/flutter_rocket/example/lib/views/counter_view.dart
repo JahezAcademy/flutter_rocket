@@ -35,7 +35,7 @@ class CounterExample extends StatelessWidget {
               ///
               /// This function will increment the count value of the `Counter`
               /// instance after a delay of one second.
-              call: add,
+              fetch: add,
 
               /// The widget builder function that will be called whenever
               /// the RocketView is updated.

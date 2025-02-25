@@ -1,6 +1,5 @@
 # RocketView
 
-
 Rocket Model is a Flutter package that provides a way to manage the state of your data using a `RocketModel` object and display that data in a widget tree using a `RocketView` widget. The `RocketView` widget automatically handles the different states of the data (loading, done, and failed) and provides an easy way to fetch and reload data.
 
 ## Usage
@@ -19,7 +18,7 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     return RocketView(
       model: todoModel,
-      call: () => GetTodos.getTodos(todoModel),
+      fetch: () => GetTodos.getTodos(todoModel),
       onLoading: () {
         return const Center(
           child: CircularProgressIndicator(
