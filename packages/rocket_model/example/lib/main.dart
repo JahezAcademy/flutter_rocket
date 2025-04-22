@@ -55,6 +55,20 @@ class RocketModelExampleState extends State<RocketModelExample> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('RocketModel Example Screen'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _model.loadData,
+          ),
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: _model.saveToCache,
+          ),
+          IconButton(
+            icon: const Icon(Icons.restore),
+            onPressed: _model.loadFromCache,
+          ),
+        ],
       ),
       body: Center(
         child: _buildBody(),

@@ -11,8 +11,17 @@ class ExampleModel extends RocketModel<ExampleModel> {
     try {
       final data = await _api.getData();
       setMulti(data);
+      await saveToCache('example_model_cache');
     } catch (e) {
       setException(RocketException(exception: 'Failed to load data: $e'));
+    }
+  }
+
+  Future<void> loadFromCache() async {
+    try {
+      await loadFromCache('example_model_cache');
+    } catch (e) {
+      setException(RocketException(exception: 'Failed to load data from cache: $e'));
     }
   }
 

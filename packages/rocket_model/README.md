@@ -12,6 +12,7 @@ A model object is a class that represents data and provides methods for managing
 - Implements the `RocketListenable` mixin, which allows you to notify listeners when the model changes.
 - Includes methods for managing and updating data, such as adding and deleting items.
 - Provides hooks for handling data loading and error handling.
+- Supports local caching of data using the `shared_preferences` package.
 
 ## Getting Started
 
@@ -101,6 +102,8 @@ An abstract class that defines the behavior of a model object.
 - `fromJson(Map<String, dynamic> json, {bool isSub = false})`: Deserializes the model's data from the given JSON map.
 - `toJson()`: Serializes the model's data to a JSON map.
 - `rebuildWidget({bool fromUpdate = false})`: Notifies listeners that the model has changed and needs to be rebuilt.
+- `saveToLocalStorage(String key, String value)`: Saves the given value to local storage with the specified key.
+- `loadFromLocalStorage(String key)`: Loads the value from local storage with the specified key.
 
 ### RocketState
 

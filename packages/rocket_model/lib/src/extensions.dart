@@ -11,3 +11,17 @@ extension AllToJson on List<RocketModel> {
     }).toList();
   }
 }
+
+extension LocalCache on RocketModel {
+  Future<void> saveToCache(String key) async {
+    final jsonString = toJson().toString();
+    await saveToLocalStorage(key, jsonString);
+  }
+
+  Future<void> loadFromCache(String key) async {
+    final jsonString = await loadFromLocalStorage(key);
+    if (jsonString != null) {
+      fromJson(jsonDecode(jsonString));
+    }
+  }
+}
