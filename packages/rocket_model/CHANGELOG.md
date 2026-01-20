@@ -9,3 +9,8 @@
 ## 0.0.3
 
 * Updated `RocketException` object fields
+
+## 0.0.4
+
+* Added `fields` support to `rebuildWidget` for targeted UI updates.
+* Optimized field notification logic.

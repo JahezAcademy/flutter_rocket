@@ -50,31 +50,35 @@ abstract class RocketListenable {
 
   /// Notifies the listeners registered with any of the specified keys.
   void callListeners(List<String> keys) {
-    _observers.forEach((key, value) {
-      if (keys.contains(key)) {
-        for (var l in value) {
-          l.callBack.call();
-        }
-      }
-    });
+    for (var key in keys) {
+      callListener(key);
+    }
   }
 
   /// Removes the specified listener (or all listeners if no listener is specified) with the specified key.
   void removeListener(String key, [VoidCallback? listener]) {
     if (_observers.containsKey(key)) {
-      listener == null
-          ? _observers.remove(key)
-          : _observers[key]!.removeWhere((l) => l.callBack == listener);
+      if (listener == null) {
+        _observers.remove(key);
+      } else {
+        _observers[key]!.removeWhere((l) => l.callBack == listener);
+        if (_observers[key]!.isEmpty) {
+          _observers.remove(key);
+        }
+      }
     }
   }
 
   /// Removes the specified listeners (or all listeners if no listener is specified) with the specified keys.
   void removeListeners(List<String> keys, [List<VoidCallback>? listeners]) {
-    listeners == null
-        ? _observers.removeWhere((key, value) => keys.contains(key))
-        : _observers.forEach((key, value) {
-            value.removeWhere((l) => listeners.contains(l.callBack));
-          });
+    for (var key in keys) {
+      removeListener(key);
+    }
+    if (listeners != null) {
+      _observers.forEach((key, value) {
+        value.removeWhere((l) => listeners.contains(l.callBack));
+      });
+    }
   }
 
   /// Returns true if this object has any listeners.
