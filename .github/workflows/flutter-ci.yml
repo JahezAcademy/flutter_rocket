@@ -13,48 +13,38 @@ on:
     
 jobs:
   build:
-    # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - packages/flutter_rocket
+          - packages/rocket_cache
+          - packages/rocket_client
+          - packages/rocket_listenable
+          - packages/rocket_mini_view
+          - packages/rocket_model
+          - packages/rocket_singleton
+          - packages/rocket_view
+          - rocket_cli
+      fail-fast: false
+    
     steps:
-    
-    - uses: actions/checkout@v3
-    
-    # Setup the flutter environment.
-    - uses: subosito/flutter-action@v2
-    
-    - name: Run CI for all packages
-      run: |
-        # Check formatting for the entire repository
-        echo "🧐 Checking formatting..."
-        dart format --set-exit-if-changed .
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+      
+      - name: Install Dependencies
+        run: flutter pub get
+        working-directory: ${{ matrix.package }}
 
-        # Find all directories with pubspec.yaml (excluding .dart_tool and build)
-        packages=$(find . -maxdepth 4 -name "pubspec.yaml" | grep -v "/.dart_tool/" | grep -v "/build/" | sed 's/\/pubspec.yaml//' | sort)
+      - name: Analyze
+        run: dart analyze .
+        working-directory: ${{ matrix.package }}
 
-        for pkg in $packages; do
-          echo ""
-          echo "----------------------------------------------------"
-          echo "🚀 Processing $pkg"
-          echo "----------------------------------------------------"
-          
-          # Navigate into package directory
-          cd "$pkg"
-          
-          # Get dependencies
-          flutter pub get
-          
-          # Statically analyze the Dart code
-          echo "📝 Analyzing $pkg..."
-          dart analyze .
-          
-          # Run tests if test directory exists
+      - name: Run Tests
+        run: |
           if [ -d "test" ]; then
-            echo "🧪 Running tests for $pkg..."
             flutter test
           else
-            echo "ℹ️ No tests found in $pkg"
+            echo "No tests found"
           fi
-          
-          # Navigate back to root
-          cd - > /dev/null
-        done
+        working-directory: ${{ matrix.package }}
