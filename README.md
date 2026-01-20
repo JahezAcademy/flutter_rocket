@@ -150,10 +150,35 @@ class Post extends RocketModel<Post> {
   }
 
   @override
-  get instance => Post();
+  Post get instance => Post();
 }
+```
+
+### Advanced Optimization: Automatic Bubbling
+`RocketModel` now automatically handles notification bubbling. If you have a collection of models (e.g. `Posts` containing `Post`), any change to an individual `Post` will automatically notify the `Posts` parent and rebuild any `RocketView` listening to it. This eliminates the need for manual listener management in your UI.
 
 ```
+
+### Selective Rebuilds
+For complex models, you can optimize performance by rebuilding widgets only when specific fields change:
+
+1. Specify fields in `RocketView`:
+```dart
+RocketView(
+  model: userModel,
+  fields: ['avatarUrl'], // Only listen to avatarUrl
+  builder: (context, state) => Image.network(userModel.avatarUrl),
+)
+```
+
+2. Notify for those fields in your model:
+```dart
+void updateAvatar(String newUrl) {
+  avatarUrl = newUrl;
+  rebuildWidget(fields: ['avatarUrl']); // Only notifies avatarUrl listeners
+}
+```
+This prevents the "Profile Picture" from rebuilding if the user's "Bio" or "Points" change.
 
 Now second step create your RocketRequest in constructor or initState of first widget and pass url & headers
 
@@ -247,7 +272,7 @@ class PostExample extends StatelessWidget {
                 // callType: CallType.callAsStream,
                 // secondsOfStream: 1,
                 // customized your loading (default widget is CircularProgressIndicator)
-                // loader:CustomLoading(),
+                // loader:CustomLoading(), // Optional: default is CircularProgressIndicator
 
                 // handle errors
                 onError: (RocketException exception, Function() reload) {
@@ -334,6 +359,46 @@ class Details extends StatelessWidget {
 & last item its Rocket for save your model or any value and get it anywhere by key
 
 [Rocket object details](https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_singleton)
+
+### Interceptors
+You can now add interceptors to your `RocketClient` to handle global logic like adding Auth tokens or logging:
+
+```dart
+RocketClient client = RocketClient(
+  url: 'https://api.example.com',
+  beforeRequest: (request) {
+    request.headers['Authorization'] = 'Bearer token';
+    return request;
+  },
+  afterResponse: (response) {
+    print('Status: ${response.statusCode}');
+    return response;
+  }
+);
+```
+
+### Caching
+`RocketClient` now supports dynamic caching with `rocket_cache`. 
+
+1. Initialize its storage (usually in `main`):
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await RocketCache.init();
+  runApp(MyApp());
+}
+```
+
+2. Use it in your requests:
+```dart
+client.request(
+  'posts',
+  model: post,
+  cacheKey: 'all_posts', // Unique key for this request
+  cacheDuration: Duration(days: 1), // Optional: auto-expire after 1 day
+);
+```
+Data will be loaded from cache instantly if available.
 
 ## [More examples](https://github.com/JahezAcademy/flutter_rocket/tree/main/example)
 
