@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:rocket_cli/rocket_cli.dart';
-import 'package:rocket_cli/src/model_generator/models/utils/extensions.dart';
 
 void main() {
   group('EString Extension Tests', () {
@@ -149,6 +148,31 @@ void main() {
 
       final result = controller.models.first.result;
       expect(result, contains('List<dynamic>? items;'));
+    });
+
+    test('Generates updateFields with selective rebuild logic', () async {
+      const jsonStr = '{"title": "Hello", "body": "World"}';
+      await generator.generate(jsonStr, 'Post', controller);
+
+      final result = controller.models.first.result;
+
+      // Check for fields list initialization
+      expect(result, contains('List<String> fields = [];'));
+
+      // Check for selective field updates
+      expect(result, contains('if (titleField != null) {'));
+      expect(result, contains('title = titleField;'));
+      expect(result, contains('fields.add(postTitleField);'));
+
+      expect(result, contains('if (bodyField != null) {'));
+      expect(result, contains('body = bodyField;'));
+      expect(result, contains('fields.add(postBodyField);'));
+
+      // Check for rebuildWidget call with fields
+      expect(
+          result,
+          contains(
+              'rebuildWidget(fromUpdate: true, fields: fields.isEmpty ? null : fields);'));
     });
   });
 }

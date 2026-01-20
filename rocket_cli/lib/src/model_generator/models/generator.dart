@@ -71,7 +71,7 @@ class Generator {
           'const String ${className.toLowerCase()}${key.camel.firstUpper}Field = "$key";';
       final String updateFieldParamLine = "$fieldType? ${key.camel}Field,";
       final String updateFieldBodyLine =
-          "${key.camel} = ${key.camel}Field ?? ${key.camel};";
+          "if (${key.camel}Field != null) { ${key.camel} = ${key.camel}Field; fields.add($fieldKeyMap); }";
 
       bool isPrimitive = _isPrimitive(value);
 

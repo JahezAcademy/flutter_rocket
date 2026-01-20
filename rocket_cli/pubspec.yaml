@@ -1,6 +1,6 @@
 name: rocket_cli
 description: A command-line tool for generating RocketModel classes from JSON for the flutter_rocket package.
-version: 1.0.0
+version: 1.1.0
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/rocket_cli
 homepage: https://github.com/JahezAcademy/flutter_rocket
 

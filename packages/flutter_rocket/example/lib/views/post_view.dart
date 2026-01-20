@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:example/models/post_model.dart';
@@ -80,25 +79,26 @@ class PostExample extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         // your data saved in multi list as Post model
                         Post currentPost = post.all![index];
-                        return ListTile(
-                            leading: Text(currentPost.id.toString()),
-                            title: Text(currentPost.title!),
-                            trailing: IconButton(
-                              color: Colors.brown,
-                              icon: const Icon(Icons.update),
-                              onPressed: () {
-                                List titles = post.all!
-                                    .toJson(
-                                        include: ["title"], onlyValues: true)
-                                    .map((e) => e[0])
-                                    .toList();
-                                log("$titles");
-                                // update post data
-                                currentPost.updateFields(
-                                    titleField: "This Title changed");
-                              },
-                            ),
-                            onTap: () => context.go('/posts/$index'));
+                        return RocketView(
+                          model: currentPost,
+                          // This widget will rebuild only when title of current post changed
+                          fields: const [postTitleField],
+                          builder: (context, state) {
+                            return ListTile(
+                                leading: Text(currentPost.id.toString()),
+                                title: Text(currentPost.title!),
+                                trailing: IconButton(
+                                  color: Colors.brown,
+                                  icon: const Icon(Icons.update),
+                                  onPressed: () {
+                                    // update post data
+                                    currentPost.updateFields(
+                                        titleField: "This Title changed");
+                                  },
+                                ),
+                                onTap: () => context.go('/posts/$index'));
+                          },
+                        );
                       },
                     ),
                   );
@@ -116,15 +116,21 @@ class Details extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Post currentPost = post.all![index];
-    return Scaffold(
-      appBar: AppBar(title: Text(currentPost.title!)),
-      body: Center(
-        child: ListTile(
-          leading: Text(currentPost.id.toString()),
-          title: Text(currentPost.title!),
-          subtitle: Text(currentPost.body!),
-        ),
-      ),
+    return RocketView(
+      model: currentPost,
+      fields: const [postTitleField, postBodyField],
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(title: Text(currentPost.title!)),
+          body: Center(
+            child: ListTile(
+              leading: Text(currentPost.id.toString()),
+              title: Text(currentPost.title!),
+              subtitle: Text(currentPost.body!),
+            ),
+          ),
+        );
+      },
     );
   }
 }
