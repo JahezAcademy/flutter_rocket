@@ -19,8 +19,9 @@ class -name- extends RocketModel<-name-> {
   void updateFields({
    -updateFieldsParams-
   }) {
-   -updateFieldsBody-
-    rebuildWidget(fromUpdate: true);
+    List<String> fields = [];
+    -updateFieldsBody-
+    rebuildWidget(fromUpdate: true, fields: fields.isEmpty ? null : fields);
   }
 
   @override

@@ -36,11 +36,24 @@ class Post extends RocketModel<Post> {
     String? titleField,
     String? bodyField,
   }) {
-    userId = userIdField ?? userId;
-    id = idField ?? id;
-    title = titleField ?? title;
-    body = bodyField ?? body;
-    rebuildWidget(fromUpdate: true);
+    List<String> fields = [];
+    if (userIdField != null) {
+      userId = userIdField;
+      fields.add(postUserIdField);
+    }
+    if (idField != null) {
+      id = idField;
+      fields.add(postIdField);
+    }
+    if (titleField != null) {
+      title = titleField;
+      fields.add(postTitleField);
+    }
+    if (bodyField != null) {
+      body = bodyField;
+      fields.add(postBodyField);
+    }
+    rebuildWidget(fromUpdate: true, fields: fields.isEmpty ? null : fields);
   }
 
   @override
