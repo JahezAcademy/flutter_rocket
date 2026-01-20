@@ -22,3 +22,9 @@
 
 * Adds `requestSimulation` method for Support api integration simulation
 * Fix `Request with GET/HEAD method cannot have body` bug
+
+# 0.0.6
+
+* Added support for Request and Response Interceptors.
+* Integrated `rocket_cache` for offline data persistence.
+* Improved error handling and response logging.
