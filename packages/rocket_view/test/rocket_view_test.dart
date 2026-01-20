@@ -187,7 +187,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            fields: ['name'],
+            fields: const ['name'],
             builder: (context, state) {
               buildCount++;
               return Text('Name: ${rocketModel.name}');
@@ -214,7 +214,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            fields: ['name'],
+            fields: const ['name'],
             builder: (context, state) {
               buildCount++;
               return Text('Name: ${rocketModel.name}');

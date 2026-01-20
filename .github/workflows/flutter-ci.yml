@@ -22,22 +22,39 @@ jobs:
     # Setup the flutter environment.
     - uses: subosito/flutter-action@v2
     
-    - name: Get flutter dependencies.
-      run: flutter pub get
-      working-directory: ./packages/flutter_rocket
+    - name: Run CI for all packages
+      run: |
+        # Check formatting for the entire repository
+        echo "🧐 Checking formatting..."
+        dart format --set-exit-if-changed .
 
-    - name: Upgrade flutter dependencies.
-      run: flutter packages upgrade
-      working-directory: ./packages/flutter_rocket
-    
-    - name: Check for any formatting issues in the code.
-      run: dart format --set-exit-if-changed .
-      working-directory: ./packages/flutter_rocket
-    
-    - name: Statically analyze the Dart code for any errors.
-      run: dart analyze .
-      working-directory: ./packages/flutter_rocket
+        # Find all directories with pubspec.yaml (excluding .dart_tool and build)
+        packages=$(find . -maxdepth 4 -name "pubspec.yaml" | grep -v "/.dart_tool/" | grep -v "/build/" | sed 's/\/pubspec.yaml//' | sort)
 
-    - name: Test model & view examples
-      run: flutter test
-      working-directory: ./packages/flutter_rocket/example
+        for pkg in $packages; do
+          echo ""
+          echo "----------------------------------------------------"
+          echo "🚀 Processing $pkg"
+          echo "----------------------------------------------------"
+          
+          # Navigate into package directory
+          cd "$pkg"
+          
+          # Get dependencies
+          flutter pub get
+          
+          # Statically analyze the Dart code
+          echo "📝 Analyzing $pkg..."
+          dart analyze .
+          
+          # Run tests if test directory exists
+          if [ -d "test" ]; then
+            echo "🧪 Running tests for $pkg..."
+            flutter test
+          else
+            echo "ℹ️ No tests found in $pkg"
+          fi
+          
+          # Navigate back to root
+          cd - > /dev/null
+        done
