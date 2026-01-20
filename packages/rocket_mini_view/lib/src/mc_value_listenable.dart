@@ -3,9 +3,9 @@ import 'package:rocket_listenable/rocket_listenable.dart';
 import 'constants.dart';
 
 class RocketValue<T> extends RocketListenable {
-  RocketValue(this._value);
-  T get v => _value;
-  T _value;
+  RocketValue(T initialValue) : _value = initialValue;
+  T get v => _value as T;
+  dynamic _value;
 
   set v(T newValue) {
     if (_value == newValue) return;
@@ -14,8 +14,8 @@ class RocketValue<T> extends RocketListenable {
   }
 
   void rebuildWidget() {
-    if (keyHasListeners(rocketMiniRebuild)) callListener(rocketMiniRebuild);
-    if (keyHasListeners(rocketMergesRebuild)) callListener(rocketMergesRebuild);
+    callListener(rocketMiniRebuild);
+    callListener(rocketMergesRebuild);
   }
 
   factory RocketValue.merge(List<RocketListenable> kMerges) {

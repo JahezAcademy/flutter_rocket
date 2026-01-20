@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'extensions.dart';
 
 class Rocket {
   Rocket._();
@@ -30,12 +29,10 @@ class Rocket {
   ///
   /// [key] The key of the value to get.
   ///
-  /// Returns the value, or null if no value with the given key exists.
+  /// Returns the value.
   static T get<T>([String? key]) {
-    // assert(key != null && getByType<T>().isNotEmpty,
-    //     "No value of type $T and key $key");
     if (key == null) return getFirstByType<T>();
-    return _models[key];
+    return _models[key] as T;
   }
 
   /// Iterates over all rocket models in the collection.
@@ -51,10 +48,8 @@ class Rocket {
   ///
   /// Throws an AssertionError if no value with the given key exists.
   static void remove<T>({String? key}) {
-    // assert(key != null || getByType<T>().isNotEmpty,
-    //     "No value of type $T and key $key");
     if (key == null) {
-      _models.removeWhere((key, value) => key.contains(T.toString()));
+      _models.removeWhere((key, value) => value is T);
       return;
     }
     _models.remove(key);
@@ -62,19 +57,12 @@ class Rocket {
 
   /// Returns true if the collection contains a value with the given key.
   static bool hasKey(String key) {
-    return _models.hasKey(key);
+    return _models.containsKey(key);
   }
 
   /// Returns true if the collection contains a value of the given type.
   static bool hasType<T>() {
-    final String key = T.toString();
-    bool exist = false;
-    _models.forEach((k, value) {
-      if (k.contains(key)) {
-        exist = true;
-      }
-    });
-    return exist;
+    return _models.values.any((value) => value is T);
   }
 
   /// Gets a list of the keys of all rocket models in the collection.

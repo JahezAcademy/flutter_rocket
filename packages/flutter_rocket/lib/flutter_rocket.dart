@@ -6,3 +6,4 @@ export 'package:rocket_client/rocket_client.dart';
 export 'package:rocket_listenable/rocket_listenable.dart';
 export 'package:rocket_model/rocket_model.dart';
 export 'package:rocket_singleton/rocket_singleton.dart';
+export 'package:rocket_cache/rocket_cache.dart';
