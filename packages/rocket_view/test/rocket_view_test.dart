@@ -176,9 +176,64 @@ void main() {
 
       expect(callFunctionCalled, isTrue);
     });
+
+    testWidgets('RocketView selective rebuild with matching field',
+        (WidgetTester tester) async {
+      final rocketModel = RocketModelData<int>();
+      rocketModel.state = RocketState.done;
+      int buildCount = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RocketView<int>(
+            model: rocketModel,
+            fields: ['name'],
+            builder: (context, state) {
+              buildCount++;
+              return Text('Name: ${rocketModel.name}');
+            },
+          ),
+        ),
+      );
+
+      expect(buildCount, 1);
+
+      // Notify matching field
+      rocketModel.rebuildWidget(fields: ['name']);
+      await tester.pump();
+      expect(buildCount, 2);
+    });
+
+    testWidgets('RocketView selective rebuild with non-matching field',
+        (WidgetTester tester) async {
+      final rocketModel = RocketModelData<int>();
+      rocketModel.state = RocketState.done;
+      int buildCount = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RocketView<int>(
+            model: rocketModel,
+            fields: ['name'],
+            builder: (context, state) {
+              buildCount++;
+              return Text('Name: ${rocketModel.name}');
+            },
+          ),
+        ),
+      );
+
+      expect(buildCount, 1);
+
+      // Notify different field
+      rocketModel.rebuildWidget(fields: ['other']);
+      await tester.pump();
+      expect(buildCount, 1); // Should NOT rebuild
+    });
   });
 }
 
 class RocketModelData<T> extends RocketModel<T> {
   int? data;
+  String? name;
 }

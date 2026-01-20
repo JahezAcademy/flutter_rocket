@@ -14,7 +14,9 @@ import 'rocket_exception.dart';
 /// and manipulated through the model object's public methods.
 abstract class RocketModel<T> extends RocketListenable {
   /// The dynamic instance of the model.
-  dynamic instance;
+  /// This must be overridden in subclasses to return a new instance of the model (e.g. `get instance => MyModel()`).
+  T get instance =>
+      throw UnimplementedError("instance getter must be implemented for $T");
 
   /// A flag indicating whether the model is currently loading data.
   bool _loadingChecker = false;
@@ -41,7 +43,7 @@ abstract class RocketModel<T> extends RocketListenable {
   int? statusCode;
 
   /// Sets the current state of the model.
-  set state(currentState) {
+  set state(RocketState currentState) {
     _state = currentState == RocketState.loading
         ? _loadingChecker
             ? state
@@ -69,28 +71,49 @@ abstract class RocketModel<T> extends RocketListenable {
 
   /// Deletes the data object at the specified index.
   void delItem(int index) {
-    all!.removeAt(index);
+    T item = all!.removeAt(index);
+    if (item is RocketModel) {
+      item.removeListener(rocketRebuild, _handleChildChange);
+    }
     rebuildWidget(fromUpdate: true);
   }
 
   /// Adds a new data object.
   void addItem(T newModel) {
+    all ??= [];
     all!.add(newModel);
+    if (newModel is RocketModel) {
+      newModel.registerListener(rocketRebuild, _handleChildChange);
+    }
     rebuildWidget(fromUpdate: true);
   }
 
   /// Maps the given data to an instance of the model.
   T _mapToInstance(e) {
     var copy = instance;
-    copy.fromJson(e, isSub: true);
+    if (copy is RocketModel) {
+      copy.fromJson(e, isSub: true);
+      copy.registerListener(rocketRebuild, _handleChildChange);
+    }
     return copy;
   }
 
   /// Sets the model's data to the given list of data.
   void setMulti(List data) {
+    if (all != null) {
+      for (var item in all!) {
+        if (item is RocketModel) {
+          item.removeListener(rocketRebuild, _handleChildChange);
+        }
+      }
+    }
     all = data.map<T>(_mapToInstance).toList();
     existData = true;
     state = RocketState.done;
+  }
+
+  void _handleChildChange() {
+    rebuildWidget(fromUpdate: true);
   }
 
   /// Deserializes the model's data from the given JSON map.
@@ -110,17 +133,21 @@ abstract class RocketModel<T> extends RocketListenable {
   /// loaded from scratch. If `enableDebug` is true, this method logs a message indicating the current state
   /// of the model. Finally, this method calls the `callListener` method inherited from `RocketListenable`
   /// to notify any registered listeners that the model has changed.
-  void rebuildWidget({bool fromUpdate = false}) {
-    if (fromUpdate && enableDebug) {
-      log('[MVCR]> ${T.toString()} : Updated');
-    } else {
-      if (enableDebug) {
-        if (state == RocketState.loading) {}
-
-        if (state == RocketState.done || state == RocketState.failed) {}
+  ///
+  /// Use `fields` to notify only listeners registered for specific keys, enabling selective rebuilding.
+  void rebuildWidget({bool fromUpdate = false, List<String>? fields}) {
+    if (enableDebug) {
+      if (fromUpdate) {
+        log('[MVCR]> ${T.toString()} : Updated ${fields != null ? "fields: $fields" : ""}');
+      } else {
+        log('[MVCR]> ${T.toString()} : State changed to $state');
       }
     }
 
-    callListener(rocketRebuild);
+    if (fields != null) {
+      callListeners(fields);
+    } else {
+      callListener(rocketRebuild);
+    }
   }
 }
