@@ -1,4 +1,4 @@
-# <img src="https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/logo.png" width="40"> Flutter Rocket
+# <img width="40" height="40" alt="logo-2" src="https://github.com/user-attachments/assets/d89f912e-fac9-4341-845e-dc33d70ee70c" /> Flutter Rocket
 
 **The ultimate power-up for your Flutter state management and API integration.**
 
@@ -53,7 +53,8 @@ Flutter Rocket is a high-performance, lightweight state management and API integ
 
 ## 🎨 Graphic Tutorial
 
-![Flutter Rocket Architecture](https://github.com/JahezAcademy/flutter_rocket/blob/dev/images/flutter_rocket_schema.jpg)
+![Flutter Rocket Architecture](https://github.com/user-attachments/assets/f9752127-a5ff-493c-9099-741699167324)
+
 [Explore the Miro Board](https://miro.com/app/board/uXjVPndHj2s=/?share_link_id=307293362528)
 
 ---
