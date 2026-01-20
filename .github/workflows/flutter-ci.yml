@@ -13,38 +13,29 @@ on:
     
 jobs:
   build:
+    # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        package:
-          - packages/flutter_rocket
-          - packages/rocket_cache
-          - packages/rocket_client
-          - packages/rocket_listenable
-          - packages/rocket_mini_view
-          - packages/rocket_model
-          - packages/rocket_singleton
-          - packages/rocket_view
-          - rocket_cli
-      fail-fast: false
-    
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-      
-      - name: Install Dependencies
-        run: flutter pub get
-        working-directory: ${{ matrix.package }}
+    
+    - uses: actions/checkout@v3
+    
+    # Setup the flutter environment.
+    - uses: subosito/flutter-action@v2
+    
+    - name: Get flutter dependencies.
+      run: flutter pub get
+      working-directory: ./packages/flutter_rocket
 
-      - name: Analyze
-        run: dart analyze .
-        working-directory: ${{ matrix.package }}
+    - name: Upgrade flutter dependencies.
+      run: flutter packages upgrade
+      working-directory: ./packages/flutter_rocket
+    
+    - name: Check for any formatting issues in the code.
+      run: dart format --set-exit-if-changed .
+    
+    - name: Statically analyze the Dart code for any errors.
+      run: dart analyze .
 
-      - name: Run Tests
-        run: |
-          if [ -d "test" ]; then
-            flutter test
-          else
-            echo "No tests found"
-          fi
-        working-directory: ${{ matrix.package }}
+    - name: Test model & view examples
+      run: flutter test
+      working-directory: ./packages/flutter_rocket/example
