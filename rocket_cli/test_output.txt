@@ -1,0 +1,72 @@
+00:00 [32m+0[0m: [1m[90mloading test/rocket_cli_test.dart[0m[0m                                                                                                                                                            Could not find a command named "/Users/m97chahboun/Development/flutter/bin/cache/dart-sdk/bin/snapshots/frontend_server.dart.snapshot".
+
+Usage: dart <command|dart-file> [arguments]
+
+Global options:
+-v, --verbose               Show additional command output.
+    --version               Print the Dart SDK version.
+    --enable-analytics      Enable analytics.
+    --disable-analytics     Disable analytics.
+    --suppress-analytics    Disallow analytics for this `dart *` run without changing the analytics configuration.
+-h, --help                  Print this usage information.
+
+Available commands:
+
+Project
+  compile    Compile Dart to various formats.
+  create     Create a new Dart project.
+  pub        Work with packages.
+  run        Run a Dart program.
+  test       Run tests for a project.
+
+Source code
+  analyze    Analyze Dart code in a directory.
+  doc        Generate API documentation for Dart projects.
+  fix        Apply automated fixes to Dart source code.
+  format     Idiomatically format Dart source code.
+
+Tools
+  devtools   Open DevTools (optionally connecting to an existing application).
+  info       Show diagnostic information about the installed tooling.
+
+Run "dart help <command>" for more information about a command.
+See https://dart.dev/tools/dart-tool for detailed documentation.
+00:00 [32m+0[0m[31m -1[0m: [1m[90mloading test/rocket_cli_test.dart[0m [1m[31m[E][0m[0m                                                                                                                                                     
+  [31mFailed to load "test/rocket_cli_test.dart":[0m 
+  SocketException: Write failed (OS Error: Broken pipe, errno = 32), port = 0
+  dart:io-patch/socket_patch.dart 1484:34                                _NativeSocket.write
+  dart:io-patch/socket_patch.dart 2408:15                                _RawSocket.write
+  dart:io-patch/socket_patch.dart 2944:18                                _Socket._write
+  dart:io-patch/socket_patch.dart 2667:28                                _SocketStreamConsumer.write
+  dart:io-patch/socket_patch.dart 2615:13                                _SocketStreamConsumer.addStream.<fn>
+  dart:async/zone.dart 1538:47                                           _rootRunUnary
+  dart:async/zone.dart 1429:19                                           _CustomZone.runUnary
+  dart:async/zone.dart 1329:7                                            _CustomZone.runUnaryGuarded
+  dart:async/stream_impl.dart 381:11                                     _BufferingStreamSubscription._sendData
+  dart:async/stream_impl.dart 312:7                                      _BufferingStreamSubscription._add
+  dart:async/stream_controller.dart 798:19                               _SyncStreamControllerDispatch._sendData
+  dart:async/stream_controller.dart 663:7                                _StreamController._add
+  dart:async/stream_controller.dart 618:5                                _StreamController.add
+  dart:io/io_sink.dart 155:17                                            _StreamSinkImpl.add
+  dart:io/io_sink.dart 293:5                                             _IOSinkImpl.write
+  dart:io-patch/socket_patch.dart 2773:36                                _Socket.write
+  dart:io/stdio.dart 442:13                                              _StdSink.writeln
+  package:frontend_server_client/src/frontend_server_client.dart 328:21  FrontendServerClient._sendCommand
+  package:frontend_server_client/src/frontend_server_client.dart 245:5   FrontendServerClient.accept
+  package:test_core/src/runner/vm/test_compiler.dart 128:30              _TestCompilerForLanguageVersion._compile
+  ===== asynchronous gap ===========================
+  package:pool/pool.dart 127:14                                          Pool.withResource
+  ===== asynchronous gap ===========================
+  package:test_core/src/runner/vm/platform.dart 252:22                   VMPlatform._compileToKernel
+  ===== asynchronous gap ===========================
+  package:test_core/src/runner/vm/platform.dart 232:15                   VMPlatform._spawnIsolate
+  ===== asynchronous gap ===========================
+  package:test_core/src/runner/vm/platform.dart 76:19                    VMPlatform.load
+  ===== asynchronous gap ===========================
+  package:test_core/src/runner/loader.dart 232:27                        Loader.loadFile.<fn>
+  ===== asynchronous gap ===========================
+  package:test_core/src/runner/load_suite.dart 99:19                     new LoadSuite.<fn>.<fn>
+  
+
+[1m[36mTo run this test again:[0m /Users/m97chahboun/Development/flutter/bin/cache/dart-sdk/bin/dart test test/rocket_cli_test.dart -p vm --plain-name 'loading test/rocket_cli_test.dart'
+00:00 [32m+0[0m[31m -1[0m: [31mSome tests failed.[0m                                                                                                                                                                        
