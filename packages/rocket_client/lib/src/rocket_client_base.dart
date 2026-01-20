@@ -7,6 +7,7 @@ import 'package:http/retry.dart';
 import 'package:rocket_client/src/retry_options.dart';
 import 'package:rocket_model/rocket_model.dart';
 
+import 'package:rocket_cache/rocket_cache.dart';
 import 'extensions.dart';
 
 typedef RocketDataCallback = Function(dynamic data)?;
@@ -18,20 +19,27 @@ class RocketClient {
   final bool setCookies;
   void Function(dynamic, int, String?)? onResponse;
   final RetryOptions globalRetryOptions;
+  final Client? _client;
+  FutureOr<Request> Function(Request)? beforeRequest;
+  FutureOr<RocketModel> Function(RocketModel)? afterResponse;
 
   RocketClient(
       {required this.url,
       this.headers = const {},
       this.setCookies = false,
       this.globalRetryOptions = const RetryOptions(),
-      this.onResponse});
+      this.onResponse,
+      this.beforeRequest,
+      this.afterResponse,
+      Client? client})
+      : _client = client;
 
   Future<RocketModel> _processData<T>(StreamedResponse response,
       {RocketModel<T>? model,
       RocketDataCallback inspect,
       List<String>? target,
       String? endpoint,
-      RocketOnError onError}) async {
+      String? cacheKey}) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
     late dynamic result;
     try {
@@ -39,36 +47,49 @@ class RocketClient {
     } catch (e) {
       result = respDecoded;
     }
-    onResponse?.call(result, response.statusCode, endpoint);
+    if (cacheKey != null &&
+        response.statusCode >= 200 &&
+        response.statusCode < 300) {
+      await RocketCache.save(cacheKey, result);
+    }
+    return _handleResponseData<T>(result, response.statusCode,
+        model: model, inspect: inspect, target: target, endpoint: endpoint);
+  }
+
+  RocketModel _handleResponseData<T>(dynamic result, int statusCode,
+      {RocketModel<T>? model,
+      RocketDataCallback inspect,
+      List<String>? target,
+      String? endpoint}) {
+    onResponse?.call(result, statusCode, endpoint);
     // TODO : need more enhancements
-    RocketResponse rocketResponse = RocketResponse(result, response.statusCode);
-    switch (response.statusCode) {
-      case < 300 && >= 200:
-        result = _handleTarget(inspect, result, target);
-        if (model != null) {
-          if (result is List?) {
-            model.setMulti(result ?? []);
-          } else {
-            model.fromJson(result);
-          }
-          return model;
-        }
-        rocketResponse.update(result, response.statusCode);
-        return rocketResponse;
-      default:
-        if (model != null) {
-          model.setException(RocketException(
-            response: result,
-            statusCode: response.statusCode,
-          ));
-          return model;
+    RocketResponse rocketResponse = RocketResponse(result, statusCode);
+    if (statusCode < 300 && statusCode >= 200) {
+      result = _handleTarget(inspect, result, target);
+      if (model != null) {
+        if (result is List?) {
+          model.setMulti(result ?? []);
         } else {
-          rocketResponse.setException(RocketException(
-            response: result,
-            statusCode: response.statusCode,
-          ));
-          return rocketResponse;
+          model.fromJson(result);
         }
+        return model;
+      }
+      rocketResponse.update(result, statusCode);
+      return rocketResponse;
+    } else {
+      if (model != null) {
+        model.setException(RocketException(
+          response: result,
+          statusCode: statusCode,
+        ));
+        return model;
+      } else {
+        rocketResponse.setException(RocketException(
+          response: result,
+          statusCode: statusCode,
+        ));
+        return rocketResponse;
+      }
     }
   }
 
@@ -136,18 +157,35 @@ class RocketClient {
     RocketOnError onError,
     Map<String, dynamic>? data,
     Map<String, dynamic>? params,
+    String? cacheKey,
+    Duration? cacheDuration,
     RetryOptions retryOptions = const RetryOptions(),
   }) async {
+    if (cacheKey != null) {
+      dynamic cachedData =
+          await RocketCache.load(cacheKey, expiration: cacheDuration);
+      if (cachedData != null) {
+        return _handleResponseData<T>(cachedData, 200,
+            model: model, inspect: inspect, target: target, endpoint: endpoint);
+      }
+    }
     if (model != null) {
       model.state = RocketState.loading;
     }
     StreamedResponse? response;
     String mapToParams = Uri(queryParameters: params ?? {}).query;
-    Uri url = Uri.parse("${this.url}/$endpoint?$mapToParams");
-    Request request = Request(method.name, url);
+    String baseUrl = url.endsWith('/') ? url : '$url/';
+    String cleanEndpoint =
+        endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+    Uri fullUrl = Uri.parse(
+        "$baseUrl$cleanEndpoint${mapToParams.isNotEmpty ? "?$mapToParams" : ""}");
+    Request request = Request(method.name, fullUrl);
     if (data != null) request.body = json.encode(data);
     request.headers.addAll(headers);
-    final client = Client();
+    if (beforeRequest != null) {
+      request = await beforeRequest!(request);
+    }
+    final client = _client ?? Client();
     final retryClient = RetryClient(client,
         retries: retryOptions.retries ??
             globalRetryOptions.retries ??
@@ -165,8 +203,16 @@ class RocketClient {
       if (setCookies) {
         _updateCookie(response);
       }
-      return _processData<T>(response,
-          model: model, inspect: inspect, endpoint: endpoint, target: target);
+      RocketModel result = await _processData<T>(response,
+          model: model,
+          inspect: inspect,
+          endpoint: endpoint,
+          target: target,
+          cacheKey: cacheKey);
+      if (afterResponse != null) {
+        result = await afterResponse!(result);
+      }
+      return result;
     } catch (error, stackTrace) {
       log("$error $stackTrace");
       return _catchError(error, stackTrace, model: model);
@@ -232,11 +278,13 @@ class RocketClient {
     String end = method == HttpMethods.post ? id : "$id/";
     var request =
         MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
-    files?.forEach((key, value) async {
-      request.files.add(await MultipartFile.fromPath(key, value));
-    });
+    if (files != null) {
+      for (var key in files.keys) {
+        request.files.add(await MultipartFile.fromPath(key, files[key]!));
+      }
+    }
 
-    request.fields.addAll(fields!);
+    if (fields != null) request.fields.addAll(fields);
     request.headers.addAll(headers);
 
     var response = await request.send();
@@ -253,10 +301,12 @@ class RocketClient {
   }
 
   void _updateCookie(StreamedResponse response) {
-    String rawCookie = response.headers['set-cookie']!;
-    int index = rawCookie.indexOf(';');
-    headers['cookie'] =
-        (index == -1) ? rawCookie : rawCookie.substring(0, index);
+    String? rawCookie = response.headers['set-cookie'];
+    if (rawCookie != null) {
+      int index = rawCookie.indexOf(';');
+      headers['cookie'] =
+          (index == -1) ? rawCookie : rawCookie.substring(0, index);
+    }
   }
 
   Future<void> requestSimulation<T>(
