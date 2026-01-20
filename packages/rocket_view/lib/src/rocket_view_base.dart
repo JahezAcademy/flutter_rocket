@@ -63,6 +63,7 @@ class RocketView<T> extends StatefulWidget {
     this.callType = CallType.callAsFuture,
     this.onLoading,
     this.onError,
+    this.fields,
   }) : super(key: key);
 
   /// The function that builds the widget tree based on the state.
@@ -82,6 +83,9 @@ class RocketView<T> extends StatefulWidget {
 
   /// The function to call if an error occurs, if not defined you need to handle it on `builder` by `state`
   final OnError onError;
+
+  /// Specific fields to listen to. If null, the view listens to the entire model.
+  final List<String>? fields;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -105,8 +109,8 @@ class ViewRocketState extends State<RocketView> {
       widget.model.state = RocketState.loading;
       widget.fetch?.call();
     };
-    widget.model.registerListener(rocketRebuild, _handleChange);
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    _registerListeners();
+
     /// Call the `call` function based on the `callType` parameter.
     switch (widget.callType) {
       case CallType.callAsFuture:
@@ -118,7 +122,6 @@ class ViewRocketState extends State<RocketView> {
         }
         break;
     }
-    // });
     super.initState();
   }
 
@@ -128,46 +131,40 @@ class ViewRocketState extends State<RocketView> {
 
     /// Unregister the old listener and register a new one if the `RocketModel` has changed.
     if (widget.model != oldWidget.model) {
-      oldWidget.model.removeListener(rocketRebuild);
-      widget.model.registerListener(rocketRebuild, _handleChange);
-
-      /// Unregister the old listeners and register new ones if the `RocketModel` is a list.
-      if (oldWidget.model.all != null) {
-        for (var e in oldWidget.model.all!) {
-          e.removeListener(rocketRebuild);
-        }
-      }
-      if (widget.model.all != null) {
-        for (var e in widget.model.all!) {
-          e.registerListener(rocketRebuild, _handleChange);
-        }
-      }
+      _unregisterListeners(oldWidget.model);
+      _registerListeners();
     }
   }
 
   @override
   void dispose() {
-    /// Unregister this listener and all the listeners for the `RocketModel` if it is a list.
-    widget.model.removeListener(rocketRebuild);
-    if (widget.model.all != null) {
-      for (var e in widget.model.all!) {
-        e.removeListener(rocketRebuild);
-      }
-    }
+    /// Unregister this listener.
+    _unregisterListeners(widget.model);
     super.dispose();
+  }
+
+  void _registerListeners() {
+    if (widget.fields != null) {
+      for (var field in widget.fields!) {
+        widget.model.registerListener(field, _handleChange);
+      }
+    } else {
+      widget.model.registerListener(rocketRebuild, _handleChange);
+    }
+  }
+
+  void _unregisterListeners(RocketModel model) {
+    if (widget.fields != null) {
+      for (var field in widget.fields!) {
+        model.removeListener(field, _handleChange);
+      }
+    } else {
+      model.removeListener(rocketRebuild, _handleChange);
+    }
   }
 
   /// The function to call when a change occurs in the `RocketModel`.
   void _handleChange() {
-    if (widget.model.state == RocketState.done) {
-      if (widget.model.all != null) {
-        for (var e in widget.model.all!) {
-          if (!e.keyHasListeners(rocketRebuild)) {
-            e.registerListener(rocketRebuild, _handleChange);
-          }
-        }
-      }
-    }
     setState(() {});
   }
 
@@ -175,33 +172,28 @@ class ViewRocketState extends State<RocketView> {
   _handleStates() {
     switch (widget.model.state) {
       case RocketState.loading:
-        return widget.onLoading!();
+        return widget.onLoading != null
+            ? widget.onLoading!()
+            : const Center(child: CircularProgressIndicator());
       case RocketState.done:
         return widget.builder(context, widget.model.state);
       case RocketState.failed:
-        return widget.onError!(widget.model.exception, reload);
+        return widget.onError != null
+            ? widget.onError!(widget.model.exception, reload)
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(widget.model.exception.exception.toString()),
+                    TextButton(onPressed: reload, child: const Text("Retry"))
+                  ],
+                ),
+              );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    /// Call the builder function if the loader is `null`.
-    final bool invalidonLoading =
-        widget.model.state == RocketState.loading && widget.onLoading == null;
-    final bool invalidOnError =
-        widget.model.state == RocketState.failed && widget.onError == null;
-    final bool invalidCase = invalidonLoading || invalidOnError;
-    if (invalidCase) {
-      try {
-        return widget.builder(context, widget.model.state);
-      } catch (e) {
-        assert(!invalidCase,
-            "Should define ${invalidOnError ? "onError" : "onLoading"} or handle state in builder\n$e");
-        return const SizedBox.shrink();
-      }
-    }
-
-    /// Return the appropriate widget tree based on the `RocketState`.
     return _handleStates();
   }
 }
