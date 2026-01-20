@@ -4,7 +4,6 @@ version: 0.0.6
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_client
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_client
 homepage: https://github.com/JahezAcademy/flutter_rocket
-publish_to: none
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -14,10 +13,8 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.2.1
-  rocket_model:
-    path: ../rocket_model
-  rocket_cache:
-    path: ../rocket_cache
+  rocket_model: ^0.0.4
+  rocket_cache: ^0.0.2
 
 dev_dependencies:
   flutter_test:

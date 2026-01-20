@@ -1,9 +1,8 @@
 name: rocket_cache
 description: A persistence and caching layer for the Rocket package.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_cache
 homepage: https://github.com/JahezAcademy/flutter_rocket
-publish_to: none
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

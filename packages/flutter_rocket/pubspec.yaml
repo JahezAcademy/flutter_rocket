@@ -1,10 +1,9 @@
 name: flutter_rocket
 description: Powerful package for state management & request.
-version: 0.0.7
+version: 0.0.8
 repository: https://github.com/JahezAcademy/flutter_rocket/flutter_rocket
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/flutter_rocket
 homepage: https://github.com/JahezAcademy/flutter_rocket
-publish_to: none
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -13,20 +12,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rocket_model:
-    path: ../rocket_model
-  rocket_listenable:
-    path: ../rocket_listenable
-  rocket_view:
-    path: ../rocket_view
-  rocket_mini_view:
-    path: ../rocket_mini_view
-  rocket_client:
-    path: ../rocket_client
-  rocket_singleton:
-    path: ../rocket_singleton
-  rocket_cache:
-    path: ../rocket_cache
+  rocket_model: ^0.0.4
+  rocket_listenable: ^0.0.2
+  rocket_view: ^0.0.4
+  rocket_mini_view: ^0.0.3
+  rocket_client: ^0.0.6
+  rocket_singleton: ^0.0.4
+  rocket_cache: ^0.0.2
   
 
 dev_dependencies:

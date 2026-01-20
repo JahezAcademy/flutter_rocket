@@ -4,7 +4,6 @@ version: 0.0.4
 repository: https://github.com/JahezAcademy/flutter_rocket/tree/dev/packages/rocket_model
 issue_tracker: https://github.com/JahezAcademy/flutter_rocket/labels/rocket_model
 homepage: https://github.com/JahezAcademy/flutter_rocket
-publish_to: none
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -13,8 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rocket_listenable:
-    path: ../rocket_listenable
+  rocket_listenable: ^0.0.2
 
 dev_dependencies:
   flutter_test:
