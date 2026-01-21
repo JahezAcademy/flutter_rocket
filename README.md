@@ -53,9 +53,9 @@ Flutter Rocket is a high-performance, lightweight state management and API integ
 
 ## 🎨 Graphic Tutorial
 
-![Flutter Rocket Architecture](https://github.com/user-attachments/assets/f9752127-a5ff-493c-9099-741699167324)
+![Flutter Rocket Architecture](https://github.com/user-attachments/assets/b60a34bd-e480-4e6b-81af-1bb9905c0017)
 
-[Explore the Miro Board](https://miro.com/app/board/uXjVPndHj2s=/?share_link_id=307293362528)
+[Explore the Miro Board](https://miro.com/app/board/uXjVJal1g3o=/?share_link_id=335195782321)
 
 ---
 
