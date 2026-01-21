@@ -1,74 +1,136 @@
-# RocketModel
-RocketModel get data from [RocketClient](https://pub.dev/packages/rocket_client) & Show it with [RocketView](https://pub.dev/packages/rocket_view)
+# Rocket Model 🚀
 
-An abstract class that defines the behavior of a model object in Flutter.
+[![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model)
+[![license](https://img.shields.io/github/license/JahezAcademy/mvc_rocket.svg)](LICENSE)
 
-A model object is a class that represents data and provides methods for managing and updating that data. The data can be stored in various forms (e.g. in-memory, in a database, or on a server) and can be accessed and manipulated through the model object's public methods.
+A **type‑safe, reactive model layer** for Flutter/Dart that works hand‑in‑hand with `rocket_client` for data fetching and `rocket_view` for UI rendering. Define your data models once, get automatic JSON (de)serialization, state handling, and listener notifications.
 
-## Features
+## 📦 Installation
 
-- Provides a base class for creating model objects in Flutter.
-- Allows you to define the behavior of model objects in a consistent and predictable way.
-- Implements the `RocketListenable` mixin, which allows you to notify listeners when the model changes.
-- Includes methods for managing and updating data, such as adding and deleting items.
-- Provides hooks for handling data loading and error handling.
+Add the dependency to your `pubspec.yaml`:
 
-## Getting Started
-
-To use `RocketModel` in your Flutter app, you'll need to import the `rocket_listenable` and `rocket_exception` packages. You can then create a new class that extends `RocketModel` and define the behavior of your model object in that class.
-
-```dart
-import 'package:flutter/foundation.dart';
-import 'package:rocket_listenable/rocket_listenable.dart';
-
-import 'constants.dart';
-
-import 'rocket_exception.dart';
-
-abstract class RocketModel<T> extends RocketListenable {
-  // ...
-}
+```yaml
+dependencies:
+  rocket_model: ^0.0.1
 ```
 
-Once you've created your `RocketModel` subclass, you can use it to manage and update data in your app. For example, you might use a model object to manage a list of items that you want to display in a view.
+Then run:
+
+```bash
+flutter pub get
+```
+
+## 🎯 Quick Start
 
 ```dart
-class MyItem {
-  final String name;
-  final String description;
+import 'package:rocket_model/rocket_model.dart';
+import 'package:rocket_client/rocket_client.dart';
+import 'package:rocket_view/rocket_view.dart';
+```
 
-  MyItem({required this.name, required this.description});
-}
+## 🛠️ Rocket CLI
 
-class MyModel extends RocketModel<MyItem> {
-  MyModel() {
-    // Load data from a server or database...
+It is **highly recommended** to use [rocket_cli](https://pub.dev/packages/rocket_cli) to generate your models. It automates the creation of boilerplate code, including `fromJson`, `toJson`, and field definitions.
+
+**Installation:**
+
+```bash
+dart pub global activate rocket_cli
+```
+
+**Usage Example:**
+
+Generate a model from a JSON string:
+
+```bash
+rocket_cli -j '{"id": 1, "title": "My Post", "body": "Content"}' -n Post
+```
+
+Or from a file:
+
+```bash
+rocket_cli -f post.json -n Post
+```
+
+
+### 1️⃣ Define a model
+
+```dart
+const String postTitleField = "title";
+
+class Post extends RocketModel<Post> {
+  int? userId;
+  int? id;
+  String? title;
+  String? body;
+
+  Post({this.userId, this.id, this.title, this.body});
+
+  void updateFields({String? titleField}) {
+    List<String> fields = [];
+    if (titleField != null) {
+      title = titleField;
+      fields.add(postTitleField);
+    }
+    rebuildWidget(fromUpdate: true, fields: fields.isEmpty ? null : fields);
   }
 
   @override
   void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
-    // Deserialize data from a JSON map...
+    userId = json['userId'];
+    id = json['id'];
+    title = json['title'];
+    body = json['body'];
+    super.fromJson(json, isSub: isSub);
   }
 
   @override
-  Map<String, dynamic> toJson() {
-    // Serialize data to a JSON map...
-    return {};
-  }
-}
+  Map<String, dynamic> toJson() => {
+        'userId': userId,
+        'id': id,
+        'title': title,
+        'body': body,
+      };
 
-class MyView extends StatelessWidget {
-  final MyModel model = MyModel();
+  @override
+  get instance => Post();
+}
+```
+
+### 2️⃣ Load data with `rocket_client`
+
+Initialize your client and save it to the Rocket singleton:
+
+```dart
+void main() {
+  final client = RocketClient(url: 'https://jsonplaceholder.typicode.com');
+  Rocket.add('posts-api', client);
+  runApp(MyApp());
+}
+```
+
+### 3️⃣ Show data with `rocket_view`
+
+```dart
+class PostList extends StatelessWidget {
+  final Post post = Post();
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: model.all?.length ?? 0,
-      itemBuilder: (BuildContext context, int index) {
-        final item = model.all![index];
-        return ListTile(
-          title: Text(item.name),
-          subtitle: Text(item.description),
+    return RocketView(
+      model: post,
+      // call the api using the client key
+      fetch: () => Rocket.get<RocketClient>('posts-api').request('posts', model: post),
+      builder: (context, state) {
+        return ListView.builder(
+          itemCount: post.all!.length,
+          itemBuilder: (_, i) {
+            final p = post.all![i];
+            return ListTile(
+              title: Text(p.title ?? ''),
+              subtitle: Text(p.body ?? ''),
+            );
+          },
         );
       },
     );
@@ -76,104 +138,39 @@ class MyView extends StatelessWidget {
 }
 ```
 
-## API Documentation
+The view automatically rebuilds when the model notifies listeners via `rebuildWidget()`.
 
-### RocketModel
+## 🛠️ API Overview
 
-An abstract class that defines the behavior of a model object.
+| Class / Member | Description |
+|----------------|-------------|
+| **`RocketModel<T>`** (abstract) | Base class for all models. Implements `RocketListenable` for reactive updates. |
+| `instance` | Factory getter that returns a fresh instance of the concrete model. |
+| `all` | List of all loaded items of type `T`. |
+| `fromJson(Map<String, dynamic> json, {bool isSub})` | Populate the model from a JSON map. |
+| `toJson()` | Serialize the model back to JSON. |
+| `addItem(T item)` | Append a new item to `all` and notify listeners. |
+| `delItem(int index)` | Remove an item by index and notify listeners. |
+| `setMulti(List<T> data)` | Replace the entire collection with a new list. |
+| `setException(RocketException e)` | Store an error that occurred during loading. |
+| `rebuildWidget({bool fromUpdate = false})` | Trigger a UI rebuild for listeners. |
+| **`RocketState`** (enum) | Loading lifecycle: `loading`, `done`, `failed`. |
 
-#### Properties
+### Key Properties
 
-- `instance`: The dynamic instance of the model.
-- `_loadingChecker`: A flag indicating whether the model is currently loading data.
-- `existData`: A flag indicating whether the model contains any data.
-- `exception`: An exception object that represents any errors that occur during data loading or manipulation.
-- `all`: A list of all data objects of type `T`.
-- `_state`: The current state of the model.
+- `instance` – concrete model factory.
+- `all` – current collection of items.
+- `exception` – holds any loading error.
+- `state` – current `RocketState`.
 
-#### Methods
+## 🤝 Contributing
 
-- `setException(RocketException exception)`: Sets the exception object with the given exception.
-- `delItem(int index)`: Deletes the data object at the specified index.
-- `addItem(T newModel)`: Adds a new data object.
-- `_mapToInstance(e)`: Maps the given data to an instance of the model.
-- `setMulti(List data)`: Sets the model's data to the given list of data.
-- `fromJson(Map<String, dynamic> json, {bool isSub = false})`: Deserializes the model's data from the given JSON map.
-- `toJson()`: Serializes the model's data to a JSON map.
-- `rebuildWidget({bool fromUpdate = false})`: Notifies listeners that the model has changed and needs to be rebuilt.
+We welcome contributions! Open issues or submit pull requests on the [GitHub repository](https://github.com/JahezAcademy/mvc_rocket). Helpful contributions include:
 
-### RocketState
+- New model examples.
+- Improved documentation or tutorials.
+- Bug fixes or API extensions.
 
-An enum that represents the possible states of a `RocketModel` object.
+## 📄 License
 
-#### Values
-
-- `loading`: The model is currently loading data.
-- `done`: The model has finished loading data and contains valid data.
-- `failed`: An error occurred while loading or manipulating data.
-
-
-## Usage
-
-```dart
-import 'package:flutter_rocket/flutter_rocket.dart';
-
-const String postUserIdField = "userId";
-const String postIdField = "id";
-const String postTitleField = "title";
-const String postBodyField = "body";
-
-class Post extends RocketModel<Post> {
-  int? userId;
-  int? id;
-  String? title;
-  String? body;
-  // disable logs debugging
-  @override
-  bool get enableDebug => false;
-  Post({
-    this.userId,
-    this.id,
-    this.title,
-    this.body,
-  });
-
-  @override
-  void fromJson(Map<String, dynamic> json, {bool isSub = false}) {
-    userId = json[postUserIdField];
-    id = json[postIdField];
-    title = json[postTitleField];
-    body = json[postBodyField];
-    super.fromJson(json, isSub: isSub);
-  }
-
-  void updateFields({
-    int? userIdField,
-    int? idField,
-    String? titleField,
-    String? bodyField,
-  }) {
-    userId = userIdField ?? userId;
-    id = idField ?? id;
-    title = titleField ?? title;
-    body = bodyField ?? body;
-    rebuildWidget(fromUpdate: true);
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data[postUserIdField] = userId;
-    data[postIdField] = id;
-    data[postTitleField] = title;
-    data[postBodyField] = body;
-
-    return data;
-  }
-
-  @override
-  get instance => Post();
-}
-
-```
-
+This package is released under the MIT License – see the [LICENSE](LICENSE) file for details.
