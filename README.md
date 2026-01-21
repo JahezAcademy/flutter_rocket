@@ -29,6 +29,9 @@ Flutter Rocket is a high-performance, lightweight state management and API integ
 | [rocket_model](https://pub.dev/packages/rocket_model) | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model) | Base model and state logic. |
 | [rocket_client](https://pub.dev/packages/rocket_client) | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client) | HTTP client with caching. |
 | [rocket_view](https://pub.dev/packages/rocket_view) | [![pub package](https://img.shields.io/pub/v/rocket_view.svg)](https://pub.dev/packages/rocket_view) | UI state management widgets. |
+| [rocket_mini_view](https://pub.dev/packages/rocket_mini_view) | [![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view) | A tiny, reactive widget. |
+| [rocket_singleton](https://pub.dev/packages/rocket_singleton) | [![pub package](https://img.shields.io/pub/v/rocket_singleton.svg)](https://pub.dev/packages/rocket_singleton) | Fast, type‑safe in‑memory storage. |
+| [rocket_cache](https://pub.dev/packages/rocket_cache) | [![pub package](https://img.shields.io/pub/v/rocket_cache.svg)](https://pub.dev/packages/rocket_cache) | A persistence and caching layer. |
 | [rocket_cli](https://pub.dev/packages/rocket_cli) | [![pub package](https://img.shields.io/pub/v/rocket_cli.svg)](https://pub.dev/packages/rocket_cli) | CLI for model generation. |
 
 ---
