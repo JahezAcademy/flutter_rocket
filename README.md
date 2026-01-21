@@ -26,7 +26,7 @@ Flutter Rocket is a high-performance, lightweight state management and API integ
 | Package | Version | Description |
 | --- | --- | --- |
 | [flutter_rocket](https://pub.dev/packages/flutter_rocket) | [![pub package](https://img.shields.io/pub/v/flutter_rocket.svg)](https://pub.dev/packages/flutter_rocket) | Core bundle for Flutter. |
-| [rocket_model](https://pub.dev/packages/rocket_model) | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model) | Base model and state logic. |
+| [rocket_model](https://pub.dev/packages/rocket_model) | [![pub package](https://img.shields.io/pub/v/rocket_model.svg)](https://pub.dev/packages/rocket_model) | A type‑safe, reactive model layer. |
 | [rocket_client](https://pub.dev/packages/rocket_client) | [![pub package](https://img.shields.io/pub/v/rocket_client.svg)](https://pub.dev/packages/rocket_client) | HTTP client with caching. |
 | [rocket_view](https://pub.dev/packages/rocket_view) | [![pub package](https://img.shields.io/pub/v/rocket_view.svg)](https://pub.dev/packages/rocket_view) | UI state management widgets. |
 | [rocket_mini_view](https://pub.dev/packages/rocket_mini_view) | [![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view) | A tiny, reactive widget. |
