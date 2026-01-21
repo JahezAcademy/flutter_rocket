@@ -1,99 +1,82 @@
-# Rocket MiniView
+# Rocket MiniView 🚀
 
-`RocketMiniView` is a widget provided by the `rocket_listenable` package that listens to changes in a `RocketListenable` object and rebuilds when a change occurs. It is designed to be used in conjunction with `RocketValue` objects to build reactive UIs in Flutter.
+[![pub package](https://img.shields.io/pub/v/rocket_mini_view.svg)](https://pub.dev/packages/rocket_mini_view)
+[![license](https://img.shields.io/github/license/JahezAcademy/mvc_rocket.svg)](LICENSE)
 
-## Usage
+A tiny, **reactive** widget that rebuilds automatically when a `RocketListenable` (e.g. `RocketValue`) changes. It lives in the `rocket_listenable` ecosystem and lets you write concise, declarative UI code without boilerplate.
 
-To use `RocketMiniView`, import it into your Dart file:
+## 📦 Installation
+
+Add the dependency to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  rocket_mini_view: ^0.0.1
+```
+
+Then fetch the packages:
+
+```bash
+flutter pub get
+```
+
+## 🎯 Getting Started
+
+Import the widget:
+
+```dart
+import 'package:rocket_mini_view/rocket_mini_view.dart';
+```
+
+### Simple example
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:rocket_listenable/rocket_listenable.dart';
-import 'package:your_app/constants.dart';
+import 'package:rocket_mini_view/rocket_mini_view.dart';
 
-import 'rocket_mini_view.dart';
+final RocketValue<List<String>> items = RocketValue([]);
 
-final RocketValue value = [].mini;
-...
-RocketMiniView(
-  value: value,
-  builder: () {
-    return Text(value.length.toString());
-  },
-)
+class CounterDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('MiniView Demo')),
+      body: Center(
+        child: RocketMiniView(
+          value: items,
+          builder: () => Text('Items count: ${items.value.length}'),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => items.value = [...items.value, 'Item ${items.value.length + 1}'],
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
 ```
 
-The `RocketMiniView` widget takes two required parameters:
+The `builder` runs each time `items` changes, giving you an instantly‑updating UI.
 
-- `value`: The `RocketListenable` object to listen to.
-- `builder`: A function that returns the widget tree to build.
+## 🛠️ API Overview
 
-The `builder` function should return the widget tree that needs to be rebuilt when the `RocketListenable` object changes.
+| Class / Constructor | Description |
+|---------------------|-------------|
+| `RocketMiniView({Key? key, required RocketListenable<T> value, required Widget Function() builder})` | Core widget that listens to `value` and rebuilds using `builder`. |
+| `MiniViewRocketState` | Internal `State` implementation – handles subscription lifecycle (`initState`, `didUpdateWidget`, `dispose`). |
+| `_rebuildWidget()` | Private helper called when the listened object notifies listeners. |
+| `build(BuildContext context)` | Returns the widget produced by `builder`. |
 
-## API Reference
+### Parameters
+- **`value`** – The `RocketListenable` (e.g. `RocketValue`, `RocketListenable`) you want to observe.
+- **`builder`** – A zero‑argument function that returns the widget tree to render.
+- **`key`** – Optional widget key.
 
-### `RocketMiniView`
+## 🤝 Contributing
 
-The `RocketMiniView` widget is a widget that listens to changes in a `RocketListenable` object and rebuilds when a change occurs.
+Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/JahezAcademy/mvc_rocket). Contributions that add examples, improve documentation, or extend functionality are especially welcome.
 
-#### Constructor
+## 📄 License
 
-```dart
-RocketMiniView({
-  Key? key,
-  required this.value,
-  required this.builder,
-})
-```
-
-- `key`: An optional `Key` object to use for the widget.
-- `value`: The `RocketListenable` object to listen to.
-- `builder`: A function that returns the widget tree to build.
-
-#### `MiniViewRocketState`
-
-The `MiniViewRocketState` class is the state object for the `RocketMiniView` widget.
-
-#### `initState` Method
-
-```dart
-void initState()
-```
-
-Called when the widget is first inserted into the widget tree.
-
-#### `didUpdateWidget` Method
-
-```dart
-void didUpdateWidget(RocketMiniView oldWidget)
-```
-
-Called when the widget is updated with new parameters.
-
-#### `dispose` Method
-
-```dart
-void dispose()
-```
-
-Called when the widget is removed from the widget tree.
-
-#### `_rebuildWidget` Method
-
-```dart
-void _rebuildWidget()
-```
-
-Called when the `RocketListenable` object changes.
-
-#### `build` Method
-
-```dart
-Widget build(BuildContext context)
-```
-
-Builds the widget tree using the `builder` function.
-
-## Conclusion
-
-`RocketMiniView` is a useful widget provided by the `rocket_listenable` package that enables you to build reactive UIs in Flutter. Its simple API and ability to listen to changes in `RocketListenable` objects make it an ideal choice for building Flutter applications that need to react to changes in data.
+This package is released under the MIT License – see the [LICENSE](LICENSE) file for details.
