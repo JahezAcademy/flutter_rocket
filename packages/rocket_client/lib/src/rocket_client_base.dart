@@ -195,9 +195,8 @@ class RocketClient {
     StreamedResponse? response;
     String mapToParams = Uri(queryParameters: params ?? {}).query;
     String baseUrl = url.endsWith('/') ? url : '$url/';
-    String cleanEndpoint = endpoint.startsWith('/')
-        ? endpoint.substring(1)
-        : endpoint;
+    String cleanEndpoint =
+        endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
     Uri fullUrl = Uri.parse(
       "$baseUrl$cleanEndpoint${mapToParams.isNotEmpty ? "?$mapToParams" : ""}",
     );
@@ -210,17 +209,14 @@ class RocketClient {
     final client = _client ?? Client();
     final retryClient = RetryClient(
       client,
-      retries:
-          retryOptions.retries ??
+      retries: retryOptions.retries ??
           globalRetryOptions.retries ??
           RetryOptions.defaultRetries,
-      when:
-          retryOptions.retryWhen ??
+      when: retryOptions.retryWhen ??
           globalRetryOptions.retryWhen ??
           RetryOptions.defaultWhen,
       onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
-      delay:
-          retryOptions.delay ??
+      delay: retryOptions.delay ??
           globalRetryOptions.delay ??
           RetryOptions.defaultDelay,
     );
@@ -340,9 +336,8 @@ class RocketClient {
     String? rawCookie = response.headers['set-cookie'];
     if (rawCookie != null) {
       int index = rawCookie.indexOf(';');
-      headers['cookie'] = (index == -1)
-          ? rawCookie
-          : rawCookie.substring(0, index);
+      headers['cookie'] =
+          (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
   }
 
