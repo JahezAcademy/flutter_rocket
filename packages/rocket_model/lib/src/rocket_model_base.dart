@@ -60,7 +60,7 @@ abstract class RocketModel<T> extends RocketListenable {
     exception = rocketException;
     state = RocketState.failed;
     if (enableDebug) {
-      log("[MVCR]> Failed details :${exception.toString()}");
+      log("Failed details :${exception.toString()}", name: "flutter_rocket");
     }
   }
 
@@ -138,9 +138,11 @@ abstract class RocketModel<T> extends RocketListenable {
   void rebuildWidget({bool fromUpdate = false, List<String>? fields}) {
     if (enableDebug) {
       if (fromUpdate) {
-        log('[MVCR]> ${T.toString()} : Updated ${fields != null ? "fields: $fields" : ""}');
+        log('${T.toString()} : Updated ${fields != null ? "fields: $fields" : ""}',
+            name: "flutter_rocket");
       } else {
-        log('[MVCR]> ${T.toString()} : State changed to $state');
+        log('${T.toString()} : State changed to $state',
+            name: "flutter_rocket");
       }
     }
 

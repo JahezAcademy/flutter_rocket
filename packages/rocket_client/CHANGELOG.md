@@ -1,3 +1,9 @@
+## 0.0.7
+
+* init rocket cache
+* Adds rocket cache to posts example
+
+
 ## 0.0.6
 
 * Added support for Request and Response Interceptors.

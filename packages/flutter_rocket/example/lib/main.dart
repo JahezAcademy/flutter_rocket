@@ -6,11 +6,12 @@ import 'package:flutter_rocket/flutter_rocket.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  configureRequest();
+  rocketInit();
   runApp(const App());
 }
 
-void configureRequest() {
+void rocketInit() {
+  RocketCache.init();
   const String baseUrl = 'https://jsonplaceholder.typicode.com';
   // create request object
   RocketClient request = RocketClient(url: baseUrl);
@@ -59,9 +60,10 @@ class MyApp extends StatelessWidget {
               Text(
                 '🚀 Rocket Package 🚀',
                 style: TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown,
+                ),
               ),
               Example("Mini View", "miniView"),
               Example("Counter View", "counter"),
@@ -86,15 +88,17 @@ class Example extends StatelessWidget {
       width: context.width * 0.6,
       height: context.height * 0.1,
       child: TextButton(
-          key: Key(to),
-          child: Text(
-            title,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24.0,
-                color: Colors.brown),
+        key: Key(to),
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24.0,
+            color: Colors.brown,
           ),
-          onPressed: () => context.go("/$to", extra: title)),
+        ),
+        onPressed: () => context.go("/$to", extra: title),
+      ),
     );
   }
 }
