@@ -10,6 +10,7 @@ class GetPosts {
       postsEndpoint,
       // your model
       model: postModel,
+      cacheKey: "posts",
       inspect: (d) {
         return d;
       },

@@ -23,23 +23,25 @@ class RocketClient {
   FutureOr<Request> Function(Request)? beforeRequest;
   FutureOr<RocketModel> Function(RocketModel)? afterResponse;
 
-  RocketClient(
-      {required this.url,
-      this.headers = const {},
-      this.setCookies = false,
-      this.globalRetryOptions = const RetryOptions(),
-      this.onResponse,
-      this.beforeRequest,
-      this.afterResponse,
-      Client? client})
-      : _client = client;
+  RocketClient({
+    required this.url,
+    this.headers = const {},
+    this.setCookies = false,
+    this.globalRetryOptions = const RetryOptions(),
+    this.onResponse,
+    this.beforeRequest,
+    this.afterResponse,
+    Client? client,
+  }) : _client = client;
 
-  Future<RocketModel> _processData<T>(StreamedResponse response,
-      {RocketModel<T>? model,
-      RocketDataCallback inspect,
-      List<String>? target,
-      String? endpoint,
-      String? cacheKey}) async {
+  Future<RocketModel> _processData<T>(
+    StreamedResponse response, {
+    RocketModel<T>? model,
+    RocketDataCallback inspect,
+    List<String>? target,
+    String? endpoint,
+    String? cacheKey,
+  }) async {
     String respDecoded = utf8.decode(await response.stream.toBytes());
     late dynamic result;
     try {
@@ -52,15 +54,24 @@ class RocketClient {
         response.statusCode < 300) {
       await RocketCache.save(cacheKey, result);
     }
-    return _handleResponseData<T>(result, response.statusCode,
-        model: model, inspect: inspect, target: target, endpoint: endpoint);
+    return _handleResponseData<T>(
+      result,
+      response.statusCode,
+      model: model,
+      inspect: inspect,
+      target: target,
+      endpoint: endpoint,
+    );
   }
 
-  RocketModel _handleResponseData<T>(dynamic result, int statusCode,
-      {RocketModel<T>? model,
-      RocketDataCallback inspect,
-      List<String>? target,
-      String? endpoint}) {
+  RocketModel _handleResponseData<T>(
+    dynamic result,
+    int statusCode, {
+    RocketModel<T>? model,
+    RocketDataCallback inspect,
+    List<String>? target,
+    String? endpoint,
+  }) {
     onResponse?.call(result, statusCode, endpoint);
     // TODO : need more enhancements
     RocketResponse rocketResponse = RocketResponse(result, statusCode);
@@ -78,23 +89,24 @@ class RocketClient {
       return rocketResponse;
     } else {
       if (model != null) {
-        model.setException(RocketException(
-          response: result,
-          statusCode: statusCode,
-        ));
+        model.setException(
+          RocketException(response: result, statusCode: statusCode),
+        );
         return model;
       } else {
-        rocketResponse.setException(RocketException(
-          response: result,
-          statusCode: statusCode,
-        ));
+        rocketResponse.setException(
+          RocketException(response: result, statusCode: statusCode),
+        );
         return rocketResponse;
       }
     }
   }
 
   _handleTarget(
-      Function(dynamic data)? inspect, result, List<String>? targetData) {
+    Function(dynamic data)? inspect,
+    result,
+    List<String>? targetData,
+  ) {
     if (inspect != null) {
       result = inspect(result);
     } else if (targetData != null) {
@@ -161,24 +173,34 @@ class RocketClient {
     Duration? cacheDuration,
     RetryOptions retryOptions = const RetryOptions(),
   }) async {
-    if (cacheKey != null) {
-      dynamic cachedData =
-          await RocketCache.load(cacheKey, expiration: cacheDuration);
-      if (cachedData != null) {
-        return _handleResponseData<T>(cachedData, 200,
-            model: model, inspect: inspect, target: target, endpoint: endpoint);
-      }
-    }
     if (model != null) {
       model.state = RocketState.loading;
+    }
+    if (cacheKey != null) {
+      dynamic cachedData = await RocketCache.load(
+        cacheKey,
+        expiration: cacheDuration,
+      );
+      if (cachedData != null) {
+        return _handleResponseData<T>(
+          cachedData,
+          200,
+          model: model,
+          inspect: inspect,
+          target: target,
+          endpoint: endpoint,
+        );
+      }
     }
     StreamedResponse? response;
     String mapToParams = Uri(queryParameters: params ?? {}).query;
     String baseUrl = url.endsWith('/') ? url : '$url/';
-    String cleanEndpoint =
-        endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+    String cleanEndpoint = endpoint.startsWith('/')
+        ? endpoint.substring(1)
+        : endpoint;
     Uri fullUrl = Uri.parse(
-        "$baseUrl$cleanEndpoint${mapToParams.isNotEmpty ? "?$mapToParams" : ""}");
+      "$baseUrl$cleanEndpoint${mapToParams.isNotEmpty ? "?$mapToParams" : ""}",
+    );
     Request request = Request(method.name, fullUrl);
     if (data != null) request.body = json.encode(data);
     request.headers.addAll(headers);
@@ -186,29 +208,36 @@ class RocketClient {
       request = await beforeRequest!(request);
     }
     final client = _client ?? Client();
-    final retryClient = RetryClient(client,
-        retries: retryOptions.retries ??
-            globalRetryOptions.retries ??
-            RetryOptions.defaultRetries,
-        when: retryOptions.retryWhen ??
-            globalRetryOptions.retryWhen ??
-            RetryOptions.defaultWhen,
-        onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
-        delay: retryOptions.delay ??
-            globalRetryOptions.delay ??
-            RetryOptions.defaultDelay);
+    final retryClient = RetryClient(
+      client,
+      retries:
+          retryOptions.retries ??
+          globalRetryOptions.retries ??
+          RetryOptions.defaultRetries,
+      when:
+          retryOptions.retryWhen ??
+          globalRetryOptions.retryWhen ??
+          RetryOptions.defaultWhen,
+      onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
+      delay:
+          retryOptions.delay ??
+          globalRetryOptions.delay ??
+          RetryOptions.defaultDelay,
+    );
 
     try {
       response = await retryClient.send(request);
       if (setCookies) {
         _updateCookie(response);
       }
-      RocketModel result = await _processData<T>(response,
-          model: model,
-          inspect: inspect,
-          endpoint: endpoint,
-          target: target,
-          cacheKey: cacheKey);
+      RocketModel result = await _processData<T>(
+        response,
+        model: model,
+        inspect: inspect,
+        endpoint: endpoint,
+        target: target,
+        cacheKey: cacheKey,
+      );
       if (afterResponse != null) {
         result = await afterResponse!(result);
       }
@@ -232,7 +261,8 @@ class RocketClient {
       return Future.value(e);
     } else {
       model.setException(
-          RocketException(exception: e.toString(), stackTrace: stackTrace));
+        RocketException(exception: e.toString(), stackTrace: stackTrace),
+      );
       return Future.value(model);
     }
   }
@@ -273,11 +303,17 @@ class RocketClient {
   /// });
   /// ```
   Future sendFile(
-      String endpoint, Map<String, String>? fields, Map<String, String>? files,
-      {String id = "", HttpMethods method = HttpMethods.post}) async {
+    String endpoint,
+    Map<String, String>? fields,
+    Map<String, String>? files, {
+    String id = "",
+    HttpMethods method = HttpMethods.post,
+  }) async {
     String end = method == HttpMethods.post ? id : "$id/";
-    var request =
-        MultipartRequest(method.name, Uri.parse("$url/$endpoint/$end"));
+    var request = MultipartRequest(
+      method.name,
+      Uri.parse("$url/$endpoint/$end"),
+    );
     if (files != null) {
       for (var key in files.keys) {
         request.files.add(await MultipartFile.fromPath(key, files[key]!));
@@ -304,8 +340,9 @@ class RocketClient {
     String? rawCookie = response.headers['set-cookie'];
     if (rawCookie != null) {
       int index = rawCookie.indexOf(';');
-      headers['cookie'] =
-          (index == -1) ? rawCookie : rawCookie.substring(0, index);
+      headers['cookie'] = (index == -1)
+          ? rawCookie
+          : rawCookie.substring(0, index);
     }
   }
 
