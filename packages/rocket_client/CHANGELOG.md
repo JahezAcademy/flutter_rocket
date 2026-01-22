@@ -1,7 +1,7 @@
 ## 0.0.7
 
 * init rocket cache
-* Fix cache bug
+* Adds rocket cache to posts example
 
 
 ## 0.0.6
