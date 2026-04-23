@@ -7,7 +7,7 @@
 ```dart
 RocketView(
   model: postModel,
-  fetch: () => client.request('posts', model: postModel),
+  fetch: ({bool refresh = false}) => client.request('posts', model: postModel),
   builder: (context, state) {
     return ListView.builder(
       itemCount: postModel.all!.length,
