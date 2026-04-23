@@ -1,3 +1,8 @@
+## 0.0.14
+
+* Updated all internal dependencies and examples.
+* Refactored client and model integration.
+
 ## 0.0.13
 
 * Updated dependencies and metadata.

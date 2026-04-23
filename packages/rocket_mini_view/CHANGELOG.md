@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Cleaned up generic widget tests and optimized examples.
+
 ## 0.0.3
 
 * Updated `rocket_listenable` dependency.

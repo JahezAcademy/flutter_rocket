@@ -1,3 +1,8 @@
+## 0.0.5
+
+* Added `instance`, `fromJson`, and `toJson` requirements to `RocketModel`.
+* Improved state management and data handling.
+
 ## 0.0.4
 
 * Added `fields` support to `rebuildWidget` for targeted UI updates.
