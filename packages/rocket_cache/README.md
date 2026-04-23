@@ -24,7 +24,7 @@ Use it directly with `RocketClient`:
 client.request(
   'posts',
   model: postModel,
-  cacheKey: 'all_posts',
+  cache: true,
   cacheDuration: Duration(days: 1),
 );
 ```
