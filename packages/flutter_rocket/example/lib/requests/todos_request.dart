@@ -5,5 +5,5 @@ const String todosEndpoint = "todos";
 
 class GetTodos {
   static Future getTodos(Todos todosModel) =>
-      Rocket.get<RocketClient>().request(todosEndpoint, model: todosModel);
+      Rocket.get<RocketClient>()!.request(todosEndpoint, model: todosModel);
 }

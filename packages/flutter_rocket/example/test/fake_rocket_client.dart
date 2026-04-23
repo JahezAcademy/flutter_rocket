@@ -9,14 +9,16 @@ class RocketClientTest extends RocketClient {
   Future<RocketModel> request<T>(String endpoint,
       {RocketModel<T>? model,
       HttpMethods method = HttpMethods.get,
-      RocketDataCallback? inspect,
+      RocketDataCallback inspect,
       List<String>? target,
-      RocketOnError? onError,
+      RocketOnError onError,
       Map<String, dynamic>? data,
       Map<String, dynamic>? params,
-      String? cacheKey,
+      bool cache = false,
+      @Deprecated('Cache key is now generated automatically') String? cacheKey,
       Duration? cacheDuration,
-      RetryOptions retryOptions = const RetryOptions()}) async {
+      RetryOptions? retryOptions,
+      bool refresh = false}) async {
     model!.state = RocketState.loading;
     await Future.delayed(const Duration(seconds: 1));
     try {

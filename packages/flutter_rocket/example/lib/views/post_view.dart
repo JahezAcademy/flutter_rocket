@@ -19,7 +19,7 @@ class PostExample extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-            "Refresh Posts with swip to down or from here =>",
+            "Refresh Posts with swip to down or from here",
             style: TextStyle(fontSize: 11.0),
           ),
           actions: [
@@ -38,15 +38,11 @@ class PostExample extends StatelessWidget {
               },
               child: RocketView(
                 // call api method
-                fetch: () => GetPosts.getPosts(post),
+                fetch: ({bool refresh = false}) => GetPosts.getPosts(post),
                 // your model generated
                 model: post,
                 // call call Voidcallback if model empty
                 callType: CallType.callIfModelEmpty,
-                // or
-                // callType: CallType.callAsStream,
-                // secondsOfStream: 1,
-                // customized your loading (default widget is CircularProgressIndicator)
                 onLoading: () {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -111,11 +107,11 @@ class PostExample extends StatelessWidget {
 class Details extends StatelessWidget {
   final int index;
   //  get your model by key
-  final Post post = Rocket.get<Post>();
+  final Post? post = Rocket.get<Post>();
   Details(this.index, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Post currentPost = post.all![index];
+    Post currentPost = post!.all![index];
     return RocketView(
       model: currentPost,
       fields: const [postTitleField, postBodyField],
