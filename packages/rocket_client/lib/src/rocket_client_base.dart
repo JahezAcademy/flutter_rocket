@@ -33,7 +33,8 @@ typedef RequestInterceptor = FutureOr<Request> Function(Request request);
 ///
 /// Use this to refresh tokens, log, or transform the result globally.
 /// Must return the (possibly mutated) [RocketModel].
-typedef ResponseInterceptor = FutureOr<RocketModel> Function(RocketModel result);
+typedef ResponseInterceptor = FutureOr<RocketModel> Function(
+    RocketModel result);
 
 // ---------------------------------------------------------------------------
 // RocketClient
@@ -43,7 +44,8 @@ class RocketClient {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
-  final void Function(dynamic data, int statusCode, String? endpoint)? onResponse;
+  final void Function(dynamic data, int statusCode, String? endpoint)?
+      onResponse;
   final RetryOptions globalRetryOptions;
   final Client? _client;
   final Duration? globalCacheDuration;

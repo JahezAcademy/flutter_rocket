@@ -83,7 +83,8 @@ void main() {
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
 
-    test('request - should get list data from endpoint using inspect', () async {
+    test('request - should get list data from endpoint using inspect',
+        () async {
       mockClient = MockClient((request) async {
         return http.Response(
             json.encode({
@@ -96,8 +97,8 @@ void main() {
       });
       client = RocketClient(url: 'https://example.com', client: mockClient);
 
-      final data = await client.request('posts',
-          inspect: (data) => data['results']);
+      final data =
+          await client.request('posts', inspect: (data) => data['results']);
       expect(data.apiResponse, isA<List>());
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
@@ -118,8 +119,7 @@ void main() {
       });
       client = RocketClient(url: 'https://example.com', client: mockClient);
 
-      final data =
-          await client.request('posts', target: ['data', 'items']);
+      final data = await client.request('posts', target: ['data', 'items']);
       expect(data.apiResponse, isA<List>());
       expect(data.apiResponse.isNotEmpty, isTrue);
     });
@@ -159,9 +159,10 @@ void main() {
       // Test that cache parameters are accepted (actual caching requires integration test)
       // Mock SharedPreferences to avoid MissingPluginException
       SharedPreferences.setMockInitialValues({});
-      
+
       final model = Post();
-      await client.request('posts/1', model: model, cache: true, cacheDuration: const Duration(minutes: 5));
+      await client.request('posts/1',
+          model: model, cache: true, cacheDuration: const Duration(minutes: 5));
       expect(model.state, RocketState.done);
     });
 
