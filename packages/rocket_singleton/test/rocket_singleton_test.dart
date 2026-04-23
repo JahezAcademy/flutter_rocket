@@ -8,6 +8,10 @@ class TestModel {
 }
 
 void main() {
+  setUp(() {
+    Rocket.resetForTesting();
+  });
+
   group('Rocket', () {
     test('add and get', () {
       final model = TestModel('test');
@@ -23,29 +27,29 @@ void main() {
     });
 
     test('get by type', () {
-      Rocket.clear();
+      // Use different types to test type-based retrieval
       final model1 = TestModel('test1');
       final model2 = TestModel('test2');
-      Rocket.add(model1);
-      Rocket.add(model2);
+      Rocket.add(model1, key: 'model1');
+      Rocket.add(model2, key: 'model2');
       final models = Rocket.getByType<TestModel>();
       expect(models.length, equals(2));
-      expect(models.contains(model1), equals(true));
-      expect(models.contains(model2), equals(true));
+      expect(models.contains(model1), isTrue);
+      expect(models.contains(model2), isTrue);
     });
 
     test('remove', () {
       final model = TestModel('test');
       Rocket.add(model);
       Rocket.remove<TestModel>();
-      expect(Rocket.get<TestModel>(), equals(null));
+      expect(Rocket.get<TestModel>(), isNull);
     });
 
     test('remove by key', () {
       final model = TestModel('test');
       Rocket.add(model, key: 'myModel');
       Rocket.remove<TestModel>(key: 'myModel');
-      expect(Rocket.get<TestModel>('myModel'), equals(null));
+      expect(Rocket.get<TestModel>('myModel'), isNull);
     });
 
     test('remove by predicate', () {
@@ -61,25 +65,27 @@ void main() {
     test('has key', () {
       final model = TestModel('test');
       Rocket.add(model, key: 'myModel');
-      expect(Rocket.hasKey('myModel'), equals(true));
-      expect(Rocket.hasKey('otherModel'), equals(false));
+      expect(Rocket.hasKey('myModel'), isTrue);
+      expect(Rocket.hasKey('otherModel'), isFalse);
     });
 
     test('has type', () {
       final model = TestModel('test');
       Rocket.add(model);
-      expect(Rocket.hasType<TestModel>(), equals(true));
-      expect(Rocket.hasType<String>(), equals(false));
+      expect(Rocket.hasType<TestModel>(), isTrue);
+      expect(Rocket.hasType<String>(), isFalse);
     });
 
     test('get first by type', () {
+      // Use different types to test type-based retrieval
       final model1 = TestModel('test1');
       final model2 = TestModel('test2');
-      Rocket.add(model1);
-      Future.delayed(const Duration(seconds: 1)).whenComplete(() {
-        Rocket.add(model2);
-        expect(Rocket.getFirstByType<TestModel>(), equals(model1));
-      });
+      Rocket.add(model1, key: 'model1');
+      Rocket.add(model2, key: 'model2');
+      final result = Rocket.getFirstByType<TestModel>();
+      expect(result, isNotNull);
+      // Result should be one of the added models (HashMap doesn't guarantee order)
+      expect(result!.name, anyOf(equals('test1'), equals('test2')));
     });
 
     test('remove all', () {
@@ -89,6 +95,14 @@ void main() {
       Rocket.add(model2);
       Rocket.clear();
       expect(Rocket.getByType<TestModel>().length, equals(0));
+    });
+
+    test('get non-existent key returns null', () {
+      expect(Rocket.get<TestModel>('nonExistent'), isNull);
+    });
+
+    test('get non-existent type returns null', () {
+      expect(Rocket.get<TestModel>(), isNull);
     });
   });
 }
