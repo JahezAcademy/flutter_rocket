@@ -53,7 +53,7 @@ class Todo extends RocketModel<Todo> {
     return data;
   }
 
-  Future<void> fetch() async {
+  Future<void> fetch({bool refresh = false}) async {
     state = RocketState.loading;
     await Future.delayed(const Duration(seconds: 3));
     try {

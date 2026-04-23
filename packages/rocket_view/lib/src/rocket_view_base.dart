@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rocket_model/rocket_model.dart';
@@ -6,55 +8,64 @@ import 'enums.dart';
 
 typedef OnError = Widget Function(RocketException error, Function() reload)?;
 
+/// A widget that helps to manage the state of a [RocketModel] and handle
+/// the different states of the data (loading, done, failed).
+///
+/// The [builder] parameter is a function that takes a [BuildContext] and a [RocketState]
+/// and returns a widget tree.
+///
+/// The [fetch] parameter is a function that is called to fetch data.
+///
+/// The [callType] parameter determines when the [fetch] function is called:
+/// - [CallType.callAsFuture]: Called immediately
+/// - [CallType.callIfModelEmpty]: Called only if the model has no data
+///
+/// Example usage:
+/// ```dart
+/// RocketView(
+///   model: myModel,
+///   builder: (context, state) {
+///     if (state == RocketState.loading) {
+///       return const Center(child: CircularProgressIndicator());
+///     } else if (state == RocketState.done) {
+///       return ListView.builder(...);
+///     } else {
+///       return Text('An error occurred!');
+///     }
+///   },
+///   fetch: ({bool refresh = false}) async => await myModel.fetchData(),
+///   callType: CallType.callAsFuture,
+///   onError: (error, reload) => Text('Error: ${error.response}'),
+/// )
+/// ```
 class RocketView<T> extends StatefulWidget {
-  /// A widget that helps to manage the state of a `RocketModel` and handle the different states of the data.
-  ///
-  /// The `builder` parameter is a function that takes a `BuildContext` and a `RocketState` and returns a widget tree.
-  ///
-  /// The `call` parameter is a function that is called to fetch data. It can be a synchronous or asynchronous function.
-  ///
-  /// The `callType` parameter determines when the `call` function is called. It can be called immediately (`CallType.callAsFuture`), only if the `model` is empty (`CallType.callIfModelEmpty`), or periodically as a stream (`CallType.callAsStream`).
-  ///
-  /// The `secondsOfStream` parameter is only used if `callType` is `CallType.callAsStream`. It specifies the number of seconds between each call to the `call` function.
-  ///
-  /// The `loader` parameter is a widget that is displayed while the data is loading. If `null`, no loader is displayed.
-  ///
-  /// The `model` parameter is a `RocketModel` object that holds the data and state of the widget.
-  ///
-  /// The `onError` parameter is a function that is called if an error occurs while fetching data. It takes a `RocketException` and a `reload` function as parameters and returns a widget that is displayed instead of the normal builder. The `reload` function can be called to retry fetching data.
-  ///
-  /// Example usage:
-  ///
-  /// ```
-  /// RocketView(
-  ///   model: myModel,
-  ///   builder: (context, state) {
-  ///     if (state == RocketState.loading) {
-  ///       return Center(child: CircularProgressIndicator());
-  ///     } else if (state == RocketState.done) {
-  ///       return ListView.builder(
-  ///         itemCount: myModel.length,
-  ///         itemBuilder: (context, index) {
-  ///           final item = myModel[index];
-  ///           return ListTile(
-  ///             title: Text(item.title),
-  ///             subtitle: Text(item.body),
-  ///             trailing: Checkbox(value: item.completed),
-  ///             onTap: () => myModel.updatFields(completed: !item.completed),
-  ///           );
-  ///         },
-  ///       );
-  ///     } else {
-  ///       return Text('An error occurred!');
-  ///     }
-  ///   },
-  /// //create fetch data method inside model
-  ///   fetch: () async => await myModel.fetchData(),
-  ///   callType: CallType.callAsFuture,
-  ///   onError: (error, reload) => Text('Error: ${error.response}'),
-  /// )
-  /// ```
-  ///
+  /// The function that builds the widget tree based on the state.
+  final Widget Function(BuildContext, RocketState) builder;
+
+  /// The function that fetches data.
+  final FutureOr Function({bool refresh})? fetch;
+
+  /// When to call the [fetch] function.
+  final CallType callType;
+
+  /// The widget to display while data is loading.
+  /// If null, a default loading indicator is shown based on the state.
+  final Widget Function()? onLoading;
+
+  /// The [RocketModel] object that holds the data and state.
+  final RocketModel<T> model;
+
+  /// The function to call if an error occurs.
+  /// If null, a default error UI with retry button is shown.
+  final OnError onError;
+
+  /// Specific fields to listen to for selective rebuilds.
+  /// If null, the view listens to the entire model.
+  final List<String>? fields;
+
+  /// Enable refresh data by pull to refresh.
+  final bool refresh;
+
   const RocketView({
     Key? key,
     required this.model,
@@ -64,28 +75,8 @@ class RocketView<T> extends StatefulWidget {
     this.onLoading,
     this.onError,
     this.fields,
+    this.refresh = true,
   }) : super(key: key);
-
-  /// The function that builds the widget tree based on the state.
-  final Widget Function(BuildContext, RocketState) builder;
-
-  /// The function that fetches data.
-  final dynamic Function()? fetch;
-
-  /// When to call the `call` function.
-  final CallType callType;
-
-  /// The widget to display while data is loading, if not defined you need to handle it on `builder` by `state`
-  final Widget Function()? onLoading;
-
-  /// The `RocketModel` object that holds the data and state.
-  final RocketModel<T> model;
-
-  /// The function to call if an error occurs, if not defined you need to handle it on `builder` by `state`
-  final OnError onError;
-
-  /// Specific fields to listen to. If null, the view listens to the entire model.
-  final List<String>? fields;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -97,21 +88,19 @@ class RocketView<T> extends StatefulWidget {
   ViewRocketState createState() => ViewRocketState();
 }
 
-/// The state object for the `RocketView` widget.
+/// The state object for the [RocketView] widget.
 class ViewRocketState extends State<RocketView> {
   /// The function to call to reload data.
   late Function() reload;
 
   @override
   void initState() {
-    /// Register this listener to the `RocketModel`.
     reload = () {
       widget.model.state = RocketState.loading;
       widget.fetch?.call();
     };
     _registerListeners();
 
-    /// Call the `call` function based on the `callType` parameter.
     switch (widget.callType) {
       case CallType.callAsFuture:
         widget.fetch?.call();
@@ -128,8 +117,6 @@ class ViewRocketState extends State<RocketView> {
   @override
   void didUpdateWidget(RocketView oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    /// Unregister the old listener and register a new one if the `RocketModel` has changed.
     if (widget.model != oldWidget.model) {
       _unregisterListeners(oldWidget.model);
       _registerListeners();
@@ -138,7 +125,6 @@ class ViewRocketState extends State<RocketView> {
 
   @override
   void dispose() {
-    /// Unregister this listener.
     _unregisterListeners(widget.model);
     super.dispose();
   }
@@ -163,18 +149,24 @@ class ViewRocketState extends State<RocketView> {
     }
   }
 
-  /// The function to call when a change occurs in the `RocketModel`.
+  /// Called when a change occurs in the [RocketModel].
   void _handleChange() {
-    setState(() {});
+    if (!mounted) return;
+    // Use a microtask to avoid issues if notifyListeners was called during a build
+    Future.microtask(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
-  /// Returns the appropriate widget tree based on the `RocketState`.
-  _handleStates() {
+  /// Returns the appropriate widget tree based on the [RocketState].
+  Widget _handleStates() {
     switch (widget.model.state) {
       case RocketState.loading:
         return widget.onLoading != null
             ? widget.onLoading!()
-            : const Center(child: CircularProgressIndicator());
+            : _handleSilentLoading(context);
       case RocketState.done:
         return widget.builder(context, widget.model.state);
       case RocketState.failed:
@@ -192,8 +184,24 @@ class ViewRocketState extends State<RocketView> {
     }
   }
 
+  Widget _handleSilentLoading(BuildContext context) {
+    if (widget.model.state == RocketState.loading &&
+        !widget.model.isPaginated) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      return widget.builder(context, widget.model.state);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _handleStates();
+    return widget.refresh
+        ? RefreshIndicator(
+            onRefresh: () async {
+              await widget.fetch?.call(refresh: true);
+            },
+            child: _handleStates(),
+          )
+        : _handleStates();
   }
 }

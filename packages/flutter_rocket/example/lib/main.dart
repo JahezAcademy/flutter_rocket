@@ -14,10 +14,12 @@ void rocketInit() {
   RocketCache.init();
   const String baseUrl = 'https://jsonplaceholder.typicode.com';
   // create request object
-  RocketClient request = RocketClient(url: baseUrl);
-  request.onResponse = (data, statusCode, endpoint) {
-    log('Response Status: $statusCode, Endpoint: /$endpoint');
-  };
+  RocketClient request = RocketClient(
+    url: baseUrl,
+    onResponse: (data, statusCode, endpoint) {
+      log('Response Status: $statusCode, Endpoint: /$endpoint');
+    },
+  );
   // save it, for use from any screen
   Rocket.add(request);
 }

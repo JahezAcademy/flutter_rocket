@@ -1,5 +1,8 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
+
+/// A type-safe singleton container for storing and retrieving objects by key or type.
 class Rocket {
   Rocket._();
 
@@ -7,6 +10,12 @@ class Rocket {
       _modelsDelegate ??= HashMap<String, dynamic>();
 
   static HashMap<String, dynamic>? _modelsDelegate;
+
+  /// Resets the singleton state. Useful for testing.
+  @visibleForTesting
+  static void resetForTesting() {
+    _modelsDelegate = null;
+  }
 
   /// Adds a value to the collection.
   ///
@@ -25,14 +34,14 @@ class Rocket {
     }
   }
 
-  /// Gets a value from the collection.
+  /// Gets a value from the collection by key.
   ///
-  /// [key] The key of the value to get.
+  /// [key] The key of the value to get. If null, uses type-based lookup.
   ///
-  /// Returns the value.
-  static T get<T>([String? key]) {
+  /// Returns the value, or `null` if not found.
+  static T? get<T>([String? key]) {
     if (key == null) return getFirstByType<T>();
-    return _models[key] as T;
+    return _models[key] as T?;
   }
 
   /// Iterates over all rocket models in the collection.
@@ -42,11 +51,9 @@ class Rocket {
     _models.forEach(action);
   }
 
-  /// Removes a value from the collection.
+  /// Removes values from the collection by type.
   ///
-  /// [key] The key of the value to remove.
-  ///
-  /// Throws an AssertionError if no value with the given key exists.
+  /// [T] The type of values to remove.
   static void remove<T>({String? key}) {
     if (key == null) {
       _models.removeWhere((key, value) => value is T);
@@ -81,7 +88,6 @@ class Rocket {
   ///
   /// Returns a list of rocket models of the given type.
   static List<T> getByType<T>() {
-    // assert(hasType<T>(), "No value of type $T");
     return _models.values.whereType<T>().toList();
   }
 
@@ -89,13 +95,9 @@ class Rocket {
   ///
   /// [T] The type of rocket models to get.
   ///
-  /// Returns the first value of the given type, or null if no models of the given type exist.
-  static T getFirstByType<T>() {
-    final result = getByType<T>().firstOrNull;
-    if (result == null) {
-      throw Exception("No value of type $T found.");
-    }
-    return result;
+  /// Returns the first value of the given type, or `null` if no models of the given type exist.
+  static T? getFirstByType<T>() {
+    return getByType<T>().firstOrNull;
   }
 
   /// Removes all rocket models from the collection.

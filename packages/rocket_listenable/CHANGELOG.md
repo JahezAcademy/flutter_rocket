@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Minor internal optimizations and compatibility updates.
+
 ## 0.0.2
 
 * Added support for selective listeners via string keys.

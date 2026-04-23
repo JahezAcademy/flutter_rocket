@@ -1,3 +1,8 @@
+## 0.0.8
+
+* Enhanced retry options and exception handling.
+* Refactored `RocketClient` for improved maintainability.
+
 ## 0.0.7
 
 * init rocket cache

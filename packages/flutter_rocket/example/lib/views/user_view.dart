@@ -30,7 +30,7 @@ class UserExample extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: RocketView(
             // call api by RocketRequest saved in McController and make model on ready
-            fetch: () => GetUsers.getUsers(users),
+            fetch: ({bool refresh = false}) => GetUsers.getUsers(users),
 
             // your model
             model: users,
@@ -148,7 +148,7 @@ class OneUser extends StatelessWidget {
   late Address address;
   late Geo geo;
   OneUser(this.index, {Key? key}) : super(key: key) {
-    user = Rocket.get<User>().all![index];
+    user = Rocket.get<User>()!.all![index];
     company = user.company!;
     address = user.address!;
     geo = address.geo!;

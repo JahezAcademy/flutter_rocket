@@ -1,3 +1,8 @@
+## 0.0.5
+
+* Updated `fetch` signature to support `refresh` parameter.
+* Improved error handling and retry button logic.
+
 ## 0.0.4
 
 * Added `fields` parameter to `RocketView` for selective rebuilds.

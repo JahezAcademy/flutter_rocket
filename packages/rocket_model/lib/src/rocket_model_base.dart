@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:rocket_listenable/rocket_listenable.dart';
 
 import 'constants.dart';
-
 import 'rocket_exception.dart';
 
 /// An abstract class that defines the behavior of a model object.
@@ -14,7 +13,7 @@ import 'rocket_exception.dart';
 /// and manipulated through the model object's public methods.
 abstract class RocketModel<T> extends RocketListenable {
   /// The dynamic instance of the model.
-  /// This must be overridden in subclasses to return a new instance of the model (e.g. `get instance => MyModel()`).
+  /// This must be overridden in subclasses to return a new instance of the model.
   T get instance =>
       throw UnimplementedError("instance getter must be implemented for $T");
 
@@ -39,7 +38,10 @@ abstract class RocketModel<T> extends RocketListenable {
   /// Returns the current state of the model.
   RocketState get state => _state;
 
+  /// API response data.
   dynamic apiResponse;
+
+  /// HTTP status code from the last response.
   int? statusCode;
 
   /// Sets the current state of the model.
@@ -98,8 +100,11 @@ abstract class RocketModel<T> extends RocketListenable {
     return copy;
   }
 
+  /// A flag indicating whether the model is paginated.
+  bool isPaginated = false;
+
   /// Sets the model's data to the given list of data.
-  void setMulti(List data) {
+  void setMulti(List<dynamic> data) {
     if (all != null) {
       for (var item in all!) {
         if (item is RocketModel) {
@@ -107,7 +112,12 @@ abstract class RocketModel<T> extends RocketListenable {
         }
       }
     }
-    all = data.map<T>(_mapToInstance).toList();
+    if (isPaginated) {
+      all ??= [];
+      all!.addAll(data.map<T>(_mapToInstance).toList());
+    } else {
+      all = data.map<T>(_mapToInstance).toList();
+    }
     existData = true;
     state = RocketState.done;
   }
@@ -127,12 +137,24 @@ abstract class RocketModel<T> extends RocketListenable {
   /// Serializes the model's data to a JSON map.
   Map<String, dynamic> toJson() => {};
 
+  /// Disposes of the model and removes all child model listeners.
+  @override
+  void dispose() {
+    if (all != null) {
+      for (var item in all!) {
+        if (item is RocketModel) {
+          item.removeListener(rocketRebuild, _handleChildChange);
+        }
+      }
+    }
+    super.dispose();
+  }
+
   /// Notifies listeners that the model has changed and needs to be rebuilt.
   ///
   /// If the `fromUpdate` flag is true, this method indicates that the model has been updated rather than
   /// loaded from scratch. If `enableDebug` is true, this method logs a message indicating the current state
-  /// of the model. Finally, this method calls the `callListener` method inherited from `RocketListenable`
-  /// to notify any registered listeners that the model has changed.
+  /// of the model.
   ///
   /// Use `fields` to notify only listeners registered for specific keys, enabling selective rebuilding.
   void rebuildWidget({bool fromUpdate = false, List<String>? fields}) {

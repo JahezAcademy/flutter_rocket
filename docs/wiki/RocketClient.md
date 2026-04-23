@@ -18,7 +18,7 @@ Use the `request` method to fetch data. It automatically handles the `RocketMode
 await client.request(
   'posts',
   model: postModel,
-  method: RocketMethods.get, // Default is GET
+  method: HttpMethods.get, // Default is GET
 );
 ```
 
@@ -33,7 +33,7 @@ await client.request(
 Interceptors allow you to run code before a request is sent or after a response is received.
 
 ```dart
-final client = Rocketクライアント(
+final client = RocketClient(
   url: 'https://api.example.com',
   beforeRequest: (request) {
     // Add Auth token
@@ -65,7 +65,7 @@ void main() async {
 client.request(
   'posts',
   model: postModel,
-  cacheKey: 'posts_cache',
+  cache: true,
   cacheDuration: Duration(hours: 1),
 );
 ```

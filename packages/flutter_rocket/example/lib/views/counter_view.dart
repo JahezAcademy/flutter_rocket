@@ -70,7 +70,7 @@ class CounterExample extends StatelessWidget {
   }
 
   /// Asynchronously increments the count after a delay of one second.
-  Future<void> add() async {
+  Future<void> add({bool refresh = false}) async {
     await Future.delayed(const Duration(seconds: 1));
     counter.fromJson({Counter.countKey: counter.count + 1});
   }

@@ -37,20 +37,25 @@ Flutter Rocket is a high-performance, lightweight state management and API integ
 ---
 
 ## 📖 Table of Contents
-- [Graphic Tutorial](#-graphic-tutorial)
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
-- [Core Concepts](#-core-concepts)
-    - [RocketModel](#rocketmodel)
-    - [RocketClient](#rocketclient)
-    - [RocketView](#rocketview)
-- [Premium Optimizations](#-premium-optimizations)
+- [ Flutter Rocket](#-flutter-rocket)
+  - [🚀 Key Features](#-key-features)
+  - [📦 Package Ecosystem](#-package-ecosystem)
+  - [📖 Table of Contents](#-table-of-contents)
+  - [🎨 Graphic Tutorial](#-graphic-tutorial)
+  - [📦 Installation](#-installation)
+  - [⚡ Quick Start](#-quick-start)
+    - [1. Define your Model](#1-define-your-model)
+    - [2. Setup the Client](#2-setup-the-client)
+    - [3. Bind UI with RocketView](#3-bind-ui-with-rocketview)
+  - [✨ Premium Optimizations](#-premium-optimizations)
     - [Selective Rebuilds](#selective-rebuilds)
     - [Automatic Bubbling](#automatic-bubbling)
-- [Advanced Features](#-advanced-features)
+  - [🛠️ Advanced Features](#️-advanced-features)
     - [Interceptors](#interceptors)
     - [Caching](#caching)
-- [Rocket CLI](#-rocket-cli)
+  - [🛠️ Rocket CLI](#️-rocket-cli)
+  - [🔗 Links \& Support](#-links--support)
+- [Author](#author)
 
 ---
 
@@ -131,7 +136,7 @@ class PostList extends StatelessWidget {
   Widget build(BuildContext context) {
     return RocketView(
       model: postModel,
-      fetch: () => Rocket.get(rocketRequestKey).request('posts', model: postModel),
+      fetch: ({bool refresh = false}) => Rocket.get(rocketRequestKey).request('posts', model: postModel),
       builder: (context, state) {
         return ListView.builder(
           itemCount: postModel.all!.length,

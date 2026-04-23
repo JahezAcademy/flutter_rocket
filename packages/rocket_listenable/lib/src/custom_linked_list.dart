@@ -1,6 +1,5 @@
 import 'dart:collection';
-
-import 'package:flutter/material.dart';
+import 'dart:ui';
 
 final class CustomLinkedListEntry<T>
     extends LinkedListEntry<CustomLinkedListEntry<VoidCallback>> {

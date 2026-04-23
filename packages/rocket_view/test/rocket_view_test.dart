@@ -56,7 +56,7 @@ void main() {
         MaterialApp(
           home: RocketView<int>(
             model: rocketModel,
-            fetch: () {
+            fetch: ({bool refresh = false}) async {
               rocketModel.state = RocketState.failed;
               rocketModel.exception = RocketException(
                 exception: 'Error fetching data',
@@ -87,9 +87,10 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: RocketView<int>(
             model: rocketModel,
-            fetch: () async {},
+            fetch: ({bool refresh = false}) async {},
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
             onError: (error, reload) => TextButton(
               onPressed: reload,
@@ -117,7 +118,7 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
-            fetch: () {
+            fetch: ({bool refresh = false}) {
               callFunctionCalled = true;
             },
             callType: CallType.callAsFuture,
@@ -142,7 +143,7 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
-            fetch: () {
+            fetch: ({bool refresh = false}) async {
               callFunctionCalled = true;
             },
             callType: CallType.callIfModelEmpty,
@@ -166,7 +167,7 @@ void main() {
           home: RocketView<int>(
             model: rocketModel,
             builder: (context, state) => Text('Data is ${rocketModel.data}'),
-            fetch: () {
+            fetch: ({bool refresh = false}) {
               callFunctionCalled = true;
             },
             callType: CallType.callIfModelEmpty,
@@ -236,4 +237,18 @@ void main() {
 class RocketModelData<T> extends RocketModel<T> {
   int? data;
   String? name;
+
+  @override
+  T get instance => this as T;
+
+  @override
+  void fromJson(Map<String, dynamic>? json, {bool isSub = false}) {
+    if (!isSub) {
+      existData = true;
+      state = RocketState.done;
+    }
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {};
 }

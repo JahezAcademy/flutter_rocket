@@ -1,3 +1,17 @@
+## 0.0.14
+
+* Updated all internal dependencies and examples.
+* Refactored client and model integration.
+
+## 0.0.13
+
+* Updated dependencies and metadata.
+* Update `rocket_client`
+
+## 0.0.12
+
+* Updated dependencies and metadata.
+
 ## 0.0.8
 
 - Support selective rebuilds for high performance.

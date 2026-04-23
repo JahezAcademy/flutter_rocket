@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Updated internal object management and storage.
+
 ## 0.0.4
 
 * Updated dependencies and metadata.

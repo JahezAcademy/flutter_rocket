@@ -5,12 +5,12 @@ const String postsEndpoint = "posts";
 
 class GetPosts {
   static Future getPosts(Post postModel) {
-    return Rocket.get<RocketClient>().request(
+    return Rocket.get<RocketClient>()!.request(
       // endpoint
       postsEndpoint,
       // your model
       model: postModel,
-      cacheKey: "posts",
+      cache: true,
       inspect: (d) {
         return d;
       },

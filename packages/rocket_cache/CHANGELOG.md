@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Improved data management and persistence layer.
+
 ## 0.0.2
 
 * Updated metadata and documentation.

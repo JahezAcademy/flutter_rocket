@@ -7,6 +7,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
+    // Reset the static prefs instance for clean test isolation
+    RocketCache.resetForTesting();
     SharedPreferences.setMockInitialValues({});
     await RocketCache.init();
   });
