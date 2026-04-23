@@ -15,6 +15,7 @@ dependencies:
   http: ^1.2.1
   rocket_model: ^0.0.4
   rocket_cache: ^0.0.2
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:

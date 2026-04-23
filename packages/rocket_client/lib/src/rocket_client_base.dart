@@ -8,31 +8,278 @@ import 'package:rocket_client/src/retry_options.dart';
 import 'package:rocket_model/rocket_model.dart';
 
 import 'package:rocket_cache/rocket_cache.dart';
-import 'extensions.dart';
+import 'enums.dart';
 
-typedef RocketDataCallback = Function(dynamic data)?;
+// ---------------------------------------------------------------------------
+// Typedefs
+// ---------------------------------------------------------------------------
+
+/// Transforms raw response data before it is mapped onto a [RocketModel].
+///
+/// Return the value you want to use as the final data (e.g. extract a nested
+/// key from the JSON map).
+typedef RocketDataCallback = dynamic Function(dynamic data)?;
+
+/// Called when the server returns a non-2xx status code.
 typedef RocketOnError = void Function(dynamic response, int statusCode)?;
+
+/// Intercepts an outgoing [Request] before it is sent.
+///
+/// You can add headers, modify the body, change the URL, etc.
+/// Must return the (possibly mutated) [Request].
+typedef RequestInterceptor = FutureOr<Request> Function(Request request);
+
+/// Intercepts the [RocketModel] result after a successful response.
+///
+/// Use this to refresh tokens, log, or transform the result globally.
+/// Must return the (possibly mutated) [RocketModel].
+typedef ResponseInterceptor = FutureOr<RocketModel> Function(RocketModel result);
+
+// ---------------------------------------------------------------------------
+// RocketClient
+// ---------------------------------------------------------------------------
 
 class RocketClient {
   final String url;
   final Map<String, String> headers;
   final bool setCookies;
-  void Function(dynamic, int, String?)? onResponse;
+  final void Function(dynamic data, int statusCode, String? endpoint)? onResponse;
   final RetryOptions globalRetryOptions;
   final Client? _client;
-  FutureOr<Request> Function(Request)? beforeRequest;
-  FutureOr<RocketModel> Function(RocketModel)? afterResponse;
+  final Duration? globalCacheDuration;
+  final bool globalCache;
+
+  /// Called before every request is sent. Use to inject auth headers, etc.
+  final RequestInterceptor? beforeRequest;
+
+  /// Called after every successful response. Use to refresh tokens, log, etc.
+  final ResponseInterceptor? afterResponse;
 
   RocketClient({
     required this.url,
-    this.headers = const {},
+    Map<String, String>? headers,
     this.setCookies = false,
     this.globalRetryOptions = const RetryOptions(),
     this.onResponse,
     this.beforeRequest,
     this.afterResponse,
+    this.globalCacheDuration,
+    this.globalCache = false,
     Client? client,
-  }) : _client = client;
+  })  : _client = client,
+        headers = headers ?? {};
+
+  // -------------------------------------------------------------------------
+  // Public API
+  // -------------------------------------------------------------------------
+
+  /// Sends an HTTP request to [endpoint] using the given HTTP [method].
+  ///
+  /// - [model]         : If provided, its state transitions to [RocketState.loading]
+  ///                     before the request and is populated with the response data.
+  /// - [method]        : HTTP verb. Defaults to [HttpMethods.get].
+  /// - [data]          : Request body serialised to JSON.
+  /// - [params]        : Query parameters appended to the URL.
+  /// - [inspect]       : Transform the raw response value before model mapping.
+  /// - [target]        : Path of keys used to extract a nested JSON value
+  ///                     (e.g. `['data', 'items']`). Ignored when [inspect] is set.
+  /// - [cache]         : Cache the response for this specific request.
+  /// - [cacheDuration] : How long the cache entry is considered fresh.
+  /// - [retryOptions]  : Per-request retry configuration. `null` falls back to
+  ///                     [globalRetryOptions].
+  /// - [refresh]       : When `true`, clears the model's list and bypasses cache.
+  ///
+  /// Returns the populated [model] when provided, otherwise a [RocketResponse]
+  /// containing the raw JSON (or raw string if JSON decoding fails).
+  ///
+  /// Example:
+  /// ```dart
+  /// final post = Post();
+  /// await client.request('posts/1', model: post);
+  /// print(post.toJson());
+  /// ```
+  Future<RocketModel> request<T>(
+    String endpoint, {
+    RocketModel<T>? model,
+    HttpMethods method = HttpMethods.get,
+    RocketDataCallback inspect,
+    List<String>? target,
+    RocketOnError onError,
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? params,
+    bool cache = false,
+    @Deprecated('Cache key is now generated automatically') String? cacheKey,
+    Duration? cacheDuration,
+    RetryOptions? retryOptions,
+    bool refresh = false,
+  }) async {
+    if (model != null) {
+      model.state = RocketState.loading;
+    }
+
+    // ── Cache read ──────────────────────────────────────────────────────────
+    if ((globalCache || cache) && !refresh && method == HttpMethods.get) {
+      cacheKey =
+          Uri.parse(endpoint).replace(queryParameters: params).toString();
+
+      final cachedData = await RocketCache.load(
+        cacheKey,
+        expiration: globalCacheDuration ?? cacheDuration,
+      );
+
+      if (cachedData != null) {
+        return _handleResponseData<T>(
+          cachedData,
+          200,
+          model: model,
+          inspect: inspect,
+          target: target,
+          endpoint: endpoint,
+        );
+      }
+    }
+
+    if (refresh) {
+      model?.all?.clear();
+    }
+
+    // ── Build URL ───────────────────────────────────────────────────────────
+    final String mapToParams = Uri(queryParameters: params ?? {}).query;
+    final String baseUrl = url.endsWith('/') ? url : '$url/';
+    final String cleanEndpoint =
+        endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+    final Uri fullUrl = Uri.parse(
+      '$baseUrl$cleanEndpoint${mapToParams.isNotEmpty ? '?$mapToParams' : ''}',
+    );
+
+    // ── Build Request ───────────────────────────────────────────────────────
+    Request httpRequest = Request(method.name, fullUrl);
+    if (data != null) httpRequest.body = json.encode(data);
+    httpRequest.headers.addAll(headers);
+
+    httpRequest = await beforeRequest?.call(httpRequest) ?? httpRequest;
+
+    // ── Retry client ────────────────────────────────────────────────────────
+    final effective = retryOptions ?? globalRetryOptions;
+    final client = _client ?? Client();
+    final retryClient = RetryClient(
+      client,
+      retries: effective.retries ?? RetryOptions.defaultRetries,
+      when: effective.retryWhen ?? RetryOptions.defaultWhen,
+      onRetry: effective.onRetry,
+      delay: effective.delay ?? RetryOptions.defaultDelay,
+    );
+
+    // ── Send ────────────────────────────────────────────────────────────────
+    try {
+      final response = await retryClient.send(httpRequest);
+
+      if (setCookies) {
+        _updateCookie(response);
+      }
+
+      RocketModel result = await _processData<T>(
+        response,
+        model: model,
+        inspect: inspect,
+        endpoint: endpoint,
+        target: target,
+        cacheKey: cacheKey,
+      );
+
+      result = await afterResponse?.call(result) ?? result;
+
+      return result;
+    } catch (error, stackTrace) {
+      log('$error $stackTrace');
+      return _catchError(error, stackTrace, model: model);
+    }
+  }
+
+  /// Sends a multipart request (file upload) to [endpoint].
+  ///
+  /// - [fields] : Additional form fields.
+  /// - [files]  : Map of field name → file path.
+  /// - [id]     : Optional ID appended to the URL.
+  /// - [method] : HTTP verb. Defaults to [HttpMethods.post].
+  ///
+  /// Returns the decoded JSON response on success, or the raw response string
+  /// on failure.
+  ///
+  /// Example:
+  /// ```dart
+  /// await client.sendFile(
+  ///   'upload',
+  ///   fields: {'name': 'profile'},
+  ///   files:  {'avatar': '/path/to/image.jpg'},
+  /// );
+  /// ```
+  Future<dynamic> sendFile(
+    String endpoint, {
+    Map<String, String>? fields,
+    Map<String, String>? files,
+    String id = '',
+    HttpMethods method = HttpMethods.post,
+  }) async {
+    final String end = method == HttpMethods.post ? id : '$id/';
+    final request = MultipartRequest(
+      method.name,
+      Uri.parse('$url/$endpoint/$end'),
+    );
+
+    if (files != null) {
+      for (final entry in files.entries) {
+        request.files.add(await MultipartFile.fromPath(entry.key, entry.value));
+      }
+    }
+
+    if (fields != null) request.fields.addAll(fields);
+    request.headers.addAll(headers);
+
+    final response = await request.send();
+    final responseBytes = await response.stream.toBytes();
+
+    switch (response.statusCode) {
+      case >= 200 && < 300:
+        return json.decode(utf8.decode(responseBytes));
+      default:
+        return String.fromCharCodes(responseBytes);
+    }
+  }
+
+  /// Simulates a network response without making a real HTTP request.
+  ///
+  /// Useful for testing UI state transitions. Waits [responseDuration] before
+  /// populating [model] with [data].
+  Future<void> requestSimulation<T>(
+    String endpoint, {
+    required RocketModel<T> model,
+    HttpMethods method = HttpMethods.get,
+    RocketDataCallback inspect,
+    List<String>? target,
+    dynamic data,
+    Duration responseDuration = const Duration(seconds: 2),
+  }) async {
+    final result = _handleTarget(inspect, data, target);
+    model.state = RocketState.loading;
+    await Future.delayed(responseDuration);
+
+    if (result is List) {
+      model.setMulti(result);
+    } else if (result is Map<String, dynamic>) {
+      model.fromJson(result);
+    } else {
+      throw ArgumentError.value(
+        result,
+        'data',
+        'Expected a List or Map<String, dynamic>',
+      );
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Private helpers
+  // -------------------------------------------------------------------------
 
   Future<RocketModel> _processData<T>(
     StreamedResponse response, {
@@ -42,18 +289,20 @@ class RocketClient {
     String? endpoint,
     String? cacheKey,
   }) async {
-    String respDecoded = utf8.decode(await response.stream.toBytes());
-    late dynamic result;
+    final String respDecoded = utf8.decode(await response.stream.toBytes());
+    dynamic result;
     try {
       result = json.decode(respDecoded);
-    } catch (e) {
+    } catch (_) {
       result = respDecoded;
     }
+
     if (cacheKey != null &&
         response.statusCode >= 200 &&
         response.statusCode < 300) {
       await RocketCache.save(cacheKey, result);
     }
+
     return _handleResponseData<T>(
       result,
       response.statusCode,
@@ -73,308 +322,113 @@ class RocketClient {
     String? endpoint,
   }) {
     onResponse?.call(result, statusCode, endpoint);
-    // TODO : need more enhancements
-    RocketResponse rocketResponse = RocketResponse(result, statusCode);
-    if (statusCode < 300 && statusCode >= 200) {
-      result = _handleTarget(inspect, result, target);
+
+    final RocketResponse rocketResponse = RocketResponse(result, statusCode);
+
+    if (statusCode >= 200 && statusCode < 300) {
+      final dynamic shaped = _handleTarget(inspect, result, target);
+
       if (model != null) {
-        if (result is List?) {
-          model.setMulti(result ?? []);
+        if (shaped is List?) {
+          model.setMulti(shaped ?? []);
         } else {
-          model.fromJson(result);
+          model.fromJson(shaped);
         }
         return model;
       }
-      rocketResponse.update(result, statusCode);
+
+      rocketResponse.update(shaped, statusCode);
       return rocketResponse;
     } else {
+      final exception =
+          RocketException(response: result, statusCode: statusCode);
+
       if (model != null) {
-        model.setException(
-          RocketException(response: result, statusCode: statusCode),
-        );
+        model.setException(exception);
         return model;
-      } else {
-        rocketResponse.setException(
-          RocketException(response: result, statusCode: statusCode),
-        );
-        return rocketResponse;
       }
+
+      rocketResponse.setException(exception);
+      return rocketResponse;
     }
   }
 
-  _handleTarget(
-    Function(dynamic data)? inspect,
-    result,
+  dynamic _handleTarget(
+    dynamic Function(dynamic data)? inspect,
+    dynamic result,
     List<String>? targetData,
   ) {
     if (inspect != null) {
-      result = inspect(result);
+      return inspect(result);
     } else if (targetData != null) {
       try {
-        result = _getTarget(result, targetData);
+        return _getTarget(result as Map, targetData);
       } catch (e) {
-        log("Error in Target : $e, Try to use inspect instead");
+        log('Error in target: $e — use inspect instead');
       }
     }
     return result;
   }
 
-  /// Sends an HTTP request to the specified `endpoint` using the specified HTTP `method`.
-  ///
-  /// If a `model` is provided, its `state` will be set to `RocketState.loading` before the request is sent.
-  ///
-  /// The `data` parameter contains the request body, which will be serialized to JSON before being sent.
-  ///
-  /// The `params` parameter contains the query parameters to be added to the URL.
-  ///
-  /// The `inspect` parameter can be used to inspect the raw response data before it is processed.
-  ///
-  /// The `targetData` parameter is a list of keys that will be used to extract a nested JSON object from the response data.
-  ///
-  /// If the request is successful and a `model` is provided, the response data will be processed using `_processModel<T>`.
-  /// Otherwise, it will be processed using `_processData<T>`.
-  ///
-  /// If an error occurs, `_catchError` will be called to handle it.
-  ///
-  /// Returns a `Future` that resolves to the response data if model provided return it with data,Otherwise return json if can convert response, or string if can't convert to json response .
-  /// Example Usage:
-  /// ```dart
-  /// void main() async {
-  /// final rocket = Rocket('https://jsonplaceholder.typicode.com');
-
-  /// final post = Post();
-
-  /// await rocket.request('posts',
-  ///     model: post);
-
-  /// print(post.toJson());
-  /// result = {
-  ///   "userId": 1,
-  ///   "id": 1,
-  ///   "title":
-  ///       "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-  ///   "body":
-  ///       "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit "
-  ///       "molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-  /// }
-  /// }
-  /// ```
-
-  Future<RocketModel> request<T>(
-    String endpoint, {
-    RocketModel<T>? model,
-    HttpMethods method = HttpMethods.get,
-    RocketDataCallback inspect,
-    List<String>? target,
-    RocketOnError onError,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? params,
-    String? cacheKey,
-    Duration? cacheDuration,
-    RetryOptions retryOptions = const RetryOptions(),
-  }) async {
-    if (model != null) {
-      model.state = RocketState.loading;
-    }
-    if (cacheKey != null) {
-      dynamic cachedData = await RocketCache.load(
-        cacheKey,
-        expiration: cacheDuration,
-      );
-      if (cachedData != null) {
-        return _handleResponseData<T>(
-          cachedData,
-          200,
-          model: model,
-          inspect: inspect,
-          target: target,
-          endpoint: endpoint,
-        );
-      }
-    }
-    StreamedResponse? response;
-    String mapToParams = Uri(queryParameters: params ?? {}).query;
-    String baseUrl = url.endsWith('/') ? url : '$url/';
-    String cleanEndpoint =
-        endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
-    Uri fullUrl = Uri.parse(
-      "$baseUrl$cleanEndpoint${mapToParams.isNotEmpty ? "?$mapToParams" : ""}",
-    );
-    Request request = Request(method.name, fullUrl);
-    if (data != null) request.body = json.encode(data);
-    request.headers.addAll(headers);
-    if (beforeRequest != null) {
-      request = await beforeRequest!(request);
-    }
-    final client = _client ?? Client();
-    final retryClient = RetryClient(
-      client,
-      retries: retryOptions.retries ??
-          globalRetryOptions.retries ??
-          RetryOptions.defaultRetries,
-      when: retryOptions.retryWhen ??
-          globalRetryOptions.retryWhen ??
-          RetryOptions.defaultWhen,
-      onRetry: retryOptions.onRetry ?? globalRetryOptions.onRetry,
-      delay: retryOptions.delay ??
-          globalRetryOptions.delay ??
-          RetryOptions.defaultDelay,
-    );
-
-    try {
-      response = await retryClient.send(request);
-      if (setCookies) {
-        _updateCookie(response);
-      }
-      RocketModel result = await _processData<T>(
-        response,
-        model: model,
-        inspect: inspect,
-        endpoint: endpoint,
-        target: target,
-        cacheKey: cacheKey,
-      );
-      if (afterResponse != null) {
-        result = await afterResponse!(result);
-      }
-      return result;
-    } catch (error, stackTrace) {
-      log("$error $stackTrace");
-      return _catchError(error, stackTrace, model: model);
-    }
-  }
-
-  _getTarget(Map data, List target) {
+  dynamic _getTarget(Map<dynamic, dynamic> data, List<String> target) {
     dynamic result = data;
-    for (var key in target) {
+    for (final key in target) {
       result = result[key];
     }
     return result;
   }
 
-  _catchError(Object e, StackTrace stackTrace, {RocketModel? model}) async {
-    if (model == null) {
-      return Future.value(e);
-    } else {
-      model.setException(
-        RocketException(exception: e.toString(), stackTrace: stackTrace),
-      );
-      return Future.value(model);
-    }
-  }
-
-  /// Sends a file or files to the specified endpoint and returns the response as a Future.
-  ///
-  /// The `endpoint` parameter is required and specifies the endpoint that the file(s) will be sent to.
-  ///
-  /// The `fields` parameter is optional and specifies any additional fields to be sent along with the file(s).
-  ///
-  /// The `files` parameter is optional and specifies the file(s) to be sent. The keys represent the form field names,
-  /// and the values represent the file paths.
-  ///
-  /// The `id` parameter is optional and specifies an ID to be included in the URL. The default is an empty string.
-  ///
-  /// The `method` parameter is optional and specifies the HTTP method to use for sending the request. The default is `HttpMethods.post`.
-  ///
-  /// Returns a `Future` that resolves to the processed response data.
-  ///
-  /// May throw an exception if an error occurs during the HTTP request.
-  ///
-  /// Example Usage:
-  /// ```
-  /// final client = RocketClient();
-  ///
-  /// // Send a file to the "upload" endpoint
-  /// final response = await client.sendFile("upload", files: {
-  //// "file": "/path/to/my/file.jpg",
-  /// });
-  ///
-  /// Send multiple files to the "upload" endpoint with additional fields and a PUT method
-  /// final response = await client.sendFile("upload", method:HttpMethods.put, fields: {
-  //// "name": "My File",
-  //// "description": "This is a file",
-  /// }, files: {
-  //// "file1": "/path/to/my/file1.jpg",
-  //// "file2": "/path/to/my/file2.jpg",
-  /// });
-  /// ```
-  Future sendFile(
-    String endpoint,
-    Map<String, String>? fields,
-    Map<String, String>? files, {
-    String id = "",
-    HttpMethods method = HttpMethods.post,
+  Future<RocketModel> _catchError(
+    Object error,
+    StackTrace stackTrace, {
+    RocketModel? model,
   }) async {
-    String end = method == HttpMethods.post ? id : "$id/";
-    var request = MultipartRequest(
-      method.name,
-      Uri.parse("$url/$endpoint/$end"),
+    final exception = RocketException(
+      exception: error.toString(),
+      stackTrace: stackTrace,
     );
-    if (files != null) {
-      for (var key in files.keys) {
-        request.files.add(await MultipartFile.fromPath(key, files[key]!));
-      }
+
+    if (model != null) {
+      model.setException(exception);
+      return model;
     }
 
-    if (fields != null) request.fields.addAll(fields);
-    request.headers.addAll(headers);
-
-    var response = await request.send();
-    switch (response.statusCode) {
-      case < 300 && >= 200:
-        var responseData = await response.stream.toBytes();
-        var result = json.decode(utf8.decode(responseData));
-        return result;
-      default:
-        var responseData = await response.stream.toBytes();
-        var responseString = String.fromCharCodes(responseData);
-        return responseString;
-    }
+    return RocketResponse(error, 0)..setException(exception);
   }
 
+  /// Updates the `cookie` header from the `set-cookie` header in [response].
+  ///
+  /// Only used when [setCookies] is `true`.
   void _updateCookie(StreamedResponse response) {
-    String? rawCookie = response.headers['set-cookie'];
+    final String? rawCookie = response.headers['set-cookie'];
     if (rawCookie != null) {
-      int index = rawCookie.indexOf(';');
+      final int index = rawCookie.indexOf(';');
       headers['cookie'] =
           (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
   }
-
-  Future<void> requestSimulation<T>(
-    String endpoint, {
-    required RocketModel<T> model,
-    HttpMethods method = HttpMethods.get,
-    RocketDataCallback inspect,
-    List<String>? target,
-    dynamic data,
-    Duration responseDuration = const Duration(seconds: 2),
-  }) async {
-    final result = _handleTarget(inspect, data, target);
-    model.state = RocketState.loading;
-    await Future.delayed(responseDuration);
-    if (result is List) {
-      model.setMulti(result);
-    } else if (result is Map<String, dynamic>) {
-      model.fromJson(result);
-    } else {
-      throw Exception("Failed to process data");
-    }
-  }
 }
 
+// ---------------------------------------------------------------------------
+// RocketResponse
+// ---------------------------------------------------------------------------
+
+/// A lightweight [RocketModel] used when no typed model is provided to
+/// [RocketClient.request].
 class RocketResponse extends RocketModel {
-  RocketResponse(this.response, this.kStatusCode);
-  dynamic response;
-  int kStatusCode;
-  void update(dynamic resp, int statusCode) {
-    kStatusCode = statusCode;
-    response = resp;
+  RocketResponse(this._response, this._statusCode);
+
+  dynamic _response;
+  int _statusCode;
+
+  void update(dynamic response, int statusCode) {
+    _response = response;
+    _statusCode = statusCode;
   }
 
   @override
-  get apiResponse => response;
+  dynamic get apiResponse => _response;
 
   @override
-  int get statusCode => kStatusCode;
+  int get statusCode => _statusCode;
 }
