@@ -18,7 +18,7 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     return RocketView(
       model: todoModel,
-      fetch: () => GetTodos.getTodos(todoModel),
+      fetch: ({bool refresh = false}) => GetTodos.getTodos(todoModel),
       onLoading: () {
         return const Center(
           child: CircularProgressIndicator(
